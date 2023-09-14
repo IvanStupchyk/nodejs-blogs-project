@@ -40,7 +40,7 @@ export const getVideosRouter = (db: DBType) => {
 
     const createdAt: Date = new Date()
 
-    let publicationDate: Date = new Date()
+    let publicationDate: Date = createdAt
     publicationDate.setDate(createdAt.getDate() + 1)
 
     const createdVideo: VideoType = {
