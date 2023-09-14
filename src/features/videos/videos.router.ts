@@ -54,8 +54,8 @@ export const getVideosRouter = (db: DBType) => {
       availableResolutions,
       canBeDownloaded: false,
       minAgeRestriction: null,
-      createdAt: dateNow.toDateString(),
-      publicationDate: dateNowPlusOneDay.toDateString()
+      createdAt: dateNow.toISOString(),
+      publicationDate: dateNowPlusOneDay.toISOString(),
     }
 
     db.push(createdVideo)
