@@ -38,11 +38,12 @@ export const getVideosRouter = (db: DBType) => {
       return
     }
 
-    const createdAt: Date = new Date()
-
-    let publicationDate: Date = new Date(createdAt)
-    publicationDate.setDate(createdAt.getDate() + 1)
+    // const createdAt: Date = new Date()
+    // let publicationDate: Date = new Date(createdAt)
+    // publicationDate.setDate(createdAt.getDate() + 1)
     // publicationDate = new Date(createdAt.getTime() + 86400000)
+    const dateNow = new Date()
+    const dateNowPlusOneDay = new Date(+dateNow + 86400000)
 
     const createdVideo: VideoType = {
       id: 32,
@@ -51,8 +52,8 @@ export const getVideosRouter = (db: DBType) => {
       availableResolutions,
       canBeDownloaded: false,
       minAgeRestriction: null,
-      createdAt: createdAt.toISOString(),
-      publicationDate: publicationDate.toISOString(),
+      createdAt: dateNow.toISOString(),
+      publicationDate: dateNowPlusOneDay.toISOString(),
     }
 
     db.push(createdVideo)
