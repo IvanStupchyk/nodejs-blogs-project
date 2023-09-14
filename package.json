@@ -1,0 +1,30 @@
+{
+  "name": "nodejs-express-task",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/IvanStupchyk/nodejs-express-task.git",
+  "author": "i.stupchyk <i.stupchyk@godeltech.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "yarn nodemon --inspect dist/index.js",
+    "watch": "tsc -w",
+    "jest": "jest"
+  },
+  "dependencies": {
+    "@types/jest": "^29.5.4",
+    "@types/supertest": "^2.0.12",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.6.0",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
