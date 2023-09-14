@@ -26,7 +26,7 @@ export const db: DBType = [
     id: 2,
     title: "string",
     author: "string",
-    canBeDownloaded: true,
+    canBeDownloaded: false,
     minAgeRestriction: null,
     createdAt: "2023-09-14T14:36:30.434Z",
     publicationDate: "2023-09-14T14:36:30.434Z",

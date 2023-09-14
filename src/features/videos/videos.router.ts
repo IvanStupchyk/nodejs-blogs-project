@@ -48,7 +48,7 @@ export const getVideosRouter = (db: DBType) => {
       author,
       title,
       availableResolutions,
-      canBeDownloaded: true,
+      canBeDownloaded: false,
       minAgeRestriction: null,
       createdAt: createdAt.toISOString(),
       publicationDate: publicationDate.toISOString(),
