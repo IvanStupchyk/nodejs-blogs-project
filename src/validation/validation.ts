@@ -1,10 +1,10 @@
 import {CreateVideoErrorType} from "../types/types";
 import {AvailableResolutionsEnum} from "../db/db";
 
-export const videoParamsValidation = (
+export const videoFieldsValidation = (
   title: string,
   author: string,
-  availableResolutions: any,
+  availableResolutions: Array<AvailableResolutionsEnum> | null,
   minAgeRestriction?: any,
   canBeDownloaded?: any,
   publicationDate?: any,
@@ -14,14 +14,14 @@ export const videoParamsValidation = (
     errorsMessages: []
   }
 
-  if (!title || !title.length || title.trim().length > 40) {
+  if (!title || !title.length || Array.isArray(title) || title.trim().length > 40) {
     errorMessages.errorsMessages.push({
       message: 'Invalid title',
       field: 'title'
     })
   }
 
-  if (!author || !author.length || author.trim().length > 20) {
+  if (!author || !author.length || Array.isArray(author) || author.trim().length > 20) {
     errorMessages.errorsMessages.push({
       message: 'Invalid author',
       field: 'author'
@@ -48,9 +48,8 @@ export const videoParamsValidation = (
     })
   }
 
-
   if (additionalValidation) {
-    if (!Number.isInteger(minAgeRestriction) ||
+    if ((typeof minAgeRestriction !== 'undefined' && !Number.isInteger(minAgeRestriction)) ||
       (Number.isInteger(minAgeRestriction) && (minAgeRestriction < 1 || minAgeRestriction > 18))
     ) {
       errorMessages.errorsMessages.push({

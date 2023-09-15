@@ -7,7 +7,7 @@ import {GetVideoModel} from "./models/GetVideoModel";
 import {DeleteVideoModel} from "./models/DeleteVideoModel";
 import {URIParamsVideoIdModel} from "./models/URIParamsVideoIdModel";
 import {UpdateVideoModel} from "./models/UpdateVideoModel";
-import {videoParamsValidation} from "../../validation/validation";
+import {videoFieldsValidation} from "../../validation/validation";
 
 export const getVideosRouter = (db: DBType) => {
   const router = express.Router()
@@ -31,18 +31,12 @@ export const getVideosRouter = (db: DBType) => {
   router.post('', (req: RequestWithBody<CreateVideoModel>, res: Response) => {
     let { title, author, availableResolutions } = req.body
 
-    const errorMessages = videoParamsValidation(title, author, availableResolutions)
+    const errorMessages = videoFieldsValidation(title, author, availableResolutions)
 
     if (errorMessages.errorsMessages.length) {
       res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errorMessages)
       return
     }
-
-    // const createdAt: Date = new Date()
-    // let publicationDate: Date = new Date(createdAt)
-    // publicationDate.setDate(createdAt.getDate() + 1)
-    // publicationDate = new Date(createdAt.getTime() + 86400000)
-
 
     const dateNow = new Date()
     const dateNowPlusOneDay = new Date(+dateNow + 86400000)
@@ -87,14 +81,14 @@ export const getVideosRouter = (db: DBType) => {
       publicationDate
     } = req.body
 
-    const foundVideo: VideoType = db.find(v => v.id === +req.params.id)
+    const foundVideo: VideoType | undefined = db.find(v => v.id === +req.params.id)
 
     if (!foundVideo) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
 
-    const errorMessages = videoParamsValidation(
+    const errorMessages = videoFieldsValidation(
       title,
       author,
       availableResolutions,
