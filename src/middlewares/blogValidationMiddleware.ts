@@ -20,6 +20,7 @@ export const blogValidationMiddleware = [
   body('websiteUrl')
     .isString()
     .trim()
+    .isLength({max: 100})
     .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/)
     .withMessage(errorsConstants.blog.websiteUrl)
 ]
