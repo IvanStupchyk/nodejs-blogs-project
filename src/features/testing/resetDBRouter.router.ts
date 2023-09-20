@@ -6,7 +6,8 @@ export const resetDBRouterRouter = (db: DBType) => {
   const router = express.Router()
 
   router.delete('/all-data', (req: Request, res: Response) => {
-    db.length = 0
+    db.posts = []
+    db.blogs = []
 
     res.send(HTTP_STATUSES.NO_CONTENT_204)
   })
