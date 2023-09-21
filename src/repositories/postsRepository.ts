@@ -16,7 +16,7 @@ export const postsRepository = {
       content,
       shortDescription,
       blogId,
-      blogName: linkedBlog.name
+      blogName: linkedBlog ? linkedBlog.name : ''
     }
 
     db.posts.push(newPost)
@@ -42,7 +42,7 @@ export const postsRepository = {
       foundPost.content = content
       foundPost.shortDescription = shortDescription
       foundPost.blogId = blogId
-      foundPost.blogName = linkedBlog.name
+      foundPost.blogName = linkedBlog ? linkedBlog.name : ''
       return true
     }
 

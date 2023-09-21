@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "yarn nodemon --inspect dist/index.js",
     "watch": "tsc -w",
-    "jest": "jest"
+    "test-e2e": "jest --config ./__tests__/jest-e2e.config.js"
   },
   "dependencies": {
     "@types/jest": "^29.5.4",
