@@ -27,7 +27,7 @@ export const postValidationMiddleware = [
   body('blogId')
     .isString()
     .custom(async value => {
-      const foundBlog = await blogsCollections.findOne({_id: value})
+      const foundBlog = await blogsCollections.findOne({id: value})
 
       if (foundBlog === null) {
         throw new Error(errorsConstants.post.blogId)
