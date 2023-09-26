@@ -8,7 +8,7 @@ export const blogsRepository = {
 
   async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogType> {
     const newBlog: BlogType = {
-      id: uuidv4(),
+      _id: uuidv4(),
       name,
       description,
       websiteUrl,
@@ -22,7 +22,7 @@ export const blogsRepository = {
   },
 
   async findBlogById(id: string): Promise<BlogType | null> {
-    return blogsCollections.findOne({id})
+    return blogsCollections.findOne({_id: id})
   },
 
   async updateBlogById(
@@ -31,7 +31,7 @@ export const blogsRepository = {
     description: string,
     websiteUrl: string
   ): Promise<boolean> {
-    const result = await blogsCollections.updateOne({id}, {
+    const result = await blogsCollections.updateOne({_id: id}, {
       $set: {
         name,
         description,
@@ -43,7 +43,7 @@ export const blogsRepository = {
   },
 
   async deleteBlog(id: string): Promise<boolean> {
-    const result = await blogsCollections.deleteOne({id})
+    const result = await blogsCollections.deleteOne({_id: id})
 
     return result.deletedCount === 1
   }
