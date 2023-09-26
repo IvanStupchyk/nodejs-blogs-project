@@ -1,4 +1,3 @@
-import {DBType} from "../../db/db";
 import express, {Request, Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody} from "../../types/types";
@@ -12,15 +11,15 @@ import {UpdatePostModel} from "./models/UpdatePostModel";
 import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
 import {DeletePostModel} from "./models/DeletePostModel";
 
-export const getPostRouter = (db: DBType) => {
+export const getPostRouter = () => {
   const router = express.Router()
 
-  router.get('/', (req: Request, res: Response) => {
-    res.json(db.posts)
+  router.get('/', async (req: Request, res: Response) => {
+    res.json(await postsRepository.getAllPosts())
   })
 
-  router.get('/:id', (req: RequestWithParams<GetPostModel>, res: Response) => {
-    const foundPost = postsRepository.findPostById(req.params.id)
+  router.get('/:id', async (req: RequestWithParams<GetPostModel>, res: Response) => {
+    const foundPost = await postsRepository.findPostById(req.params.id)
 
     !foundPost
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -31,9 +30,9 @@ export const getPostRouter = (db: DBType) => {
     '/',
     ...postValidationMiddleware,
     inputValidationErrorsMiddleware,
-    (req: RequestWithBody<CreatePostModel>, res: Response) => {
+    async (req: RequestWithBody<CreatePostModel>, res: Response) => {
     const {title, content, shortDescription, blogId} = req.body
-    const newPost = postsRepository.createPost(title, content, shortDescription, blogId)
+    const newPost = await postsRepository.createPost(title, content, shortDescription, blogId)
 
     res.status(HTTP_STATUSES.CREATED_201).send(newPost)
   })
@@ -42,9 +41,9 @@ export const getPostRouter = (db: DBType) => {
     '/:id',
     ...postValidationMiddleware,
     inputValidationErrorsMiddleware,
-    (req: RequestWithParamsAndBody<URIParamsPostIdModel, UpdatePostModel>, res: Response) => {
+    async (req: RequestWithParamsAndBody<URIParamsPostIdModel, UpdatePostModel>, res: Response) => {
       const {title, content, shortDescription, blogId} = req.body
-      const updatedPost = postsRepository.updatePostById(
+      const updatedPost = await postsRepository.updatePostById(
         req.params.id,
         title,
         content,
@@ -57,8 +56,8 @@ export const getPostRouter = (db: DBType) => {
         : res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   })
 
-  router.delete('/:id', authValidationMiddleware, (req: RequestWithParams<DeletePostModel>, res: Response) => {
-    const isPostExist = postsRepository.deletePost(req.params.id)
+  router.delete('/:id', authValidationMiddleware, async (req: RequestWithParams<DeletePostModel>, res: Response) => {
+    const isPostExist = await postsRepository.deletePost(req.params.id)
 
     !isPostExist
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

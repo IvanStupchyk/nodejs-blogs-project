@@ -1,7 +1,7 @@
 import {authValidationMiddleware} from "./authValidationMiddleware";
 import {body} from "express-validator";
 import {errorsConstants} from "../constants/errorsContants";
-import {db} from "../db/db";
+import {blogsCollections} from "../db/db";
 
 export const postValidationMiddleware = [
   authValidationMiddleware,
@@ -26,6 +26,11 @@ export const postValidationMiddleware = [
 
   body('blogId')
     .isString()
-    .custom(value => db.blogs.find(b => b.id === value))
-    .withMessage(errorsConstants.post.blogId)
+    .custom(async value => {
+      const foundBlog = await blogsCollections.findOne({id: value})
+
+      if (foundBlog === null) {
+        throw new Error(errorsConstants.post.blogId)
+      }
+    })
 ]

@@ -4,9 +4,8 @@ import {HTTP_STATUSES} from "../utils";
 
 export const inputValidationErrorsMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req).formatWith(error => {
-    // @ts-ignore
     return {
-      field: error.path,
+      field: error.type === 'field' ? error.path : error.msg,
       message: error.msg
     }
   })
