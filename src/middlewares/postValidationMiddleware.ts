@@ -1,7 +1,7 @@
 import {authValidationMiddleware} from "./authValidationMiddleware";
 import {body} from "express-validator";
 import {errorsConstants} from "../constants/errorsContants";
-import {blogsCollections} from "../db/db";
+import {blogsCollections} from "../db/db"
 
 export const postValidationMiddleware = [
   authValidationMiddleware,
