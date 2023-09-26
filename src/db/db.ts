@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config()
 
 export type BlogType = {
-  id: string,
+  _id: string,
   name: string
   description: string
   websiteUrl: string
@@ -14,7 +14,7 @@ export type BlogType = {
 export type BlogsType = Array<BlogType>
 
 export type PostType = {
-  id: string
+  _id: string
   title: string
   shortDescription: string
   content: string

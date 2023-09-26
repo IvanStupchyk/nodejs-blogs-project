@@ -12,10 +12,10 @@ export const postsRepository = {
     shortDescription: string,
     blogId: string
   ): Promise<PostType> {
-    const linkedBlog = await blogsCollections.findOne({id: blogId})
+    const linkedBlog = await blogsCollections.findOne({_id: blogId})
 
     const newPost: PostType = {
-      id: uuidv4(),
+      _id: uuidv4(),
       title,
       content,
       shortDescription,
@@ -30,7 +30,7 @@ export const postsRepository = {
   },
 
   async findPostById(id: string): Promise<PostType | null> {
-    return postsCollections.findOne({id})
+    return postsCollections.findOne({_id: id})
   },
 
   async updatePostById(
@@ -40,9 +40,9 @@ export const postsRepository = {
     shortDescription: string,
     blogId: string
   ): Promise<boolean> {
-    const linkedBlog = await blogsCollections.findOne({id: blogId})
+    const linkedBlog = await blogsCollections.findOne({_id: blogId})
 
-    const result = await postsCollections.updateOne({id}, {
+    const result = await postsCollections.updateOne({_id: id}, {
       $set: {
         title,
         content,
@@ -56,7 +56,7 @@ export const postsRepository = {
   },
 
   async deletePost(id: string): Promise<boolean> {
-    const deletedPost = await postsCollections.deleteOne({id})
+    const deletedPost = await postsCollections.deleteOne({_id: id})
 
     return deletedPost.deletedCount === 1
   }
