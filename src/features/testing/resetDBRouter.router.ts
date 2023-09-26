@@ -1,13 +1,13 @@
-import {DBType} from "../../db/db";
+import {blogsCollections, postsCollections} from "../../db/db";
 import express, {Request, Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 
-export const resetDBRouterRouter = (db: DBType) => {
+export const resetDBRouterRouter = () => {
   const router = express.Router()
 
-  router.delete('/all-data', (req: Request, res: Response) => {
-    db.posts = []
-    db.blogs = []
+  router.delete('/all-data', async (req: Request, res: Response) => {
+    await blogsCollections.deleteMany({})
+    await postsCollections.deleteMany({})
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   })
