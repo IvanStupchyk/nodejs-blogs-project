@@ -24,7 +24,9 @@ export const blogsTestManager = {
         id: expect.any(String),
         name: data.name,
         description: data.description,
-        websiteUrl: data.websiteUrl
+        websiteUrl: data.websiteUrl,
+        createdAt: expect.any(String),
+        isMembership: false,
       })
     }
 

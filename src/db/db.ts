@@ -42,17 +42,3 @@ export async function runDb () {
     await client.close()
   }
 }
-
-export let db: DBType = {
-  blogs: [
-  ],
-  posts: [
-  ]
-}
-
-export type DBType = {
-  blogs: Array<BlogType>
-  posts: Array<PostType>
-}
-
-
