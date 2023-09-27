@@ -3,7 +3,7 @@ import {blogsCollections, postsCollections, PostsType, PostType} from "../db/db"
 
 export const postsRepository = {
   async getAllPosts(): Promise<PostsType> {
-    return postsCollections.find({}).toArray()
+    return postsCollections.find({}, { projection: {_id: 0}}).toArray()
   },
 
   async createPost(
@@ -24,13 +24,13 @@ export const postsRepository = {
       blogName: linkedBlog?.name ?? ''
     }
 
-    await postsCollections.insertOne(newPost)
+    await postsCollections.insertOne({...newPost})
 
-    return newPost
+    return {...newPost}
   },
 
   async findPostById(id: string): Promise<PostType | null> {
-    return postsCollections.findOne({id})
+    return postsCollections.findOne({id}, { projection: {_id: 0}})
   },
 
   async updatePostById(
