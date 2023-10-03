@@ -12,7 +12,7 @@ export const blogsRepository = {
     } = params
 
     const findCondition = searchNameTerm
-      ? { name: {$regex: searchNameTerm} }
+      ? { name: {$regex: searchNameTerm, $options: 'i'} }
       : {}
 
     const skipSize = pageNumber === 1
@@ -26,7 +26,11 @@ export const blogsRepository = {
       .limit(pageSize)
       .toArray()
 
-    const blogsCount = await blogsCollections.countDocuments()
+    const blogsCount = (await blogsCollections
+      .find(findCondition, {projection: {_id: 0}})
+      .toArray())
+      .length
+    // const blogsCount = await blogsCollections.countDocuments()
 
     const pagesCount = Math.ceil(blogsCount / pageSize)
 
