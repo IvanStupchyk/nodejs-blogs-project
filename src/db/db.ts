@@ -11,7 +11,32 @@ export type BlogType = {
   isMembership: boolean
 }
 
-export type BlogsType = Array<BlogType>
+export const mockBlogModel = {
+  id: '',
+  name: '',
+  description: '',
+  websiteUrl: '',
+  createdAt: '',
+  isMembership: false
+}
+
+export const mockPostModel = {
+  id: '',
+  title: '',
+  shortDescription: '',
+  content: '',
+  blogId: '',
+  createdAt: '',
+  blogName: ''
+}
+
+export type BlogsType = {
+  pagesCount: number,
+  page: number,
+  pageSize: number,
+  totalCount: number,
+  items: Array<BlogType>
+}
 
 export type PostType = {
   id: string
@@ -23,7 +48,13 @@ export type PostType = {
   blogName: string
 }
 
-export type PostsType = Array<PostType>
+export type PostsType = {
+  pagesCount: number,
+  page: number,
+  pageSize: number,
+  totalCount: number,
+  items: Array<PostType>
+}
 
 const mongoUri = process.env.DATABASE_URI ?? ''
 
@@ -42,17 +73,3 @@ export async function runDb () {
     await client.close()
   }
 }
-
-export let db: DBType = {
-  blogs: [
-  ],
-  posts: [
-  ]
-}
-
-export type DBType = {
-  blogs: Array<BlogType>
-  posts: Array<PostType>
-}
-
-

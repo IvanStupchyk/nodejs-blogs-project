@@ -26,6 +26,7 @@ export const postsTestManager = {
         content: data.content,
         shortDescription: data.shortDescription,
         blogId: data.blogId,
+        createdAt: expect.any(String),
         blogName: createdPost.blogName
       })
     }

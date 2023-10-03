@@ -1,21 +1,45 @@
-import { v4 as uuidv4 } from 'uuid'
 import {blogsCollections, BlogsType, BlogType} from "../db/db"
+import {blogSortedParams} from "../types/generalTypes";
 
 export const blogsRepository = {
-  async getAllPBlogs(): Promise<BlogsType> {
-    return blogsCollections.find({}, { projection: {_id: 0}}).toArray()
+  async getSortedBlogs(params: blogSortedParams): Promise<BlogsType> {
+    const {
+      searchNameTerm,
+      sortBy,
+      sortDirection,
+      pageNumber,
+      pageSize
+    } = params
+
+    const findCondition = searchNameTerm
+      ? { name: {$regex: searchNameTerm} }
+      : {}
+
+    const skipSize = pageNumber === 1
+      ? 0
+      : Math.trunc((pageNumber - 1) * pageSize)
+
+    const blogs = await blogsCollections
+      .find(findCondition, { projection: {_id: 0}})
+      .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
+      .skip(skipSize)
+      .limit(pageSize)
+      .toArray()
+
+    const blogsCount = await blogsCollections.countDocuments()
+
+    const pagesCount = Math.ceil(blogsCount / pageSize)
+
+    return {
+      pagesCount,
+      page: pageNumber,
+      pageSize,
+      totalCount: blogsCount,
+      items: blogs
+    }
   },
 
-  async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogType> {
-    const newBlog: BlogType = {
-      id: uuidv4(),
-      name,
-      description,
-      websiteUrl,
-      createdAt: new Date().toISOString(),
-      isMembership: false
-    }
-
+  async createBlog(newBlog: BlogType): Promise<BlogType> {
     await blogsCollections.insertOne({...newBlog})
 
     return {...newBlog}
