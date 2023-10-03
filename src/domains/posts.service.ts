@@ -1,27 +1,15 @@
 import {v4 as uuidv4} from 'uuid'
-import {mockPostModel, PostsType, PostType} from "../db/db"
+import {PostsType, PostType} from "../db/db"
 import {postsRepository} from "../repositories/postsRepository";
 import {SortOrder} from "../constants/sortOrder";
 import {GetSortedPostsModel} from "../features/posts/models/GetSortedPostsModel";
+import {mockPostModel} from "../constants/blanks";
+import {countSkipSizeForDb} from "../utils/utils";
+import {postSortedParams} from "../types/generalTypes";
 
 export const postsService = {
   async getSortedPosts(params: GetSortedPostsModel): Promise<PostsType> {
-    const {
-      sortBy,
-      sortDirection,
-      pageNumber,
-      pageSize
-    } = params
-
-    const parsedPageNumber = parseInt(pageNumber)
-    const parsedPageSize = parseInt(pageSize)
-
-    const defaultParams = {
-      sortBy: mockPostModel.hasOwnProperty(sortBy) ? sortBy : 'createdAt',
-      sortDirection: sortDirection === 'asc' ? sortDirection : SortOrder.desc,
-      pageNumber: (!isNaN(parsedPageNumber) && parsedPageNumber > 0) ? parsedPageNumber : 1,
-      pageSize: (!isNaN(parsedPageSize) && parsedPageSize > 0) ? parsedPageSize : 10
-    }
+    const defaultParams = this.createParamsForSorting(params)
 
     return await postsRepository.getSortedPosts(defaultParams)
   },
@@ -53,22 +41,8 @@ export const postsService = {
     params: GetSortedPostsModel,
     id: string
   ): Promise<PostsType | null> {
-    const {
-      sortBy,
-      sortDirection,
-      pageNumber,
-      pageSize
-    } = params
+    const defaultParams = this.createParamsForSorting(params)
 
-    const parsedPageNumber = parseInt(pageNumber)
-    const parsedPageSize = parseInt(pageSize)
-
-    const defaultParams = {
-      sortBy: mockPostModel.hasOwnProperty(sortBy) ? sortBy : 'createdAt',
-      sortDirection: sortDirection === 'asc' ? sortDirection : SortOrder.desc,
-      pageNumber: (!isNaN(parsedPageNumber) && parsedPageNumber > 0) ? parsedPageNumber : 1,
-      pageSize: (!isNaN(parsedPageSize) && parsedPageSize > 0) ? parsedPageSize : 10
-    }
     return await postsRepository.findPostsByIdForSpecificBlog(defaultParams, id)
   },
 
@@ -90,5 +64,30 @@ export const postsService = {
 
   async deletePost(id: string): Promise<boolean> {
     return await postsRepository.deletePost(id)
+  },
+
+  createParamsForSorting(params: GetSortedPostsModel) {
+    const {
+      sortBy,
+      sortDirection,
+      pageNumber,
+      pageSize
+    } = params
+
+    const parsedPageNumber = parseInt(pageNumber)
+    const parsedPageSize = parseInt(pageSize)
+    const finalPageNumber = (!isNaN(parsedPageNumber) && parsedPageNumber > 0) ? parsedPageNumber : 1
+    const finalPageSize = (!isNaN(parsedPageSize) && parsedPageSize > 0) ? parsedPageSize : 10
+    const skipSize = countSkipSizeForDb(finalPageNumber, finalPageSize)
+
+    const defaultParams: postSortedParams = {
+      sortBy: mockPostModel.hasOwnProperty(sortBy) ? sortBy : 'createdAt',
+      sortDirection: sortDirection === 'asc' ? sortDirection : SortOrder.desc,
+      pageNumber: finalPageNumber,
+      pageSize: finalPageSize,
+      skipSize
+    }
+
+    return defaultParams
   }
 }

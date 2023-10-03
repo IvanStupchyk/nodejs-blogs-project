@@ -8,16 +8,13 @@ export const blogsRepository = {
       sortBy,
       sortDirection,
       pageNumber,
-      pageSize
+      pageSize,
+      skipSize
     } = params
 
     const findCondition = searchNameTerm
       ? { name: {$regex: searchNameTerm, $options: 'i'} }
       : {}
-
-    const skipSize = pageNumber === 1
-      ? 0
-      : Math.trunc((pageNumber - 1) * pageSize)
 
     const blogs = await blogsCollections
       .find(findCondition, { projection: {_id: 0}})
@@ -30,7 +27,6 @@ export const blogsRepository = {
       .find(findCondition, {projection: {_id: 0}})
       .toArray())
       .length
-    // const blogsCount = await blogsCollections.countDocuments()
 
     const pagesCount = Math.ceil(blogsCount / pageSize)
 

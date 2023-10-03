@@ -7,12 +7,9 @@ export const postsRepository = {
       sortBy,
       sortDirection,
       pageNumber,
-      pageSize
+      pageSize,
+      skipSize
     } = params
-
-    const skipSize = pageNumber === 1
-      ? 0
-      : Math.trunc((pageNumber - 1) * pageSize)
 
     const posts = await postsCollections
       .find({}, { projection: {_id: 0}})
@@ -64,12 +61,9 @@ export const postsRepository = {
       sortBy,
       sortDirection,
       pageNumber,
-      pageSize
+      pageSize,
+      skipSize
     } = params
-
-    const skipSize = pageNumber === 1
-      ? 0
-      : Math.trunc((pageNumber - 1) * pageSize)
 
     const posts = await postsCollections
       .find({blogId: id}, { projection: {_id: 0}})
@@ -92,11 +86,6 @@ export const postsRepository = {
       totalCount: postsCount,
       items: posts
     }
-
-
-    // return postsCollections
-    //   .find({blogId: id}, { projection: {_id: 0}})
-    //   .toArray()
   },
 
   async updatePostById(

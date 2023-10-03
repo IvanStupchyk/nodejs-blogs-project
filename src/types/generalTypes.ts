@@ -7,6 +7,7 @@ export type blogSortedParams = {
   sortDirection: SortOrder.asc | SortOrder.desc
   pageNumber: number
   pageSize: number
+  skipSize: number
 }
 
 export type postSortedParams = {
@@ -14,4 +15,5 @@ export type postSortedParams = {
   sortDirection: SortOrder.asc | SortOrder.desc
   pageNumber: number
   pageSize: number
+  skipSize: number
 }

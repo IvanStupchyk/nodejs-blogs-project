@@ -11,25 +11,6 @@ export type BlogType = {
   isMembership: boolean
 }
 
-export const mockBlogModel = {
-  id: '',
-  name: '',
-  description: '',
-  websiteUrl: '',
-  createdAt: '',
-  isMembership: false
-}
-
-export const mockPostModel = {
-  id: '',
-  title: '',
-  shortDescription: '',
-  content: '',
-  blogId: '',
-  createdAt: '',
-  blogName: ''
-}
-
 export type BlogsType = {
   pagesCount: number,
   page: number,

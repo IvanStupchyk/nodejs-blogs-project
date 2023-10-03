@@ -1,8 +1,11 @@
 import { v4 as uuidv4 } from 'uuid'
-import {BlogsType, BlogType, mockBlogModel} from "../db/db"
+import {BlogsType, BlogType} from "../db/db"
 import {blogsRepository} from "../repositories/blogsRepository";
 import {GetSortedBlogsModel} from "../features/blogs/models/GetSortedBlogsModel";
 import {SortOrder} from "../constants/sortOrder";
+import {mockBlogModel} from "../constants/blanks";
+import {countSkipSizeForDb} from "../utils/utils";
+import {blogSortedParams} from "../types/generalTypes";
 
 export const blogsService = {
   async getSortedBlogs(params: GetSortedBlogsModel): Promise<BlogsType> {
@@ -16,13 +19,17 @@ export const blogsService = {
 
     const parsedPageNumber = parseInt(pageNumber)
     const parsedPageSize = parseInt(pageSize)
+    const finalPageNumber = (!isNaN(parsedPageNumber) && parsedPageNumber > 0) ? parsedPageNumber : 1
+    const finalPageSize = (!isNaN(parsedPageSize) && parsedPageSize > 0) ? parsedPageSize : 10
+    const skipSize = countSkipSizeForDb(finalPageNumber, finalPageSize)
 
-    const defaultParams = {
+    const defaultParams: blogSortedParams = {
       searchNameTerm,
       sortBy: mockBlogModel.hasOwnProperty(sortBy) ? sortBy : 'createdAt',
       sortDirection: sortDirection === 'asc' ? sortDirection : SortOrder.desc,
-      pageNumber: (!isNaN(parsedPageNumber) && parsedPageNumber > 0) ? parsedPageNumber : 1,
-      pageSize: (!isNaN(parsedPageSize) && parsedPageSize > 0) ? parsedPageSize : 10
+      pageNumber: finalPageNumber,
+      pageSize: finalPageSize,
+      skipSize
     }
 
     return await blogsRepository.getSortedBlogs(defaultParams)
