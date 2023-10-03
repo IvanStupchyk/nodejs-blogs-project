@@ -1,25 +1,26 @@
-import express, {Request, Response} from "express";
+import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
-import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody} from "../../types/types";
+import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../../types/types";
 import {CreatePostModel} from "./models/CreatePostModel";
 import {GetPostModel} from "./models/GetPostModel";
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
-import {postsRepository} from "../../repositories/postsRepository";
 import {postValidationMiddleware} from "../../middlewares/postValidationMiddleware";
 import {URIParamsPostIdModel} from "./models/URIParamsPostIdModel";
 import {UpdatePostModel} from "./models/UpdatePostModel";
 import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
 import {DeletePostModel} from "./models/DeletePostModel";
+import {postsService} from "../../domains/posts.service";
+import {GetSortedPostsModel} from "./models/GetSortedPostsModel";
 
 export const getPostRouter = () => {
   const router = express.Router()
 
-  router.get('/', async (req: Request, res: Response) => {
-    res.json(await postsRepository.getAllPosts())
+  router.get('/', async (req: RequestWithQuery<GetSortedPostsModel>, res: Response) => {
+    res.json(await postsService.getSortedPosts(req.query))
   })
 
   router.get('/:id', async (req: RequestWithParams<GetPostModel>, res: Response) => {
-    const foundPost = await postsRepository.findPostById(req.params.id)
+    const foundPost = await postsService.findPostById(req.params.id)
 
     !foundPost
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -32,7 +33,7 @@ export const getPostRouter = () => {
     inputValidationErrorsMiddleware,
     async (req: RequestWithBody<CreatePostModel>, res: Response) => {
     const {title, content, shortDescription, blogId} = req.body
-    const newPost = await postsRepository.createPost(title, content, shortDescription, blogId)
+    const newPost = await postsService.createPost(title, content, shortDescription, blogId)
 
     res.status(HTTP_STATUSES.CREATED_201).send(newPost)
   })
@@ -43,7 +44,7 @@ export const getPostRouter = () => {
     inputValidationErrorsMiddleware,
     async (req: RequestWithParamsAndBody<URIParamsPostIdModel, UpdatePostModel>, res: Response) => {
       const {title, content, shortDescription, blogId} = req.body
-      const updatedPost = await postsRepository.updatePostById(
+      const updatedPost = await postsService.updatePostById(
         req.params.id,
         title,
         content,
@@ -57,7 +58,7 @@ export const getPostRouter = () => {
   })
 
   router.delete('/:id', authValidationMiddleware, async (req: RequestWithParams<DeletePostModel>, res: Response) => {
-    const isPostExist = await postsRepository.deletePost(req.params.id)
+    const isPostExist = await postsService.deletePost(req.params.id)
 
     !isPostExist
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
