@@ -4,7 +4,7 @@ import {HTTP_STATUSES} from "../../src/utils";
 import {CreateBlogModel} from "../../src/features/blogs/models/CreateBlogModel";
 import {blogsTestManager} from "../utils/blogsTestManager";
 import {errorsConstants} from "../../src/constants/errorsContants";
-import {BlogType, PostType} from "../../src/db/db";
+import {BlogType, client, PostType} from "../../src/db/db";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
 import {postsTestManager} from "../utils/postsTestManager";
 import {mockPosts} from "../../src/constants/blanks";
@@ -35,6 +35,7 @@ describe('tests for /posts', () => {
   }
 
   beforeAll( async () => {
+    await client.connect()
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
   })
 
@@ -166,5 +167,9 @@ describe('tests for /posts', () => {
         totalCount: 1,
         items: [newBlog]
       })
+  })
+
+  afterAll(async () => {
+    await client.close()
   })
 })
