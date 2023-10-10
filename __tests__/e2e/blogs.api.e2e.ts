@@ -4,10 +4,11 @@ import {HTTP_STATUSES} from "../../src/utils";
 import {CreateBlogModel} from "../../src/features/blogs/models/CreateBlogModel";
 import {blogsTestManager} from "../utils/blogsTestManager";
 import {errorsConstants} from "../../src/constants/errorsContants";
-import {BlogType, client, PostType} from "../../src/db/db";
+import {client} from "../../src/db/db";
 import {mockBlogs} from "../../src/constants/blanks";
 import {postsTestManager} from "../utils/postsTestManager";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
+import {BlogType, PostType} from "../../src/types/generalTypes";
 
 const getRequest = () => {
   return request(app)
@@ -42,13 +43,13 @@ describe('tests for /blogs', () => {
 
   it('should return 200 and an empty blogs array', async () => {
     await getRequest()
-      .get(RouterPaths.blog)
+      .get(RouterPaths.blogs)
       .expect(HTTP_STATUSES.OK_200, mockBlogs)
   })
 
   it('should return 404 for not existing blog', async () => {
     await getRequest()
-      .get(RouterPaths.blog + '/3423')
+      .get(RouterPaths.blogs + '/3423')
       .expect(HTTP_STATUSES.NOT_FOUND_404)
   })
 
@@ -77,7 +78,7 @@ describe('tests for /blogs', () => {
     })
 
     await getRequest()
-      .get(RouterPaths.blog)
+      .get(RouterPaths.blogs)
       .expect(HTTP_STATUSES.OK_200, mockBlogs)
   })
 
@@ -91,7 +92,7 @@ describe('tests for /blogs', () => {
     newBlogs.push(createdBlog)
 
     await getRequest()
-      .get(RouterPaths.blog)
+      .get(RouterPaths.blogs)
       .expect(HTTP_STATUSES.OK_200, {
         pagesCount: 1,
         page: 1,
@@ -121,7 +122,7 @@ describe('tests for /blogs', () => {
       })
 
     await getRequest()
-      .get(`${RouterPaths.blog}/${newBlog.id}/posts`)
+      .get(`${RouterPaths.blogs}/${newBlog.id}/posts`)
       .expect(HTTP_STATUSES.OK_200, {
         pagesCount: 1,
         page: 1,
@@ -156,7 +157,7 @@ describe('tests for /blogs', () => {
       .slice((pageNumber - 1) * pageSize, (pageNumber - 1) * pageSize + pageSize)
 
     await getRequest()
-      .get(RouterPaths.blog)
+      .get(RouterPaths.blogs)
       .expect(HTTP_STATUSES.OK_200, {
         pagesCount: 1,
         page: 1,
@@ -166,7 +167,7 @@ describe('tests for /blogs', () => {
       })
 
     await getRequest()
-      .get(`${RouterPaths.blog}?searchNameTerm=second`)
+      .get(`${RouterPaths.blogs}?searchNameTerm=second`)
       .expect(HTTP_STATUSES.OK_200, {
         pagesCount: 1,
         page: 1,
@@ -177,7 +178,7 @@ describe('tests for /blogs', () => {
 
     await getRequest()
       .get(
-        `${RouterPaths.blog}?sortBy=name&sortDirection=asc&pageSize=${pageSize}&pageNumber=${pageNumber}`
+        `${RouterPaths.blogs}?sortBy=name&sortDirection=asc&pageSize=${pageSize}&pageNumber=${pageNumber}`
       )
       .expect(HTTP_STATUSES.OK_200, {
         pagesCount: 2,
@@ -209,7 +210,7 @@ describe('tests for /blogs', () => {
       })
 
     await getRequest()
-      .get(`${RouterPaths.blog}/${newBlog.id}/posts`)
+      .get(`${RouterPaths.blogs}/${newBlog.id}/posts`)
       .expect(HTTP_STATUSES.OK_200, {
         pagesCount: 1,
         page: 1,
@@ -235,7 +236,7 @@ describe('tests for /blogs', () => {
 
   it('shouldn\'t update a blog if the blog doesn\'t exist', async () => {
     await getRequest()
-      .put(`${RouterPaths.blog}/22`)
+      .put(`${RouterPaths.blogs}/22`)
       .auth('admin', 'qwerty', {type: "basic"})
       .send(validData)
       .expect(HTTP_STATUSES.NOT_FOUND_404)
@@ -247,13 +248,13 @@ describe('tests for /blogs', () => {
       name: 'updated name'
     }
     await getRequest()
-      .put(`${RouterPaths.blog}/${newBlog.id}`)
+      .put(`${RouterPaths.blogs}/${newBlog.id}`)
       .auth('admin', 'qwerty', {type: "basic"})
       .send(updatedValidData)
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
     await getRequest()
-      .get(`${RouterPaths.blog}/${newBlog.id}`)
+      .get(`${RouterPaths.blogs}/${newBlog.id}`)
       .expect({
         ...newBlog,
         name: updatedValidData.name
@@ -262,7 +263,7 @@ describe('tests for /blogs', () => {
 
   it('shouldn\'t delete a blog if the blog doesn\'t exist', async () => {
     await getRequest()
-      .delete(`${RouterPaths.blog}/22`)
+      .delete(`${RouterPaths.blogs}/22`)
       .auth('admin', 'qwerty', {type: "basic"})
       .send(validData)
       .expect(HTTP_STATUSES.NOT_FOUND_404)
@@ -270,14 +271,14 @@ describe('tests for /blogs', () => {
 
   it('should delete a blog with exiting id', async () => {
     await getRequest()
-      .delete(`${RouterPaths.blog}/${newBlog.id}`)
+      .delete(`${RouterPaths.blogs}/${newBlog.id}`)
       .auth('admin', 'qwerty', {type: "basic"})
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
     const filteredBlogs = newBlogs.filter(b => b.id !== newBlog.id)
 
     await getRequest()
-      .get(RouterPaths.blog)
+      .get(RouterPaths.blogs)
       .expect(HTTP_STATUSES.OK_200, {
         pagesCount: 1,
         page: 1,

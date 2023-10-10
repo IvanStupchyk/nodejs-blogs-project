@@ -1,35 +1,33 @@
-import {CreateBlogModel} from "../../src/features/blogs/models/CreateBlogModel";
 import {HTTP_STATUSES, HttpStatusType} from "../../src/utils";
 import request from "supertest";
 import {app, RouterPaths} from "../../src/app";
+import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 
-export const blogsTestManager = {
-  async createBlog(
-    data: CreateBlogModel,
+export const usersTestManager = {
+  async createUser(
+    data: CreateUserModel,
     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
     password = 'qwerty'
   ) {
     const response = await request(app)
-      .post(RouterPaths.blogs)
+      .post(RouterPaths.users)
       .auth('admin', password, {type: "basic"})
       .send(data)
       .expect(expectedStatusCode)
 
-    let createdBlog
+    let createdUser
 
     if (expectedStatusCode === HTTP_STATUSES.CREATED_201) {
-      createdBlog = response.body
+      createdUser = response.body
 
-      expect(createdBlog).toEqual({
+      expect(createdUser).toEqual({
         id: expect.any(String),
-        name: data.name,
-        description: data.description,
-        websiteUrl: data.websiteUrl,
-        createdAt: expect.any(String),
-        isMembership: false,
+        login: data.login,
+        email: data.email,
+        createdAt: expect.any(String)
       })
     }
 
-    return { response, createdBlog }
+    return { response, createdUser }
   }
 }

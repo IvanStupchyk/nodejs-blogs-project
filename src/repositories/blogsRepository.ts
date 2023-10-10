@@ -1,52 +1,11 @@
 import {blogsCollections} from "../db/db"
-import {blogSortedParams, BlogsType, BlogType} from "../types/generalTypes";
+import {BlogType} from "../types/generalTypes";
 
 export const blogsRepository = {
-  async getSortedBlogs(params: blogSortedParams): Promise<BlogsType> {
-    const {
-      searchNameTerm,
-      sortBy,
-      sortDirection,
-      pageNumber,
-      pageSize,
-      skipSize
-    } = params
-
-    const findCondition = searchNameTerm
-      ? { name: {$regex: searchNameTerm, $options: 'i'} }
-      : {}
-
-    const blogs = await blogsCollections
-      .find(findCondition, { projection: {_id: 0}})
-      .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
-      .skip(skipSize)
-      .limit(pageSize)
-      .toArray()
-
-    const blogsCount = (await blogsCollections
-      .find(findCondition, {projection: {_id: 0}})
-      .toArray())
-      .length
-
-    const pagesCount = Math.ceil(blogsCount / pageSize)
-
-    return {
-      pagesCount,
-      page: pageNumber,
-      pageSize,
-      totalCount: blogsCount,
-      items: blogs
-    }
-  },
-
   async createBlog(newBlog: BlogType): Promise<BlogType> {
     await blogsCollections.insertOne({...newBlog})
 
     return {...newBlog}
-  },
-
-  async findBlogById(id: string): Promise<BlogType | null> {
-    return blogsCollections.findOne({id}, { projection: {_id: 0}})
   },
 
   async updateBlogById(

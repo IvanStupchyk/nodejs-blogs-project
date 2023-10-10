@@ -21,16 +21,22 @@ import {CreatePostForSpecificBlogModel} from "../posts/models/CreatePostForSpeci
 import {postForSpecificBlogValidationMiddleware} from "../../middlewares/postForSpecifigBlogValidationMiddleware";
 import {GetSortedBlogsModel} from "./models/GetSortedBlogsModel";
 import {GetSortedPostsModel} from "../posts/models/GetSortedPostsModel";
+import {blogsQueryRepository} from "../../repositories/blogsQueryRepository";
+import {postsQueryRepository} from "../../repositories/postsQueryRepository";
 
 export const getBlogRouter = () => {
   const router = express.Router()
 
-  router.get('/', async (req: RequestWithQuery<GetSortedBlogsModel>, res: Response) => {
-    res.json(await blogsService.getSortedBlogs(req.query))
+  router.get(
+    '/',
+    async (req: RequestWithQuery<GetSortedBlogsModel>, res: Response) => {
+    res.json(await blogsQueryRepository.getSortedBlogs(req.query))
   })
 
-  router.get('/:id', async (req: RequestWithParams<GetBlogModel>, res: Response) => {
-    const foundBlog = await blogsService.findBlogById(req.params.id)
+  router.get(
+    '/:id',
+    async (req: RequestWithParams<GetBlogModel>, res: Response) => {
+    const foundBlog = await blogsQueryRepository.findBlogById(req.params.id)
 
     !foundBlog
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -41,14 +47,14 @@ export const getBlogRouter = () => {
     req: RequestWithParamsAndQuery<GetBlogModel, GetSortedPostsModel>,
     res: Response
   ) => {
-    const foundBlog = await blogsService.findBlogById(req.params.id)
+    const foundBlog = await blogsQueryRepository.findBlogById(req.params.id)
 
     if (!foundBlog) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
 
-    const foundPosts = await postsService.findPostsByIdForSpecificBlog(req.query, req.params.id)
+    const foundPosts = await postsQueryRepository.findPostsByIdForSpecificBlog(req.query, req.params.id)
     res.send(foundPosts)
   })
 
@@ -74,7 +80,7 @@ export const getBlogRouter = () => {
       const {title, content, shortDescription} = req.body
       const blogId = req.params.id
 
-      const foundBlog = await blogsService.findBlogById(req.params.id)
+      const foundBlog = await blogsQueryRepository.findBlogById(req.params.id)
 
       if (!foundBlog) {
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -104,12 +110,16 @@ export const getBlogRouter = () => {
         : res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   })
 
-  router.delete('/:id', authValidationMiddleware, async (req: RequestWithParams<DeleteBlogModel>, res: Response) => {
-    const isBlogExist = await blogsService.deleteBlog(req.params.id)
+  router.delete(
+    '/:id',
+    authValidationMiddleware,
+    async (req: RequestWithParams<DeleteBlogModel>, res: Response) => {
+      const isBlogExist = await blogsService.deleteBlog(req.params.id)
 
-    !isBlogExist
-      ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-      : res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+      res.sendStatus(!isBlogExist
+        ? HTTP_STATUSES.NOT_FOUND_404
+        : HTTP_STATUSES.NO_CONTENT_204
+      )
   })
 
   return router

@@ -1,22 +1,6 @@
 import {SortOrder} from "../constants/sortOrder";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
-
-export type blogSortedParams = {
-  searchNameTerm: string
-  sortBy: keyof BlogType
-  sortDirection: SortOrder.asc | SortOrder.desc
-  pageNumber: number
-  pageSize: number
-  skipSize: number
-}
-
-export type postSortedParams = {
-  sortBy: keyof BlogType
-  sortDirection: SortOrder.asc | SortOrder.desc
-  pageNumber: number
-  pageSize: number
-  skipSize: number
-}
+import {mockBlogModel, mockPostModel, mockUserModel} from "../constants/blanks";
 
 export type userSortedParams = {
   searchLoginTerm: string
@@ -77,4 +61,12 @@ export type UsersType = {
   pageSize: number,
   totalCount: number,
   items: Array<ViewUserModel>
+}
+
+export type SortConditionsType = {
+  pageNumber: string,
+  pageSize: string,
+  sortBy: keyof BlogType | keyof PostType,
+  model: typeof mockBlogModel | typeof mockPostModel | typeof mockUserModel
+  sortDirection: SortOrder.asc | SortOrder.desc,
 }

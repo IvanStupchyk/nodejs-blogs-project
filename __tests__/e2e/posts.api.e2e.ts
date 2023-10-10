@@ -4,10 +4,11 @@ import {HTTP_STATUSES} from "../../src/utils";
 import {CreateBlogModel} from "../../src/features/blogs/models/CreateBlogModel";
 import {blogsTestManager} from "../utils/blogsTestManager";
 import {errorsConstants} from "../../src/constants/errorsContants";
-import {BlogType, client, PostType} from "../../src/db/db";
+import {client} from "../../src/db/db";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
 import {postsTestManager} from "../utils/postsTestManager";
 import {mockPosts} from "../../src/constants/blanks";
+import {BlogType, PostType} from "../../src/types/generalTypes";
 
 const getRequest = () => {
   return request(app)
@@ -85,12 +86,13 @@ describe('tests for /posts', () => {
   })
 
   let newPost: PostType
+  let newPosts: Array<PostType> = []
   let newBlog: BlogType
   it('shouldn create a post if the user sent valid data with existing blog id', async () => {
     const { createdBlog } = await blogsTestManager.createBlog(validBlogData)
 
     await getRequest()
-      .get(`${RouterPaths.blog}/${createdBlog.id}`)
+      .get(`${RouterPaths.blogs}/${createdBlog.id}`)
       .expect(createdBlog)
 
     validPostData = {
@@ -101,6 +103,7 @@ describe('tests for /posts', () => {
 
     newPost = createdPost
     newBlog = createdBlog
+    newPosts.push(newPost)
 
     await getRequest()
       .get(RouterPaths.posts)
@@ -111,6 +114,53 @@ describe('tests for /posts', () => {
         totalCount: 1,
         items: [createdPost]
       })
+  })
+
+  it('should return correctly filtered and sorted posts', async () => {
+      const pageNumber = 2
+      const pageSize = 2
+
+      const secondPost = await postsTestManager.createPost(
+        {...validPostData, title: 'second'}
+      )
+
+      const thirdPost = await postsTestManager.createPost(
+        {...validPostData, title: 'third'}
+      )
+
+      const fourthPost = await postsTestManager.createPost(
+        {...validPostData, title: 'fourth'}
+      )
+
+      newPosts.unshift(secondPost.createdPost)
+      newPosts.unshift(thirdPost.createdPost)
+      newPosts.unshift(fourthPost.createdPost)
+
+      const sortedPosts = [...newPosts]
+        .sort((a,b) => a.title.localeCompare(b.title))
+        .slice((pageNumber - 1) * pageSize, (pageNumber - 1) * pageSize + pageSize)
+
+      await getRequest()
+        .get(RouterPaths.posts)
+        .expect(HTTP_STATUSES.OK_200, {
+          pagesCount: 1,
+          page: 1,
+          pageSize: 10,
+          totalCount: 4,
+          items: newPosts
+        })
+
+      await getRequest()
+        .get(
+          `${RouterPaths.posts}?sortBy=title&sortDirection=asc&pageSize=${pageSize}&pageNumber=${pageNumber}`
+        )
+        .expect(HTTP_STATUSES.OK_200, {
+          pagesCount: 2,
+          page: pageNumber,
+          pageSize: pageSize,
+          totalCount: newPosts.length,
+          items: sortedPosts
+        })
   })
 
   it('shouldn\'t update post if the post doesn\'t exist', async () => {
@@ -154,12 +204,20 @@ describe('tests for /posts', () => {
       .auth('admin', 'qwerty', {type: "basic"})
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-    await getRequest()
-      .get(RouterPaths.posts)
-      .expect(HTTP_STATUSES.OK_200, mockPosts)
+    const filteredPosts = newPosts.filter(b => b.id !== newPost.id)
 
     await getRequest()
-      .get(RouterPaths.blog)
+      .get(RouterPaths.posts)
+      .expect(HTTP_STATUSES.OK_200, {
+        pagesCount: 1,
+        page: 1,
+        pageSize: 10,
+        totalCount: filteredPosts.length,
+        items: filteredPosts
+      })
+
+    await getRequest()
+      .get(RouterPaths.blogs)
       .expect(HTTP_STATUSES.OK_200, {
         pagesCount: 1,
         page: 1,
