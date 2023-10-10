@@ -8,12 +8,13 @@ import {usersService} from "../../domains/users.service";
 import {userValidationMiddleware} from "../../middlewares/userValidationMiddleware";
 import {GetSortedUsersModel} from "./models/GetSortedUsersModel";
 import {DeleteUserModel} from "./models/DeleteUserModel";
+import {usersQueryRepository} from "../../repositories/usersQueryRepository";
 
 export const getUserRouter = () => {
   const router = express.Router()
 
   router.get('/', async (req: RequestWithQuery<GetSortedUsersModel>, res: Response) => {
-    res.json(await usersService.getSortedUsers(req.query))
+    res.json(await usersQueryRepository.getSortedUsers(req.query))
   })
 
   router.post(
