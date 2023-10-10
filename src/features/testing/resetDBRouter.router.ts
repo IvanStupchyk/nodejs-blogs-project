@@ -1,4 +1,4 @@
-import {blogsCollections, postsCollections} from "../../db/db";
+import {blogsCollections, postsCollections, usersCollections} from "../../db/db";
 import express, {Request, Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 
@@ -8,6 +8,7 @@ export const resetDBRouterRouter = () => {
   router.delete('/all-data', async (req: Request, res: Response) => {
     await blogsCollections.deleteMany({})
     await postsCollections.deleteMany({})
+    await usersCollections.deleteMany({})
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   })

@@ -4,9 +4,10 @@ import {HTTP_STATUSES} from "../../src/utils";
 import {CreateBlogModel} from "../../src/features/blogs/models/CreateBlogModel";
 import {blogsTestManager} from "../utils/blogsTestManager";
 import {errorsConstants} from "../../src/constants/errorsContants";
-import {BlogType, PostType} from "../../src/db/db";
+import {BlogType, client, PostType} from "../../src/db/db";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
 import {postsTestManager} from "../utils/postsTestManager";
+import {mockPosts} from "../../src/constants/blanks";
 
 const getRequest = () => {
   return request(app)
@@ -34,13 +35,14 @@ describe('tests for /posts', () => {
   }
 
   beforeAll( async () => {
+    await client.connect()
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
   })
 
   it('should return 200 and an empty posts array', async () => {
     await getRequest()
       .get(RouterPaths.posts)
-      .expect(HTTP_STATUSES.OK_200, [])
+      .expect(HTTP_STATUSES.OK_200, mockPosts)
   })
 
   it('should return 404 for not existing post', async () => {
@@ -79,7 +81,7 @@ describe('tests for /posts', () => {
 
     await getRequest()
       .get(RouterPaths.posts)
-      .expect(HTTP_STATUSES.OK_200, [])
+      .expect(HTTP_STATUSES.OK_200, mockPosts)
   })
 
   let newPost: PostType
@@ -102,7 +104,13 @@ describe('tests for /posts', () => {
 
     await getRequest()
       .get(RouterPaths.posts)
-      .expect(HTTP_STATUSES.OK_200, [createdPost])
+      .expect(HTTP_STATUSES.OK_200, {
+        pagesCount: 1,
+        page: 1,
+        pageSize: 10,
+        totalCount: 1,
+        items: [createdPost]
+      })
   })
 
   it('shouldn\'t update post if the post doesn\'t exist', async () => {
@@ -148,10 +156,20 @@ describe('tests for /posts', () => {
 
     await getRequest()
       .get(RouterPaths.posts)
-      .expect(HTTP_STATUSES.OK_200, [])
+      .expect(HTTP_STATUSES.OK_200, mockPosts)
 
     await getRequest()
       .get(RouterPaths.blog)
-      .expect(HTTP_STATUSES.OK_200, [newBlog])
+      .expect(HTTP_STATUSES.OK_200, {
+        pagesCount: 1,
+        page: 1,
+        pageSize: 10,
+        totalCount: 1,
+        items: [newBlog]
+      })
+  })
+
+  afterAll(async () => {
+    await client.close()
   })
 })
