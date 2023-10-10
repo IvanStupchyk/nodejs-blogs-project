@@ -1,8 +1,8 @@
 import {SortOrder} from "../../../constants/sortOrder";
-import {BlogType} from "../../../types/generalTypes";
+import {PostType} from "../../../types/generalTypes";
 
 export type GetSortedPostsModel = {
-  sortBy: keyof BlogType
+  sortBy: keyof PostType
   sortDirection: SortOrder.asc | SortOrder.desc
   pageNumber: string
   pageSize: string

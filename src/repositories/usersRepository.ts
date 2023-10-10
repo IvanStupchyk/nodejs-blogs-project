@@ -1,6 +1,7 @@
 import {usersCollections} from "../db/db"
 import {userSortedParams, UsersType, UserType} from "../types/generalTypes";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
+import {getPagesCount} from "../utils/utils";
 
 export const usersRepository = {
   async getSortedUsers(params: userSortedParams): Promise<UsersType> {
@@ -38,12 +39,9 @@ export const usersRepository = {
       .limit(pageSize)
       .toArray()
 
-    const usersCount = (await usersCollections
-      .find(findCondition, {projection: {_id: 0}})
-      .toArray())
-      .length
+    const usersCount = await usersCollections.countDocuments(findCondition)
 
-    const pagesCount = Math.ceil(usersCount / pageSize)
+    const pagesCount = getPagesCount(usersCount , pageSize)
 
     return {
       pagesCount,

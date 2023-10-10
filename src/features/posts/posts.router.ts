@@ -11,16 +11,17 @@ import {authValidationMiddleware} from "../../middlewares/authValidationMiddlewa
 import {DeletePostModel} from "./models/DeletePostModel";
 import {postsService} from "../../domains/posts.service";
 import {GetSortedPostsModel} from "./models/GetSortedPostsModel";
+import {postsQueryRepository} from "../../repositories/postsQueryRepository";
 
 export const getPostRouter = () => {
   const router = express.Router()
 
   router.get('/', async (req: RequestWithQuery<GetSortedPostsModel>, res: Response) => {
-    res.json(await postsService.getSortedPosts(req.query))
+    res.json(await postsQueryRepository.getSortedPosts(req.query))
   })
 
   router.get('/:id', async (req: RequestWithParams<GetPostModel>, res: Response) => {
-    const foundPost = await postsService.findPostById(req.params.id)
+    const foundPost = await postsQueryRepository.findPostById(req.params.id)
 
     !foundPost
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

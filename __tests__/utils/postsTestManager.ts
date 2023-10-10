@@ -41,7 +41,7 @@ export const postsTestManager = {
     password = 'qwerty'
   ) {
     const response = await request(app)
-      .post(`${RouterPaths.blog}/${blogId}/posts`)
+      .post(`${RouterPaths.blogs}/${blogId}/posts`)
       .auth('admin', password, {type: "basic"})
       .send(data)
       .expect(expectedStatusCode)
