@@ -1,5 +1,5 @@
-import {blogsCollections, BlogsType, BlogType} from "../db/db"
-import {blogSortedParams} from "../types/generalTypes";
+import {blogsCollections} from "../db/db"
+import {blogSortedParams, BlogsType, BlogType} from "../types/generalTypes";
 
 export const blogsRepository = {
   async getSortedBlogs(params: blogSortedParams): Promise<BlogsType> {

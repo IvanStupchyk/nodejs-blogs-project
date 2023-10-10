@@ -7,6 +7,13 @@ export const mockBlogModel = {
   isMembership: false
 }
 
+export const mockUserModel = {
+  id: '',
+  login: '',
+  email: '',
+  createdAt: '',
+}
+
 export const mockPostModel = {
   id: '',
   title: '',

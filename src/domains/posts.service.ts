@@ -1,11 +1,10 @@
 import {v4 as uuidv4} from 'uuid'
-import {PostsType, PostType} from "../db/db"
 import {postsRepository} from "../repositories/postsRepository";
 import {SortOrder} from "../constants/sortOrder";
 import {GetSortedPostsModel} from "../features/posts/models/GetSortedPostsModel";
 import {mockPostModel} from "../constants/blanks";
 import {countSkipSizeForDb} from "../utils/utils";
-import {postSortedParams} from "../types/generalTypes";
+import {postSortedParams, PostsType, PostType} from "../types/generalTypes";
 
 export const postsService = {
   async getSortedPosts(params: GetSortedPostsModel): Promise<PostsType> {

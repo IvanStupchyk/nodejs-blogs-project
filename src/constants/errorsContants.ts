@@ -9,5 +9,14 @@ export const errorsConstants = {
     shortDescription: 'shortDescription should be a string and contains at least 1 but not more than 100 characters',
     content: 'content should be a string and contains at least 1 but not more than 1000 characters',
     blogId: 'such blogId must exist and be a string'
+  },
+  user: {
+    login: 'login should be a string and contains at least 3 but not more than 10 characters',
+    password: 'password should be a string and contains at least 6 but not more than 20 characters',
+    email: 'email should be a string and valid'
+  },
+  login: {
+    loginOrEmail: 'loginOrEmail should be a string',
+    password: 'password should be a string',
   }
 }
