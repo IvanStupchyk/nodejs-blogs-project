@@ -2,13 +2,13 @@ import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../../types/types";
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
-import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
 import {CreateUserModel} from "./models/CreateUserModel";
 import {usersService} from "../../domains/users.service";
 import {userValidationMiddleware} from "../../middlewares/userValidationMiddleware";
 import {GetSortedUsersModel} from "./models/GetSortedUsersModel";
 import {DeleteUserModel} from "./models/DeleteUserModel";
 import {usersQueryRepository} from "../../repositories/usersQueryRepository";
+import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
 
 export const getUserRouter = () => {
   const router = express.Router()
@@ -28,7 +28,7 @@ export const getUserRouter = () => {
     res.status(HTTP_STATUSES.CREATED_201).send(newUser)
   })
 
-  router.delete('/:id', authValidationMiddleware, async (req: RequestWithParams<DeleteUserModel>, res: Response) => {
+  router.delete('/:id', authBasicValidationMiddleware, async (req: RequestWithParams<DeleteUserModel>, res: Response) => {
     const isUserExist = await usersService.deleteUser(req.params.id)
 
     !isUserExist

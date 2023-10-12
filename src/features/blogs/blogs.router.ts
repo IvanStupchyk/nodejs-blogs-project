@@ -10,7 +10,6 @@ import {
 import {CreateBlogModel} from "./models/CreateBlogModel";
 import {GetBlogModel} from "./models/GetBlogModel";
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
-import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
 import {UpdateBlogModel} from "./models/UpdateBlogModel";
 import {URIParamsBlogIdModel} from "./models/URIParamsBlogIdModel";
 import {DeleteBlogModel} from "./models/DeleteBlogModel";
@@ -23,6 +22,7 @@ import {GetSortedBlogsModel} from "./models/GetSortedBlogsModel";
 import {GetSortedPostsModel} from "../posts/models/GetSortedPostsModel";
 import {blogsQueryRepository} from "../../repositories/blogsQueryRepository";
 import {postsQueryRepository} from "../../repositories/postsQueryRepository";
+import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
 
 export const getBlogRouter = () => {
   const router = express.Router()
@@ -112,7 +112,7 @@ export const getBlogRouter = () => {
 
   router.delete(
     '/:id',
-    authValidationMiddleware,
+    authBasicValidationMiddleware,
     async (req: RequestWithParams<DeleteBlogModel>, res: Response) => {
       const isBlogExist = await blogsService.deleteBlog(req.params.id)
 

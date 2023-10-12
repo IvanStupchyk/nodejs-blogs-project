@@ -1,9 +1,9 @@
-import {authValidationMiddleware} from "./authValidationMiddleware";
 import {body} from "express-validator";
 import {errorsConstants} from "../constants/errorsContants";
+import {authBasicValidationMiddleware} from "./authBasicValidationMiddleware";
 
 export const userValidationMiddleware = [
-  authValidationMiddleware,
+  authBasicValidationMiddleware,
 
   body('login')
     .isString()
