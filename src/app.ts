@@ -6,6 +6,7 @@ import {resetDBRouterRouter} from "./features/testing/resetDBRouter.router";
 import {getPostRouter} from "./features/posts/posts.router";
 import {getUserRouter} from "./features/users/users.router";
 import {authRouter} from "./features/auth/auth.router";
+import {commentsRouter} from "./features/comments/comments.router";
 
 export const app = express()
 dotenv.config()
@@ -18,6 +19,7 @@ export const RouterPaths = {
   posts: '/posts',
   users: '/users',
   auth: '/auth',
+  comments: '/comments',
   testing: '/testing'
 }
 
@@ -25,4 +27,5 @@ app.use(RouterPaths.blogs, getBlogRouter())
 app.use(RouterPaths.posts, getPostRouter())
 app.use(RouterPaths.users, getUserRouter())
 app.use(RouterPaths.auth, authRouter())
+app.use(RouterPaths.comments, commentsRouter())
 app.use(RouterPaths.testing, resetDBRouterRouter())

@@ -1,6 +1,12 @@
 import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
-import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../../types/types";
+import {
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+  RequestWithParamsAndQuery,
+  RequestWithQuery
+} from "../../types/types";
 import {CreatePostModel} from "./models/CreatePostModel";
 import {GetPostModel} from "./models/GetPostModel";
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
@@ -12,6 +18,12 @@ import {DeletePostModel} from "./models/DeletePostModel";
 import {postsService} from "../../domains/posts.service";
 import {GetSortedPostsModel} from "./models/GetSortedPostsModel";
 import {postsQueryRepository} from "../../repositories/postsQueryRepository";
+import {CreateCommentModel} from "../comments/models/CreateCommentModel";
+import {URIParamsCommentModel} from "../comments/models/URIParamsCommentModel";
+import {commentsService} from "../../domains/comments.service";
+import {commentValidationMiddleware} from "../../middlewares/commentValidationMiddleware";
+import {GetSortedCommentsModel} from "../comments/models/GetSortedCommentsModel";
+import {commentsQueryRepository} from "../../repositories/comentsQueryRepository";
 
 export const getPostRouter = () => {
   const router = express.Router()
@@ -37,6 +49,38 @@ export const getPostRouter = () => {
     const newPost = await postsService.createPost(title, content, shortDescription, blogId)
 
     res.status(HTTP_STATUSES.CREATED_201).send(newPost)
+  })
+
+  router.post(
+    '/:id/comments',
+    ...commentValidationMiddleware,
+    inputValidationErrorsMiddleware,
+    async (req: RequestWithParamsAndBody<URIParamsCommentModel, CreateCommentModel>, res: Response) => {
+      const foundPost = await postsQueryRepository.findPostById(req.params.id)
+
+      if (!foundPost) {
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        return
+      }
+
+      const newComment = await commentsService.createComment(
+        req.body.content,
+        req.params.id,
+        req.user!.id,
+        req.user!.login
+      )
+
+      res.status(HTTP_STATUSES.CREATED_201).send(newComment)
+  })
+
+  router.get('/:id/comments', async (req: RequestWithParamsAndQuery<URIParamsCommentModel, GetSortedCommentsModel>, res: Response) => {
+    const foundPost = await postsQueryRepository.findPostById(req.params.id)
+
+    if (!foundPost) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return
+    }
+    res.json(await commentsQueryRepository.getSortedComments(req.query, req.params.id))
   })
 
   router.put(

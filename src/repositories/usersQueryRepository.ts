@@ -3,6 +3,7 @@ import {UsersType} from "../types/generalTypes";
 import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {GetSortedUsersModel} from "../features/users/models/GetSortedUsersModel";
 import {mockUserModel} from "../constants/blanks";
+import {ViewUserModel} from "../features/users/models/ViewUserModel";
 
 export const usersQueryRepository = {
   async getSortedUsers(params: GetSortedUsersModel): Promise<UsersType> {
@@ -63,6 +64,17 @@ export const usersQueryRepository = {
           createdAt: u.createdAt
         }
       })
+    }
+  },
+
+  async findUserById(id: string): Promise<ViewUserModel | null> {
+    const user = await usersCollections.findOne({id}, { projection: {_id: 0}})
+
+    return {
+      id: user!.id,
+      login: user!.login,
+      email: user!.email,
+      createdAt: user!.createdAt
     }
   }
 }

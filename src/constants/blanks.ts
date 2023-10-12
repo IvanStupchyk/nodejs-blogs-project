@@ -24,6 +24,16 @@ export const mockPostModel = {
   blogName: ''
 }
 
+export const mockCommentModel = {
+  id: '',
+  content: '',
+  commentatorInfo: {
+    userId: '',
+    userLogin: ''
+  },
+  createdAt: ''
+}
+
 export const mockBlogs = {
   pagesCount: 0,
   page: 1,
