@@ -1,10 +1,10 @@
-import {authValidationMiddleware} from "./authValidationMiddleware";
 import {body} from "express-validator";
 import {errorsConstants} from "../constants/errorsContants"
 import {blogsCollections} from "../db/db"
+import {authBasicValidationMiddleware} from "./authBasicValidationMiddleware";
 
 export const postValidationMiddleware = [
-  authValidationMiddleware,
+  authBasicValidationMiddleware,
 
   body('title')
     .isString()

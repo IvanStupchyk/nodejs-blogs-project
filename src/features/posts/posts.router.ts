@@ -13,7 +13,6 @@ import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidation
 import {postValidationMiddleware} from "../../middlewares/postValidationMiddleware";
 import {URIParamsPostIdModel} from "./models/URIParamsPostIdModel";
 import {UpdatePostModel} from "./models/UpdatePostModel";
-import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
 import {DeletePostModel} from "./models/DeletePostModel";
 import {postsService} from "../../domains/posts.service";
 import {GetSortedPostsModel} from "./models/GetSortedPostsModel";
@@ -24,6 +23,7 @@ import {commentsService} from "../../domains/comments.service";
 import {commentValidationMiddleware} from "../../middlewares/commentValidationMiddleware";
 import {GetSortedCommentsModel} from "../comments/models/GetSortedCommentsModel";
 import {commentsQueryRepository} from "../../repositories/comentsQueryRepository";
+import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
 
 export const getPostRouter = () => {
   const router = express.Router()
@@ -102,7 +102,7 @@ export const getPostRouter = () => {
         : res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   })
 
-  router.delete('/:id', authValidationMiddleware, async (req: RequestWithParams<DeletePostModel>, res: Response) => {
+  router.delete('/:id', authBasicValidationMiddleware, async (req: RequestWithParams<DeletePostModel>, res: Response) => {
     const isPostExist = await postsService.deletePost(req.params.id)
 
     !isPostExist
