@@ -1,4 +1,9 @@
-import {blogsCollections, commentsCollections, postsCollections, usersCollections} from "../../db/db";
+import {
+  blogsCollections,
+  commentsCollections,
+  postsCollections,
+  usersCollections
+} from "../../db/db";
 import express, {Request, Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 
