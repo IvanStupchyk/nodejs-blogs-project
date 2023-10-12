@@ -11,7 +11,7 @@ export const commentsRepository = {
       content: comment.content,
       commentatorInfo: {
         userId: comment.commentatorInfo.userId,
-        userLogin: comment.commentatorInfo.userId
+        userLogin: comment.commentatorInfo.userLogin
       },
       createdAt: comment.createdAt
     }
