@@ -1,6 +1,9 @@
 import {usersCollections} from "../db/db"
 import {UsersType} from "../types/generalTypes";
-import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
+import {
+  createDefaultSortedParams,
+  getPagesCount
+} from "../utils/utils";
 import {GetSortedUsersModel} from "../features/users/models/GetSortedUsersModel";
 import {mockUserModel} from "../constants/blanks";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
