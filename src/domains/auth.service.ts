@@ -2,9 +2,15 @@ import bcrypt from 'bcrypt'
 import {usersRepository} from "../repositories/usersRepository";
 
 export const authService = {
-  async loginUser(loginOrEmail: string, password: string): Promise<boolean> {
+  async loginUser(loginOrEmail: string, password: string): Promise<string | boolean> {
     const user = await usersRepository.loginUser(loginOrEmail)
 
-    return bcrypt.compare(password, user?.passwordHash ?? '')
+    const isCredentialsCorrect = await bcrypt.compare(password, user?.passwordHash ?? '')
+
+    if (isCredentialsCorrect) {
+      return user!.id
+    } else {
+      return false
+    }
   }
 }

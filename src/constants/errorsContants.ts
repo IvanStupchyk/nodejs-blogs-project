@@ -18,5 +18,8 @@ export const errorsConstants = {
   login: {
     loginOrEmail: 'loginOrEmail should be a string',
     password: 'password should be a string',
+  },
+  comment: {
+    content: 'Content should be a string and contains at least 20 but not more than 300 characters'
   }
 }

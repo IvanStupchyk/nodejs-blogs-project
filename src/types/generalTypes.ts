@@ -1,16 +1,7 @@
 import {SortOrder} from "../constants/sortOrder";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
-import {mockBlogModel, mockPostModel, mockUserModel} from "../constants/blanks";
-
-export type userSortedParams = {
-  searchLoginTerm: string
-  searchEmailTerm: string
-  sortBy: keyof ViewUserModel
-  sortDirection: SortOrder.asc | SortOrder.desc
-  pageNumber: number
-  pageSize: number
-  skipSize: number
-}
+import {mockBlogModel, mockCommentModel, mockPostModel, mockUserModel} from "../constants/blanks";
+import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 
 export type BlogType = {
   id: string,
@@ -27,6 +18,27 @@ export type BlogsType = {
   pageSize: number,
   totalCount: number,
   items: Array<BlogType>
+}
+
+export type CommentatorInfoType = {
+  userId: string,
+  userLogin: string
+}
+
+export type CommentType = {
+  id: string,
+  content: string
+  postId: string
+  commentatorInfo: CommentatorInfoType
+  createdAt: string
+}
+
+export type CommentsType = {
+  pagesCount: number,
+  page: number,
+  pageSize: number,
+  totalCount: number,
+  items: Array<CommentViewModel>
 }
 
 export type PostType = {
@@ -66,7 +78,7 @@ export type UsersType = {
 export type SortConditionsType = {
   pageNumber: string,
   pageSize: string,
-  sortBy: keyof BlogType | keyof PostType,
-  model: typeof mockBlogModel | typeof mockPostModel | typeof mockUserModel
+  sortBy: keyof BlogType | keyof PostType | keyof ViewUserModel | keyof CommentViewModel,
+  model: typeof mockBlogModel | typeof mockPostModel | typeof mockUserModel | typeof mockCommentModel
   sortDirection: SortOrder.asc | SortOrder.desc,
 }
