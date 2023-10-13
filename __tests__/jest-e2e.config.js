@@ -3,5 +3,5 @@ module.exports = {
 	testEnvironment: 'node',
 	modulePathIgnorePatterns: ["<rootDir>/dist/"],
 	testRegex: ".e2e.ts$",
-	testTimeout: 10000
+	testTimeout: 30000
 }

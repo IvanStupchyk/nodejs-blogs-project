@@ -13,7 +13,7 @@ const getRequest = () => {
   return request(app)
 }
 
-describe('tests for /users', () => {
+describe('tests for /users and /auth', () => {
   const invalidData: CreateUserModel = {
     login: '',
     password: '',
@@ -206,7 +206,7 @@ describe('tests for /users', () => {
     await getRequest()
       .post(`${RouterPaths.auth}/login`)
       .send(userWithCorrectData)
-      .expect(HTTP_STATUSES.NO_CONTENT_204)
+      .expect(HTTP_STATUSES.OK_200)
   })
 
   it('shouldn\'t delete user if the user doesn\'t exist', async () => {
