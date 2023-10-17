@@ -1,16 +1,20 @@
 import {body} from "express-validator";
 import {errorsConstants} from "../constants/errorsContants";
-import {authBasicValidationMiddleware} from "./authBasicValidationMiddleware";
+import {usersRepository} from "../repositories/usersRepository";
 
 export const userValidationMiddleware = [
-  authBasicValidationMiddleware,
-
   body('login')
     .isString()
     .trim()
     .matches(/^[a-zA-Z0-9_-]*$/)
     .isLength({min: 3, max: 10})
-    .withMessage(errorsConstants.user.login),
+    .custom(async value => {
+      const foundUser = await usersRepository.findUserByLoginOrEmail(value)
+
+      if (foundUser !== null) {
+        throw new Error('It should be unique login')
+      }
+    }),
 
   body('password')
     .isString()
@@ -22,5 +26,11 @@ export const userValidationMiddleware = [
     .isString()
     .trim()
     .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
-    .withMessage(errorsConstants.user.email)
+    .custom(async value => {
+      const foundUser = await usersRepository.findUserByLoginOrEmail(value)
+
+      if (foundUser !== null) {
+        throw new Error('It should be unique email')
+      }
+    }),
 ]

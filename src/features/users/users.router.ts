@@ -4,11 +4,11 @@ import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../../types/
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
 import {CreateUserModel} from "./models/CreateUserModel";
 import {usersService} from "../../domains/users.service";
-import {userValidationMiddleware} from "../../middlewares/userValidationMiddleware";
 import {GetSortedUsersModel} from "./models/GetSortedUsersModel";
 import {DeleteUserModel} from "./models/DeleteUserModel";
 import {usersQueryRepository} from "../../repositories/usersQueryRepository";
 import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
+import {userAdminValidationMiddleware} from "../../middlewares/userAdminValidationMiddleware";
 
 export const getUserRouter = () => {
   const router = express.Router()
@@ -19,7 +19,7 @@ export const getUserRouter = () => {
 
   router.post(
     '/',
-    ...userValidationMiddleware,
+    ...userAdminValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithBody<CreateUserModel>, res: Response) => {
     const {login, password, email} = req.body

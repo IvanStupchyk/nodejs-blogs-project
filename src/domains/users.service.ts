@@ -10,10 +10,17 @@ export const usersService = {
 
     const newUser: UserType = {
       id: uuidv4(),
-      login,
-      email,
-      passwordHash,
-      createdAt: new Date().toISOString()
+      accountData: {
+        login,
+        email,
+        passwordHash,
+        createdAt: new Date().toISOString()
+      },
+      emailConfirmation: {
+        confirmationCode: uuidv4(),
+        expirationDate: new Date(),
+        isConfirmed: true
+      }
     }
 
     return await usersRepository.createUser(newUser)

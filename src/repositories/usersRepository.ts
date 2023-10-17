@@ -3,11 +3,11 @@ import {UserType} from "../types/generalTypes";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 
 export const usersRepository = {
-  async loginUser(loginOrEmail: string): Promise<UserType | null> {
+  async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserType | null> {
     return await usersCollections.findOne({
       $or: [
-        { login: loginOrEmail },
-        { email: loginOrEmail }
+        { 'accountData.login': loginOrEmail },
+        { 'accountData.email': loginOrEmail }
       ]
     })
   },
@@ -17,10 +17,36 @@ export const usersRepository = {
 
     return {
       id: newUser.id,
-      login: newUser.login,
-      email: newUser.email,
-      createdAt: newUser.createdAt
+      login: newUser.accountData.login,
+      email: newUser.accountData.email,
+      createdAt: newUser.accountData.createdAt
     }
+  },
+
+  async findUserByConfirmationCode(code: string): Promise<UserType | null> {
+    return await usersCollections.findOne({'emailConfirmation.confirmationCode' : code})
+  },
+
+  async findUserByEmail(email: string): Promise<UserType | null> {
+    return await usersCollections.findOne({'accountData.email' : email})
+  },
+
+  async updateConfirmation(id: string): Promise<boolean> {
+    const result = await usersCollections.updateOne(
+      {id},
+      {$set: {'emailConfirmation.isConfirmed' : true}}
+    )
+
+    return result.modifiedCount === 1
+  },
+
+  async updateConfirmationExpiredTime(id: string, newExpirationDate: Date): Promise<boolean> {
+    const result = await usersCollections.updateOne(
+      {id},
+      {$set: {'emailConfirmation.expirationDate' : newExpirationDate}}
+    )
+
+    return result.modifiedCount === 1
   },
 
   async deleteUser(id: string): Promise<boolean> {
