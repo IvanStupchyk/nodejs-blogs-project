@@ -58,7 +58,7 @@ export const authRouter = () => {
       const isSentEmail = await authService.createUser(req.body.email, req.body.login, req.body.password)
 
       res.sendStatus(isSentEmail
-        ? HTTP_STATUSES.CREATED_201
+        ? HTTP_STATUSES.NO_CONTENT_204
         : HTTP_STATUSES.BAD_REQUEST_400
       )
     }
