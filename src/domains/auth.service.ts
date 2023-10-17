@@ -67,9 +67,10 @@ export const authService = {
     if (!user) return false
 
     try {
-      await emailManager.sendEmailConfirmationMessage(user)
+      const newCode = uuidv4()
       const newExpirationDate = add(new Date(), {hours: 1, minutes: 30})
-      await usersRepository.updateConfirmationExpiredTime(user.id, newExpirationDate)
+      await usersRepository.updateConfirmationCodeAndExpirationTime(user.id, newExpirationDate, newCode)
+      await emailManager.sendEmailConfirmationMessage(user)
 
       return true
     } catch (error) {

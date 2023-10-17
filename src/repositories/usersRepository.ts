@@ -40,10 +40,13 @@ export const usersRepository = {
     return result.modifiedCount === 1
   },
 
-  async updateConfirmationExpiredTime(id: string, newExpirationDate: Date): Promise<boolean> {
+  async updateConfirmationCodeAndExpirationTime(id: string, newExpirationDate: Date, newCode: string): Promise<boolean> {
     const result = await usersCollections.updateOne(
       {id},
-      {$set: {'emailConfirmation.expirationDate' : newExpirationDate}}
+      {$set: {
+        'emailConfirmation.expirationDate': newExpirationDate,
+         'emailConfirmation.confirmationCode': newCode
+      }}
     )
 
     return result.modifiedCount === 1
