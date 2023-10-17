@@ -2,7 +2,7 @@ import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
 import {HTTP_STATUSES} from "../../src/utils";
 import {client} from "../../src/db/db";
-import {BlogType, CommentType, PostType, UserType} from "../../src/types/generalTypes";
+import {BlogType, CommentType, PostType} from "../../src/types/generalTypes";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {LoginUserModel} from "../../src/features/auth/models/LoginUserModel";
@@ -12,6 +12,7 @@ import {postsTestManager} from "../utils/postsTestManager";
 import {commentsTestManager} from "../utils/commentsTestManager";
 import {CommentViewModel} from "../../src/features/comments/models/CommentViewModel";
 import {UpdateCommentModel} from "../../src/features/comments/models/UpdateCommentModel";
+import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 
 const getRequest = () => {
   return request(app)
@@ -43,7 +44,7 @@ describe('tests for /comments and posts/:id/comments', () => {
 
   let newPost: PostType
   let newBlog: BlogType
-  let newUser: UserType
+  let newUser: ViewUserModel
   let newComment: CommentType
   let newComments: Array<CommentViewModel> = []
   let accessToken: string

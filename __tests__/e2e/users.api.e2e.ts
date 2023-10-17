@@ -4,10 +4,10 @@ import {HTTP_STATUSES} from "../../src/utils";
 import {errorsConstants} from "../../src/constants/errorsContants";
 import {client} from "../../src/db/db";
 import {mockBlogs, mockUsers} from "../../src/constants/blanks";
-import {UserType} from "../../src/types/generalTypes";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {LoginUserModel} from "../../src/features/auth/models/LoginUserModel";
+import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 
 const getRequest = () => {
   return request(app)
@@ -30,7 +30,7 @@ describe('tests for /users and /auth', () => {
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
   })
 
-  let newUsers: Array<UserType> = []
+  let newUsers: Array<ViewUserModel> = []
 
   it('should return 200 and an empty users array', async () => {
     await getRequest()
@@ -74,7 +74,7 @@ describe('tests for /users and /auth', () => {
       .expect(HTTP_STATUSES.OK_200, mockBlogs)
   })
 
-  let newUser: UserType
+  let newUser: ViewUserModel
   it('should create a user if the user sends the valid data', async () => {
     const { createdUser } = await usersTestManager.createUser(validData)
 

@@ -51,12 +51,23 @@ export type PostType = {
   blogName: string
 }
 
-export type UserType = {
-  id: string
+export type AccountDataType = {
   login: string
   email: string
   passwordHash: string
   createdAt: string
+}
+
+type EmailConfirmationType = {
+  confirmationCode: string,
+  expirationDate: Date,
+  isConfirmed: boolean
+}
+
+export type UserType = {
+  id: string
+  accountData: AccountDataType
+  emailConfirmation: EmailConfirmationType
 }
 
 export type PostsType = {

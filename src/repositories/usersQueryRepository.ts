@@ -29,23 +29,26 @@ export const usersQueryRepository = {
     let findCondition = {}
 
     if (searchLoginTerm && !searchEmailTerm) {
-      findCondition = { login: { $regex: searchLoginTerm, $options: 'i' }}
+      findCondition = { 'accountData.login': { $regex: searchLoginTerm, $options: 'i' }}
     }
 
     if (searchEmailTerm && !searchLoginTerm) {
-      findCondition = { email: { $regex: searchEmailTerm, $options: 'i' }}
+      findCondition = { 'accountData.email': { $regex: searchEmailTerm, $options: 'i' }}
     }
 
     if (searchEmailTerm && searchLoginTerm) {
       findCondition = { $or: [
-        { login: {$regex: searchLoginTerm, $options: 'i'} },
-        { email: {$regex: searchEmailTerm, $options: 'i'} }
+        { 'accountData.login': {$regex: searchLoginTerm, $options: 'i'} },
+        { 'accountData.email': {$regex: searchEmailTerm, $options: 'i'} }
       ]}
     }
 
+    const sortField = `accountData.${sortBy}`
+
+    //@ts-ignore
     const users = await usersCollections
       .find(findCondition, { projection: {_id: 0}})
-      .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
+      .sort({[sortField]: sortDirection === 'asc' ? 1 : -1})
       .skip(skipSize)
       .limit(pageSize)
       .toArray()
@@ -62,9 +65,9 @@ export const usersQueryRepository = {
       items: users.map(u => {
         return {
           id: u.id,
-          email: u.email,
-          login: u.login,
-          createdAt: u.createdAt
+          email: u.accountData.email,
+          login: u.accountData.login,
+          createdAt: u.accountData.createdAt
         }
       })
     }
@@ -73,11 +76,11 @@ export const usersQueryRepository = {
   async findUserById(id: string): Promise<ViewUserModel | null> {
     const user = await usersCollections.findOne({id}, { projection: {_id: 0}})
 
-    return {
-      id: user!.id,
-      login: user!.login,
-      email: user!.email,
-      createdAt: user!.createdAt
-    }
+    return user ? {
+      id: user.id,
+      login: user.accountData.login,
+      email: user.accountData.email,
+      createdAt: user.accountData.createdAt
+    } : null
   }
 }
