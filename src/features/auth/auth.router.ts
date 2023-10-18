@@ -7,7 +7,6 @@ import {loginValidationMiddleware} from "../../middlewares/loginValidationMiddle
 import {authService} from "../../domains/auth.service";
 import {jwtService} from "../../application/jwt-service";
 import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
-import {usersQueryRepository} from "../../repositories/usersQueryRepository";
 import {userValidationMiddleware} from "../../middlewares/userValidationMiddleware";
 import {CreateUserModel} from "../users/models/CreateUserModel";
 import {confirmationValidationMiddleware} from "../../middlewares/confirmationValidationMiddleware";
@@ -22,15 +21,11 @@ export const authRouter = () => {
     '/me',
     authValidationMiddleware,
     async (req: Request, res: Response) => {
-   const user = await usersQueryRepository.findUserById(req.user!.id)
-
-    if (user) {
       res.status(HTTP_STATUSES.OK_200).send({
-        email: user.email,
-        login: user.login,
-        userId: user.id
+        email: req.user?.email,
+        login: req.user?.login,
+        userId: req.user?.id
       })
-    }
   })
 
   router.post(
