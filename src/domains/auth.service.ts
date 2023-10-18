@@ -70,7 +70,13 @@ export const authService = {
       const newCode = uuidv4()
       const newExpirationDate = add(new Date(), {hours: 1, minutes: 30})
       await usersRepository.updateConfirmationCodeAndExpirationTime(user.id, newExpirationDate, newCode)
-      await emailManager.resendEmailConfirmationMessage(user.accountData.email, newCode)
+
+      try {
+        await emailManager.resendEmailConfirmationMessage(user.accountData.email, newCode)
+      } catch (error) {
+        console.log('resendEmailConfirmationMessage error', error)
+      }
+
 
       return true
     } catch (error) {

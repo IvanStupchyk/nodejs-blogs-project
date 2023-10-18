@@ -28,7 +28,7 @@ export const usersRepository = {
   },
 
   async findUserByEmail(email: string): Promise<UserType | null> {
-    return await usersCollections.findOne({'accountData.email' : email})
+    return await usersCollections.findOne({'accountData.email' : email}, { projection: {_id: 0}})
   },
 
   async updateConfirmation(id: string): Promise<boolean> {
