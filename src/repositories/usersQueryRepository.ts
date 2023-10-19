@@ -1,5 +1,5 @@
 import {usersCollections} from "../db/db"
-import {UsersType} from "../types/generalTypes";
+import {InvalidRefreshTokensType, UsersType} from "../types/generalTypes";
 import {
   createDefaultSortedParams,
   getPagesCount
@@ -82,5 +82,11 @@ export const usersQueryRepository = {
       email: user.accountData.email,
       createdAt: user.accountData.createdAt
     } : null
+  },
+
+  async fetchInvalidRefreshToken(id: string): Promise<InvalidRefreshTokensType | null> {
+    const user = await usersCollections.findOne({id}, { projection: {_id: 0, invalidRefreshTokens: 1}})
+
+    return user ? {...user} : null
   }
 }

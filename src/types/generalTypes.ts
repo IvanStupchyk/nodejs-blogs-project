@@ -68,6 +68,11 @@ export type UserType = {
   id: string
   accountData: AccountDataType
   emailConfirmation: EmailConfirmationType
+  invalidRefreshTokens: Array<string>
+}
+
+export type InvalidRefreshTokensType = {
+  invalidRefreshTokens: Array<string>
 }
 
 export type PostsType = {

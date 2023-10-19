@@ -40,6 +40,15 @@ export const usersRepository = {
     return result.modifiedCount === 1
   },
 
+  async addInvalidRefreshToken(id: string, token: string): Promise<boolean> {
+    const result = await usersCollections.updateOne(
+      {id},
+      {$push: {invalidRefreshTokens: token}}
+    )
+
+    return result.modifiedCount === 1
+  },
+
   async updateConfirmationCodeAndExpirationTime(id: string, newExpirationDate: Date, newCode: string): Promise<boolean> {
     const result = await usersCollections.updateOne(
       {id},
