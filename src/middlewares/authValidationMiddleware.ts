@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUSES} from "../utils";
 import {authService} from "../domains/auth.service";
 import {jwtService} from "../application/jwt-service";
+import {usersQueryRepository} from "../repositories/usersQueryRepository";
 
 export const authValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.headers.authorization) {
@@ -15,6 +16,12 @@ export const authValidationMiddleware = async (req: Request, res: Response, next
   const user = await authService.checkAndFindUserByToken(accessToken)
 
   if (user) {
+    const invalidTokens = await usersQueryRepository.fetchInvalidRefreshToken(user.id)
+    if (invalidTokens!.invalidRefreshTokens.includes(req.cookies.refreshToken)) {
+      res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+      return
+    }
+
     req.user = user
     next()
     return
