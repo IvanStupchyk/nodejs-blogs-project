@@ -12,13 +12,12 @@ export const refreshTokenMiddleware = async (req: Request, res: Response) => {
 
   const result: any = await jwtService.verifyRefreshToken(req.cookies.refreshToken)
 
-  const invalidTokens = await usersQueryRepository.fetchInvalidRefreshToken(result.userId)
-  if (invalidTokens!.invalidRefreshTokens.includes(req.cookies.refreshToken)) {
-    res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
-    return
-  }
-
   if (typeof result?.userId === 'string') {
+    const invalidTokens = await usersQueryRepository.fetchInvalidRefreshToken(result.userId)
+    if (invalidTokens!.invalidRefreshTokens.includes(req.cookies.refreshToken)) {
+      res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+      return
+    }
     const accessToken = await jwtService.createAccessJWT(result.userId)
     const refreshToken = await jwtService.createRefreshJWT(result.userId)
 
