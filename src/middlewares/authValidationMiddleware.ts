@@ -4,13 +4,13 @@ import {authService} from "../domains/auth.service";
 import {jwtService} from "../application/jwt-service";
 
 export const authValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.headers.authorization || !req.cookies.refreshToken) {
+  if (!req.headers.authorization) {
     res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
     return
   }
 
   const accessToken = req.headers.authorization.split(' ')[1]
-  const refreshToken = req.cookies.refreshToken
+  const refreshToken = req.cookies?.refreshToken
 
   const user = await authService.checkAndFindUserByToken(accessToken)
 
