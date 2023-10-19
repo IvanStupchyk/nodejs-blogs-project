@@ -13,6 +13,7 @@ import {confirmationValidationMiddleware} from "../../middlewares/confirmationVa
 import {ConfirmEmailModel} from "./models/ConfirmEmailModel";
 import {ResendingCodeToEmailModel} from "./models/ResendingCodeToEmailModel";
 import {resendEmailValidationMiddleware} from "../../middlewares/resendEmailValidationMiddleware";
+import {refreshTokenMiddleware} from "../../middlewares/refreshTokenMiddleware";
 
 export const authRouter = () => {
   const router = express.Router()
@@ -37,20 +38,37 @@ export const authRouter = () => {
     const id = await authService.loginUser(loginOrEmail, password)
 
     if (typeof id === 'string') {
-      const token = await jwtService.createJWT(id)
-      res.status(HTTP_STATUSES.OK_200).send({
-        accessToken: token
-      })
+      const accessToken = await jwtService.createAccessJWT(id)
+      const refreshToken = await jwtService.createRefreshJWT(id)
+
+      res.status(HTTP_STATUSES.OK_200)
+        .cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
+        .send({accessToken})
     } else {
       res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
     }
   })
 
+  router.post('/logout',
+    async (req: Request, res: Response) => {
+      const isLogout = await authService.logoutUser(req)
+
+      isLogout
+        ? res.clearCookie('refreshToken').sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+        : res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+  })
+
+  router.post('/refresh-token', refreshTokenMiddleware)
+
   router.post('/registration',
     ...userValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithBody<CreateUserModel>, res: Response) => {
-      const isSentEmail = await authService.createUser(req.body.email, req.body.login, req.body.password)
+      const isSentEmail = await authService.createUser(
+        req.body.email,
+        req.body.login,
+        req.body.password
+      )
 
       res.sendStatus(isSentEmail
         ? HTTP_STATUSES.NO_CONTENT_204
@@ -82,7 +100,7 @@ export const authRouter = () => {
         ? HTTP_STATUSES.NO_CONTENT_204
         : HTTP_STATUSES.BAD_REQUEST_400
       )
-    })
+  })
 
   return router
 }

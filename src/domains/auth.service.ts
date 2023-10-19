@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import {Request} from "express";
 import {usersRepository} from "../repositories/usersRepository";
 import add from 'date-fns/add'
 import {jwtService} from "../application/jwt-service";
@@ -19,6 +20,16 @@ export const authService = {
     if (isCredentialsCorrect) {
       return user.id
     } else {
+      return false
+    }
+  },
+
+  async logoutUser(req: Request): Promise<boolean> {
+    if (!req.cookies.refreshToken) return false
+
+    try {
+      return !!await jwtService.verifyRefreshToken(req.cookies.refreshToken)
+    } catch (error) {
       return false
     }
   },

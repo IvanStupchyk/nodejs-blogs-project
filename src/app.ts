@@ -7,12 +7,14 @@ import {getPostRouter} from "./features/posts/posts.router";
 import {getUserRouter} from "./features/users/users.router";
 import {authRouter} from "./features/auth/auth.router";
 import {commentsRouter} from "./features/comments/comments.router";
+import cookieParser from "cookie-parser";
 
 export const app = express()
 dotenv.config()
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.use(cookieParser())
 
 export const RouterPaths = {
   blogs: '/blogs',
