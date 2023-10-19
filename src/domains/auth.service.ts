@@ -33,8 +33,8 @@ export const authService = {
 
       const user: InvalidRefreshTokensType | null = await usersQueryRepository.fetchInvalidRefreshToken(result.userId)
       if (!user) return false
-      if (user.invalidRefreshTokens.length === 0) return true
       if (user.invalidRefreshTokens.includes(req.cookies.refreshToken)) return false
+      if (user.invalidRefreshTokens.length === 0) return true
 
       return true
     } catch (error) {
