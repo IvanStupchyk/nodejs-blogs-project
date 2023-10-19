@@ -5,7 +5,7 @@ import add from 'date-fns/add'
 import {jwtService} from "../application/jwt-service";
 import {usersQueryRepository} from "../repositories/usersQueryRepository";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
-import {UserType} from "../types/generalTypes";
+import {InvalidRefreshTokensType, UserType} from "../types/generalTypes";
 import {v4 as uuidv4} from "uuid";
 import {emailManager} from "../managers/emailManager";
 
@@ -28,7 +28,15 @@ export const authService = {
     if (!req.cookies.refreshToken) return false
 
     try {
-      return !!await jwtService.verifyRefreshToken(req.cookies.refreshToken)
+      const result: any = await jwtService.verifyRefreshToken(req.cookies.refreshToken)
+      if (!result?.userId) return false
+
+      const user: InvalidRefreshTokensType | null = await usersQueryRepository.fetchInvalidRefreshToken(result.userId)
+      if (!user) return false
+      if (user.invalidRefreshTokens.length === 0) return true
+      if (user.invalidRefreshTokens.includes(req.cookies.refreshToken)) return false
+
+      return true
     } catch (error) {
       return false
     }
@@ -52,7 +60,8 @@ export const authService = {
           minutes: 30
         }),
         isConfirmed: false
-      }
+      },
+      invalidRefreshTokens: []
     }
 
     try {

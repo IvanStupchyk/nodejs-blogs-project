@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import {HTTP_STATUSES} from "../utils";
 import {jwtService} from "../application/jwt-service";
+import {usersRepository} from "../repositories/usersRepository";
 
 export const refreshTokenMiddleware = async (req: Request, res: Response) => {
   if (!req.cookies.refreshToken) {
@@ -13,6 +14,8 @@ export const refreshTokenMiddleware = async (req: Request, res: Response) => {
   if (typeof result?.userId === 'string') {
     const accessToken = await jwtService.createAccessJWT(result.userId)
     const refreshToken = await jwtService.createRefreshJWT(result.userId)
+
+    await usersRepository.addInvalidRefreshToken(result.userId, req.cookies.refreshToken)
 
     res.status(HTTP_STATUSES.OK_200)
       .cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
