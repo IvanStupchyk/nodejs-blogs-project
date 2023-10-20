@@ -9,6 +9,9 @@ import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 import {UserType} from "../../src/types/generalTypes";
 import {emailManager} from "../../src/managers/emailManager";
 import {usersRepository} from "../../src/repositories/usersRepository";
+const { parse } = require('cookie')
+
+const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
 
 const getRequest = () => {
   return request(app)
@@ -244,7 +247,21 @@ describe('tests for /auth', () => {
     expect(currentUser?.emailConfirmation.isConfirmed).toEqual(true)
   })
 
-  it('should log in user if email is not confirmed', async () => {
+  it('should not return my data if I am not authorized', async () => {
+    const headers = {
+      'Authorization': `Bearer wefwef`
+    }
+
+    await getRequest()
+      .get(`${RouterPaths.auth}/me`)
+      .set('Cookie', `refreshToken=wef`)
+      .set(headers)
+      .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+  }, 10000)
+
+  let firstAccessToken: string
+  let firstRefreshToken: string
+  it('should log in user if email is confirmed', async () => {
     const result = await getRequest()
       .post(`${RouterPaths.auth}/login`)
       .send({
@@ -254,6 +271,122 @@ describe('tests for /auth', () => {
       .expect(HTTP_STATUSES.OK_200)
 
     expect(result.body.accessToken).not.toBeUndefined()
+    const cookies = result.headers['set-cookie']
+    const parsedCookies: Array<any> = cookies.map(parse)
+    const exampleCookie = parsedCookies.find((cookie) => cookie?.refreshToken)
+    expect(exampleCookie?.refreshToken).not.toBeUndefined()
+    firstAccessToken = result.body.accessToken
+    firstRefreshToken = exampleCookie?.refreshToken
+  }, 10000)
+
+  it('should return my data if everything is fine with tokens', async () => {
+    const headers = {
+      'Authorization': `Bearer ${firstAccessToken}`
+    }
+
+    await getRequest()
+      .get(`${RouterPaths.auth}/me`)
+      .set('Cookie', `refreshToken=${firstRefreshToken}`)
+      .set(headers)
+      .expect(HTTP_STATUSES.OK_200, {
+        email: simpleUser.accountData.email,
+        login: simpleUser.accountData.login,
+        userId: simpleUser.id
+      })
+  }, 10000)
+
+  it('should not logout the user with incorrect refresh token', async () => {
+    await getRequest()
+      .post(`${RouterPaths.auth}/logout`)
+      .set('Cookie', `refreshToken=qwe`)
+      .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+  })
+
+  it('should logout the user with correct refresh token and then do not refresh token with old data', async () => {
+    await getRequest()
+      .post(`${RouterPaths.auth}/logout`)
+      .set('Cookie', `refreshToken=${firstRefreshToken}`)
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+
+    await getRequest()
+      .post(`${RouterPaths.auth}/logout`)
+      .set('Cookie', `refreshToken=${firstRefreshToken}`)
+      .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+
+    await getRequest()
+      .post(`${RouterPaths.auth}/refresh-token`)
+      .set('Cookie', `refreshToken=${firstRefreshToken}`)
+      .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+  })
+
+  let nextAccessToken: string
+  let nextRefreshToken: string
+  it('should refresh token with valid input token', async () => {
+    await sleep(1.5)
+    const result = await getRequest()
+      .post(`${RouterPaths.auth}/login`)
+      .send({
+        loginOrEmail: secondUserData.login,
+        password: secondUserData.password
+      })
+      .expect(HTTP_STATUSES.OK_200)
+
+    const cookies = result.headers['set-cookie']
+    const parsedCookies: Array<any> = cookies.map(parse)
+    const exampleCookie = parsedCookies.find((cookie) => cookie?.refreshToken)
+    const accessToken = result.body.accessToken
+    const refreshToken = exampleCookie?.refreshToken
+
+    console.log(refreshToken, 'firstRT')
+
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`
+    }
+
+    const meRes = await getRequest()
+      .get(`${RouterPaths.auth}/me`)
+      .auth(accessToken, {type: "bearer"})
+
+    expect(meRes.status).toBe(HTTP_STATUSES.OK_200)
+
+    await sleep(1.2)
+
+    const refreshResponse = await getRequest()
+      .post(`${RouterPaths.auth}/refresh-token`)
+      .set('Cookie', `refreshToken=${refreshToken}`)
+      .send()
+
+    expect(refreshResponse.status).toBe(HTTP_STATUSES.OK_200)
+
+    nextAccessToken = refreshResponse.body.accessToken
+
+    const cookiesInstance = refreshResponse.headers['set-cookie']
+    const parsedSecondCookies: Array<any> = cookiesInstance.map(parse)
+    const secondCookie = parsedSecondCookies.find((cookie) => cookie?.refreshToken)
+    nextRefreshToken = secondCookie?.refreshToken
+
+    expect(nextAccessToken).not.toBe(accessToken)
+    expect(nextRefreshToken).not.toBe(refreshToken)
+
+    await getRequest()
+      .get(`${RouterPaths.auth}/me`)
+      .set('Cookie', `refreshToken=${refreshToken}`)
+      .set(headers)
+      .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+
+    await getRequest()
+      .post(`${RouterPaths.auth}/logout`)
+      .set('Cookie', `refreshToken=${refreshToken}`)
+      .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+  }, 10000)
+
+
+  it('should log out user with correct token', async () => {
+    await sleep(1.5)
+    await getRequest()
+      .post(`${RouterPaths.auth}/logout`)
+      .set('Cookie', `refreshToken=${nextRefreshToken}`)
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
   })
 
   afterAll(async () => {
