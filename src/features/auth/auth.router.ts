@@ -58,7 +58,15 @@ export const authRouter = () => {
         : res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
   })
 
-  router.post('/refresh-token', refreshTokenMiddleware)
+  router.post('/refresh-token',
+    refreshTokenMiddleware,
+    async (req: Request, res: Response) => {
+      const {accessToken, refreshToken} = await authService.refreshToken(req.userId, req.cookies)
+
+      res.status(HTTP_STATUSES.OK_200)
+        .cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
+        .send({accessToken})
+  })
 
   router.post('/registration',
     ...userValidationMiddleware,

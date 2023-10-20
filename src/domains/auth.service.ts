@@ -74,6 +74,15 @@ export const authService = {
     return !!await usersRepository.createUser(newUser)
   },
 
+  async refreshToken(userId: string, cookies: {refreshToken: string}): Promise<{accessToken: string, refreshToken: string}> {
+    const accessToken = await jwtService.createAccessJWT(userId)
+    const refreshToken = await jwtService.createRefreshJWT(userId)
+
+    await usersRepository.addInvalidRefreshToken(userId, cookies.refreshToken)
+
+    return {accessToken, refreshToken}
+  },
+
   async confirmEmail(code: string): Promise<boolean> {
     const user = await usersRepository.findUserByConfirmationCode(code)
     if (!user) return false
