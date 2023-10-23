@@ -13,7 +13,7 @@ export const authValidationMiddleware = async (req: Request, res: Response, next
   const accessToken = req.headers.authorization.split(' ')[1]
   const refreshToken = req.cookies?.refreshToken
 
-  const user = await authService.checkAndFindUserByToken(accessToken)
+  const user = await authService.checkAndFindUserByAccessToken(accessToken)
 
   if (user) {
     const invalidTokens = await usersQueryRepository.fetchInvalidRefreshToken(user.id)
@@ -32,9 +32,12 @@ export const authValidationMiddleware = async (req: Request, res: Response, next
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
         return
       }
+      // in reality, we need to set up the new access token in headers but with current implementation
+      // we can't do it because we send the access token in the body, but it's only middleware for
+      // other request, so we can't mutate them
       const accessToken = await jwtService.createAccessJWT(decodedRefreshToken.userId)
 
-      req.user = await authService.checkAndFindUserByToken(accessToken)
+      req.user = await authService.checkAndFindUserByAccessToken(accessToken)
       next()
       return
     } catch (error) {

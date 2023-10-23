@@ -74,7 +74,7 @@ export const authService = {
     return !!await usersRepository.createUser(newUser)
   },
 
-  async refreshToken(userId: string, cookies: {refreshToken: string}): Promise<{accessToken: string, refreshToken: string}> {
+  async refreshTokens(userId: string, cookies: {refreshToken: string}): Promise<{accessToken: string, refreshToken: string}> {
     const accessToken = await jwtService.createAccessJWT(userId)
     const refreshToken = await jwtService.createRefreshJWT(userId)
 
@@ -113,8 +113,8 @@ export const authService = {
     }
   },
 
-  async checkAndFindUserByToken(token: string): Promise<ViewUserModel | null> {
-    const userId: string | null = await jwtService.getUserIdByToken(token)
+  async checkAndFindUserByAccessToken(token: string): Promise<ViewUserModel | null> {
+    const userId: string | null = await jwtService.getUserIdByAccessToken(token)
     if (!userId) return null
 
     return await usersQueryRepository.findUserById(userId)
