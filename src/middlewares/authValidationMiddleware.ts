@@ -44,7 +44,6 @@ export const authValidationMiddleware = async (req: Request, res: Response, next
 
       //second implementation
       res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
-      next()
       return
     } catch (error) {
       res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
