@@ -10,7 +10,7 @@ export const jwtService = {
     return jwt.sign(
       {userId, deviceId},
       settings.JWT_REFRESH_SECRET,
-      {expiresIn: 2000}
+      {expiresIn: 20}
     )
   },
 
