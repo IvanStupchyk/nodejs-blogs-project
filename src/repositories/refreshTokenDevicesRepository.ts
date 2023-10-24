@@ -32,6 +32,10 @@ export const refreshTokenDevicesRepository = {
     return isDeleted.deletedCount === 1
   },
 
+  async findDeviceId(deviceId: string): Promise<boolean> {
+    return !!await refreshTokenDevicesCollections.findOne({deviceId})
+  },
+
   async removeAllExceptCurrentSessions(deviceId: string, userId: string): Promise<boolean> {
     const deletedCount = await refreshTokenDevicesCollections.deleteMany({deviceId: {$ne: deviceId}, userId})
     return deletedCount.deletedCount >= 0
