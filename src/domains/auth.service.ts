@@ -39,12 +39,10 @@ export const authService = {
       const result: any = await jwtService.verifyRefreshToken(req.cookies.refreshToken)
       if (!result?.userId) return false
 
-      const user: UserType | null = await usersQueryRepository.fetchAllUserData(result.userId)
-      if (!user) return false
-      if (user.invalidRefreshTokens.includes(req.cookies.refreshToken)) return false
+      const session = await refreshTokenDevicesRepository.findDeviceById(result?.deviceId)
+      if (!session) return false
 
-      await refreshTokenDevicesRepository.removeSpecifiedSession(result.userId, result.deviceId)
-      return await usersRepository.addInvalidRefreshToken(result.userId, req.cookies.refreshToken)
+      return await refreshTokenDevicesRepository.removeSpecifiedSession(result.userId, result.deviceId)
     } catch (error) {
       return false
     }
@@ -68,8 +66,7 @@ export const authService = {
           minutes: 30
         }),
         isConfirmed: false
-      },
-      invalidRefreshTokens: []
+      }
     }
 
     try {
@@ -83,7 +80,7 @@ export const authService = {
     return !!await usersRepository.createUser(newUser)
   },
 
-  async refreshTokens(userId: string, deviceId: string, cookies: {refreshToken: string}): Promise<{accessToken: string, refreshToken: string}> {
+  async refreshTokens(userId: string, deviceId: string): Promise<{accessToken: string, refreshToken: string}> {
     const accessToken = await jwtService.createAccessJWT(userId)
     const refreshToken = await jwtService.createRefreshJWT(userId, deviceId)
 
@@ -96,8 +93,6 @@ export const authService = {
     } catch (error) {
       console.log(error)
     }
-
-    await usersRepository.addInvalidRefreshToken(userId, cookies.refreshToken)
 
     return {accessToken, refreshToken}
   },
