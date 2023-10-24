@@ -15,7 +15,7 @@ export const devicesService = {
       if (!result?.userId) return HTTP_STATUSES.UNAUTHORIZED_401
 
       const user: UserType | null = await usersQueryRepository.fetchAllUserData(result.userId)
-      if (!user || user.invalidRefreshTokens.includes(req.cookies.refreshToken)) return HTTP_STATUSES.UNAUTHORIZED_401
+      if (!user) return HTTP_STATUSES.UNAUTHORIZED_401
 
       const isDeviceIdExist = await refreshTokenDevicesRepository.findDeviceById(deviceId)
       if (!isDeviceIdExist) return HTTP_STATUSES.NOT_FOUND_404

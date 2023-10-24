@@ -20,8 +20,7 @@ export const usersService = {
         confirmationCode: uuidv4(),
         expirationDate: new Date(),
         isConfirmed: true
-      },
-      invalidRefreshTokens: []
+      }
     }
 
     return await usersRepository.createUser(newUser)
