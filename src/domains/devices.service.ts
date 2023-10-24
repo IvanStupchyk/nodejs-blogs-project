@@ -20,7 +20,7 @@ export const devicesService = {
 
       const isDeviceIdExist = await refreshTokenDevicesRepository.findDeviceId(deviceId)
       if (!isDeviceIdExist) return HTTP_STATUSES.NOT_FOUND_404
-      if (user.id !== result.userId || result.deviceId !== deviceId) return HTTP_STATUSES.FORBIDDEN_403
+      if (user.id !== result.userId) return HTTP_STATUSES.FORBIDDEN_403
       if (result.deviceId === deviceId) return HTTP_STATUSES.NOT_FOUND_404
 
       const isDeleted = await refreshTokenDevicesRepository.removeSpecifiedSession(result.userId, deviceId)
