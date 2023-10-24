@@ -151,8 +151,8 @@ export const authService = {
     }
     try {
       const result: any = await jwtService.verifyRefreshToken(refreshToken)
-      newDevice.lastActiveDate = (result.iat).toString()
-      newDevice.expirationDate = (result.exp).toString()
+      newDevice.lastActiveDate = new Date(result.iat * 1000)
+      newDevice.expirationDate = new Date(result.exp * 1000)
     } catch (error) {
       console.log(error)
     }
