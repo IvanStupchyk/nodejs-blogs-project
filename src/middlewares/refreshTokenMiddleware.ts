@@ -17,11 +17,6 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
         return
     }
-    // const user = await usersQueryRepository.fetchAllUserData(result.userId)
-    // if (user!.invalidRefreshTokens.includes(req.cookies.refreshToken)) {
-    //   res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
-    //   return
-    // }
 
     req.userId = result?.userId
     req.deviceId = result?.deviceId
