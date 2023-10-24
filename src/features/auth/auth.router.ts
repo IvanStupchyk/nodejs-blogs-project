@@ -66,7 +66,7 @@ export const authRouter = () => {
   router.post('/refresh-token',
     refreshTokenMiddleware,
     async (req: Request, res: Response) => {
-      const {accessToken, refreshToken} = await authService.refreshTokens(req.userId, req.deviceId, req.cookies)
+      const {accessToken, refreshToken} = await authService.refreshTokens(req.userId, req.deviceId)
 
       res.status(HTTP_STATUSES.OK_200)
         .cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
