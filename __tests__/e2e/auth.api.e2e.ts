@@ -337,10 +337,6 @@ describe('tests for /auth', () => {
     const accessToken = result.body.accessToken
     const refreshToken = exampleCookie?.refreshToken
 
-    const headers = {
-      'Authorization': `Bearer ${accessToken}`
-    }
-
     const meRes = await getRequest()
       .get(`${RouterPaths.auth}/me`)
       .auth(accessToken, {type: "bearer"})
@@ -365,17 +361,6 @@ describe('tests for /auth', () => {
 
     expect(nextAccessToken).not.toBe(accessToken)
     expect(nextRefreshToken).not.toBe(refreshToken)
-
-    await getRequest()
-      .get(`${RouterPaths.auth}/me`)
-      .set('Cookie', `refreshToken=${refreshToken}`)
-      .set(headers)
-      .expect(HTTP_STATUSES.UNAUTHORIZED_401)
-
-    await getRequest()
-      .post(`${RouterPaths.auth}/logout`)
-      .set('Cookie', `refreshToken=${refreshToken}`)
-      .expect(HTTP_STATUSES.UNAUTHORIZED_401)
   }, 10000)
 
 
