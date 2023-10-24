@@ -17,7 +17,7 @@ export const devicesService = {
       const user: UserType | null = await usersQueryRepository.fetchAllUserData(result.userId)
       if (!user || user.invalidRefreshTokens.includes(req.cookies.refreshToken)) return HTTP_STATUSES.UNAUTHORIZED_401
 
-      const isDeviceIdExist = await refreshTokenDevicesRepository.findDeviceId(deviceId)
+      const isDeviceIdExist = await refreshTokenDevicesRepository.findDeviceById(deviceId)
       if (!isDeviceIdExist) return HTTP_STATUSES.NOT_FOUND_404
       if (result.deviceId === deviceId) return HTTP_STATUSES.FORBIDDEN_403
 
@@ -25,7 +25,6 @@ export const devicesService = {
 
       if (!isDeleted) return HTTP_STATUSES.FORBIDDEN_403
       return HTTP_STATUSES.NO_CONTENT_204
-      // await usersRepository.addInvalidRefreshToken(result.userId, req.cookies.refreshToken)
     } catch (error) {
       return HTTP_STATUSES.UNAUTHORIZED_401
     }

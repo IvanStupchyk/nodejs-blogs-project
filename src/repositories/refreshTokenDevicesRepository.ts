@@ -32,7 +32,7 @@ export const refreshTokenDevicesRepository = {
     return isDeleted.deletedCount === 1
   },
 
-  async findDeviceId(deviceId: string): Promise<boolean> {
+  async findDeviceById(deviceId: string): Promise<boolean> {
     return !!await refreshTokenDevicesCollections.findOne({deviceId})
   },
 
