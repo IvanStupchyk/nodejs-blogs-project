@@ -144,8 +144,8 @@ export const authService = {
       id: uuidv4(),
       ip: req.headers['x-forwarded-for'] as string || (req.socket.remoteAddress ?? ''),
       title: req.headers["user-agent"] ?? '',
-      lastActiveDate: '',
-      expirationDate: '',
+      lastActiveDate: new Date(),
+      expirationDate: new Date(),
       deviceId,
       userId
     }
