@@ -46,7 +46,7 @@ export type RefreshTokenDeviceType = {
 export type RefreshTokenDeviceViewType = {
   ip: string,
   title: string
-  lastActiveDate: string
+  lastActiveDate: Date | string
   deviceId: string
 }
 
