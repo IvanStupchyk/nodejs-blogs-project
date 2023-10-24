@@ -337,8 +337,6 @@ describe('tests for /auth', () => {
     const accessToken = result.body.accessToken
     const refreshToken = exampleCookie?.refreshToken
 
-    console.log(refreshToken, 'firstRT')
-
     const headers = {
       'Authorization': `Bearer ${accessToken}`
     }

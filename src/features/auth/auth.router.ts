@@ -5,7 +5,6 @@ import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidation
 import {LoginUserModel} from "./models/LoginUserModel";
 import {loginValidationMiddleware} from "../../middlewares/loginValidationMiddleware";
 import {authService} from "../../domains/auth.service";
-import {jwtService} from "../../application/jwt-service";
 import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
 import {userValidationMiddleware} from "../../middlewares/userValidationMiddleware";
 import {CreateUserModel} from "../users/models/CreateUserModel";
@@ -14,6 +13,7 @@ import {ConfirmEmailModel} from "./models/ConfirmEmailModel";
 import {ResendingCodeToEmailModel} from "./models/ResendingCodeToEmailModel";
 import {resendEmailValidationMiddleware} from "../../middlewares/resendEmailValidationMiddleware";
 import {refreshTokenMiddleware} from "../../middlewares/refreshTokenMiddleware";
+import {apiRequestCountValidationMiddleware} from "../../middlewares/apiRequestCountValidationMiddleware";
 
 export const authRouter = () => {
   const router = express.Router()
@@ -32,20 +32,25 @@ export const authRouter = () => {
   router.post(
     '/login',
     ...loginValidationMiddleware,
+    apiRequestCountValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithBody<LoginUserModel>, res: Response) => {
     const {loginOrEmail, password} = req.body
-    const id = await authService.loginUser(loginOrEmail, password)
+    const result = await authService.loginUser(req, loginOrEmail, password)
 
-    if (typeof id === 'string') {
-      const accessToken = await jwtService.createAccessJWT(id)
-      const refreshToken = await jwtService.createRefreshJWT(id)
-
-      res.status(HTTP_STATUSES.OK_200)
-        .cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
-        .send({accessToken})
-    } else {
+    if(!result) {
       res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+      return
+    }
+
+    if (typeof result === 'object') {
+      res.status(HTTP_STATUSES.OK_200)
+        .cookie(
+          'refreshToken',
+          result.refreshToken,
+          {httpOnly: true, secure: true}
+        )
+        .send({accessToken: result.accessToken})
     }
   })
 
@@ -61,7 +66,7 @@ export const authRouter = () => {
   router.post('/refresh-token',
     refreshTokenMiddleware,
     async (req: Request, res: Response) => {
-      const {accessToken, refreshToken} = await authService.refreshTokens(req.userId, req.cookies)
+      const {accessToken, refreshToken} = await authService.refreshTokens(req.userId, req.deviceId, req.cookies)
 
       res.status(HTTP_STATUSES.OK_200)
         .cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
@@ -70,6 +75,7 @@ export const authRouter = () => {
 
   router.post('/registration',
     ...userValidationMiddleware,
+    apiRequestCountValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithBody<CreateUserModel>, res: Response) => {
       const isSentEmail = await authService.createUser(
@@ -87,6 +93,7 @@ export const authRouter = () => {
 
   router.post('/registration-confirmation',
     ...confirmationValidationMiddleware,
+    apiRequestCountValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithBody<ConfirmEmailModel>, res: Response) => {
       const isConfirmed = await authService.confirmEmail(req.body.code)
@@ -100,6 +107,7 @@ export const authRouter = () => {
 
   router.post('/registration-email-resending',
     ...resendEmailValidationMiddleware,
+    apiRequestCountValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithBody<ResendingCodeToEmailModel>, res: Response) => {
       const isSentEmail = await authService.resendEmail(req.body.email)

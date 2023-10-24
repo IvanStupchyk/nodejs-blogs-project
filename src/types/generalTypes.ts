@@ -33,12 +33,35 @@ export type CommentType = {
   createdAt: string
 }
 
+export type RefreshTokenDeviceType = {
+  id: string,
+  ip: string,
+  title: string
+  lastActiveDate: string
+  expirationDate: string
+  deviceId: string
+  userId: string
+}
+
+export type RefreshTokenDeviceViewType = {
+  ip: string,
+  title: string
+  lastActiveDate: string
+  deviceId: string
+}
+
 export type CommentsType = {
   pagesCount: number,
   page: number,
   pageSize: number,
   totalCount: number,
   items: Array<CommentViewModel>
+}
+
+export type APIRequestsCountType = {
+  ip: string,
+  URL: string
+  date: Date
 }
 
 export type PostType = {

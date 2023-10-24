@@ -5,12 +5,14 @@ import add from 'date-fns/add'
 import {jwtService} from "../application/jwt-service";
 import {usersQueryRepository} from "../repositories/usersQueryRepository";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
-import {InvalidRefreshTokensType, UserType} from "../types/generalTypes";
+import {RefreshTokenDeviceType, UserType} from "../types/generalTypes";
 import {v4 as uuidv4} from "uuid";
 import {emailManager} from "../managers/emailManager";
+import {refreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
 
 export const authService = {
-  async loginUser(loginOrEmail: string, password: string): Promise<string | boolean> {
+  async loginUser(req: Request, loginOrEmail: string, password: string):
+    Promise<{accessToken: string, refreshToken: string} | boolean> {
     const user = await usersRepository.findUserByLoginOrEmail(loginOrEmail)
     if (!user) return false
     if (!user.emailConfirmation.isConfirmed) return false
@@ -18,7 +20,13 @@ export const authService = {
     const isCredentialsCorrect = await bcrypt.compare(password, user.accountData.passwordHash)
 
     if (isCredentialsCorrect) {
-      return user.id
+      const deviceId = uuidv4()
+      const accessToken = await jwtService.createAccessJWT(user.id)
+      const refreshToken = await jwtService.createRefreshJWT(user.id, deviceId)
+
+      const newDevice = await this._createRefreshTokenDeviceModel(req, deviceId, user.id, refreshToken)
+      await refreshTokenDevicesRepository.setNewDevice(newDevice)
+      return {accessToken, refreshToken}
     } else {
       return false
     }
@@ -31,10 +39,11 @@ export const authService = {
       const result: any = await jwtService.verifyRefreshToken(req.cookies.refreshToken)
       if (!result?.userId) return false
 
-      const user: InvalidRefreshTokensType | null = await usersQueryRepository.fetchInvalidRefreshToken(result.userId)
+      const user: UserType | null = await usersQueryRepository.fetchAllUserData(result.userId)
       if (!user) return false
       if (user.invalidRefreshTokens.includes(req.cookies.refreshToken)) return false
 
+      await refreshTokenDevicesRepository.removeSpecifiedSession(result.userId, result.deviceId)
       return await usersRepository.addInvalidRefreshToken(result.userId, req.cookies.refreshToken)
     } catch (error) {
       return false
@@ -74,9 +83,19 @@ export const authService = {
     return !!await usersRepository.createUser(newUser)
   },
 
-  async refreshTokens(userId: string, cookies: {refreshToken: string}): Promise<{accessToken: string, refreshToken: string}> {
+  async refreshTokens(userId: string, deviceId: string, cookies: {refreshToken: string}): Promise<{accessToken: string, refreshToken: string}> {
     const accessToken = await jwtService.createAccessJWT(userId)
-    const refreshToken = await jwtService.createRefreshJWT(userId)
+    const refreshToken = await jwtService.createRefreshJWT(userId, deviceId)
+
+    try {
+      const result: any = await jwtService.verifyRefreshToken(refreshToken)
+      const lastActiveDate = (result.iat).toString()
+      const expirationDate = (result.exp).toString()
+
+      await refreshTokenDevicesRepository.updateExistingSession(deviceId, lastActiveDate, expirationDate)
+    } catch (error) {
+      console.log(error)
+    }
 
     await usersRepository.addInvalidRefreshToken(userId, cookies.refreshToken)
 
@@ -118,5 +137,26 @@ export const authService = {
     if (!userId) return null
 
     return await usersQueryRepository.findUserById(userId)
+  },
+
+  async _createRefreshTokenDeviceModel(req: Request, deviceId: string, userId: string, refreshToken: string): Promise<RefreshTokenDeviceType> {
+    const newDevice: RefreshTokenDeviceType = {
+      id: uuidv4(),
+      ip: req.headers['x-forwarded-for'] as string || (req.socket.remoteAddress ?? ''),
+      title: req.headers["user-agent"] ?? '',
+      lastActiveDate: '',
+      expirationDate: '',
+      deviceId,
+      userId
+    }
+    try {
+      const result: any = await jwtService.verifyRefreshToken(refreshToken)
+      newDevice.lastActiveDate = (result.iat).toString()
+      newDevice.expirationDate = (result.exp).toString()
+    } catch (error) {
+      console.log(error)
+    }
+
+    return newDevice
   }
 }
