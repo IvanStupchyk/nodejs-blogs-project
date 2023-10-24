@@ -89,8 +89,8 @@ export const authService = {
 
     try {
       const result: any = await jwtService.verifyRefreshToken(refreshToken)
-      const lastActiveDate = (result.iat).toString()
-      const expirationDate = (result.exp).toString()
+      const lastActiveDate = new Date(result.iat * 1000)
+      const expirationDate = new Date(result.exp * 1000)
 
       await refreshTokenDevicesRepository.updateExistingSession(deviceId, lastActiveDate, expirationDate)
     } catch (error) {

@@ -20,7 +20,7 @@ export const refreshTokenDevicesRepository = {
     return !!await refreshTokenDevicesCollections.insertOne({...device})
   },
 
-  async updateExistingSession(deviceId: string, lastActiveDate: string, expirationDate: string): Promise<boolean> {
+  async updateExistingSession(deviceId: string, lastActiveDate: Date, expirationDate: Date): Promise<boolean> {
     const isUpdated = await refreshTokenDevicesCollections.updateOne({deviceId}, {$set: {lastActiveDate, expirationDate}})
 
     return isUpdated.modifiedCount === 1
