@@ -1,7 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUSES} from "../utils";
 import {authService} from "../domains/auth.service";
-import {usersQueryRepository} from "../repositories/usersQueryRepository";
 
 export const authValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.headers.authorization) {
@@ -16,11 +15,16 @@ export const authValidationMiddleware = async (req: Request, res: Response, next
   const user = await authService.checkAndFindUserByAccessToken(accessToken)
 
   if (user) {
-    const allUserData = await usersQueryRepository.fetchAllUserData(user.id)
-    if (allUserData!.invalidRefreshTokens.includes(req.cookies.refreshToken)) {
-      res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
-      return
-    }
+    // const session = await refreshTokenDevicesRepository.findDeviceById(result?.deviceId)
+    // if (!session) {
+    //   res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+    //   return
+    // }
+    // const allUserData = await usersQueryRepository.fetchAllUserData(user.id)
+    // if (allUserData!.invalidRefreshTokens.includes(req.cookies.refreshToken)) {
+    //   res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+    //   return
+    // }
 
     req.user = user
     next()
