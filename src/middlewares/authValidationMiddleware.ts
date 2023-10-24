@@ -16,8 +16,8 @@ export const authValidationMiddleware = async (req: Request, res: Response, next
   const user = await authService.checkAndFindUserByAccessToken(accessToken)
 
   if (user) {
-    const invalidTokens = await usersQueryRepository.fetchInvalidRefreshToken(user.id)
-    if (invalidTokens!.invalidRefreshTokens.includes(req.cookies.refreshToken)) {
+    const allUserData = await usersQueryRepository.fetchAllUserData(user.id)
+    if (allUserData!.invalidRefreshTokens.includes(req.cookies.refreshToken)) {
       res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
       return
     }

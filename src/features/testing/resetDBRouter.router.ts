@@ -1,4 +1,5 @@
 import {
+  apiRequestsCountCollections,
   blogsCollections,
   commentsCollections,
   postsCollections,
@@ -15,6 +16,7 @@ export const resetDBRouterRouter = () => {
     await postsCollections.deleteMany({})
     await usersCollections.deleteMany({})
     await commentsCollections.deleteMany({})
+    await apiRequestsCountCollections.deleteMany({})
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   })
