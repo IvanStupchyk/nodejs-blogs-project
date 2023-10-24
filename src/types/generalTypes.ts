@@ -37,8 +37,8 @@ export type RefreshTokenDeviceType = {
   id: string,
   ip: string,
   title: string
-  lastActiveDate: string
-  expirationDate: string
+  lastActiveDate: Date | string
+  expirationDate: Date | string
   deviceId: string
   userId: string
 }
