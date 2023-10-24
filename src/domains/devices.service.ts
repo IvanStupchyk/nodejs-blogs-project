@@ -8,6 +8,7 @@ import {HTTP_STATUSES} from "../utils";
 export const devicesService = {
   async deleteSession(req: Request, deviceId: string): Promise<number> {
     if (!req.cookies.refreshToken) return HTTP_STATUSES.UNAUTHORIZED_401
+    if (!deviceId) return HTTP_STATUSES.NOT_FOUND_404
 
     try {
       const result: any = await jwtService.verifyRefreshToken(req.cookies.refreshToken)
