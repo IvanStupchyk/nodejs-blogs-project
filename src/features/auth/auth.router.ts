@@ -14,6 +14,10 @@ import {ResendingCodeToEmailModel} from "./models/ResendingCodeToEmailModel";
 import {resendEmailValidationMiddleware} from "../../middlewares/resendEmailValidationMiddleware";
 import {refreshTokenMiddleware} from "../../middlewares/refreshTokenMiddleware";
 import {apiRequestCountValidationMiddleware} from "../../middlewares/apiRequestCountValidationMiddleware";
+import {passwordRecoveryValidationMiddleware} from "../../middlewares/passwordRecoveryValidationMiddleware";
+import {RecoveryCodeToEmailModel} from "./models/RecoveryCodeToEmailModel";
+import {newPasswordValidationMiddleware} from "../../middlewares/newPasswordValidationMiddleware";
+import {NewPasswordModel} from "./models/NewPasswordModel";
 
 export const authRouter = () => {
   const router = express.Router()
@@ -84,7 +88,33 @@ export const authRouter = () => {
         req.body.password
       )
 
+
       res.sendStatus(isSentEmail
+        ? HTTP_STATUSES.NO_CONTENT_204
+        : HTTP_STATUSES.BAD_REQUEST_400
+      )
+    }
+  )
+
+  router.post('/password-recovery',
+    ...passwordRecoveryValidationMiddleware,
+    apiRequestCountValidationMiddleware,
+    inputValidationErrorsMiddleware,
+    async (req: RequestWithBody<RecoveryCodeToEmailModel>, res: Response) => {
+      await authService.sendRecoveryPasswordCode(req.body.email)
+
+      res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+    }
+  )
+
+  router.post('/new-password',
+    ...newPasswordValidationMiddleware,
+    apiRequestCountValidationMiddleware,
+    inputValidationErrorsMiddleware,
+    async (req: RequestWithBody<NewPasswordModel>, res: Response) => {
+      const isPasswordUpdated = await authService.updatePassword(req.body.newPassword, req.body.recoveryCode)
+
+      res.sendStatus(isPasswordUpdated
         ? HTTP_STATUSES.NO_CONTENT_204
         : HTTP_STATUSES.BAD_REQUEST_400
       )
