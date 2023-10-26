@@ -80,6 +80,29 @@ export const authService = {
     return !!await usersRepository.createUser(newUser)
   },
 
+  async sendRecoveryPasswordCode(email: string) {
+    const user = await usersRepository.findUserByLoginOrEmail(email)
+
+    if (user) {
+      try {
+        const recoveryCode = await jwtService.createPasswordRecoveryJWT(user.id)
+
+        await emailManager.sendPasswordRecoveryMessage(user, recoveryCode)
+      } catch (error) {
+        console.log('sendPasswordRecoveryMessage error', error)
+      }
+    }
+  },
+
+  async updatePassword(newPassword: string, recoveryCode: string): Promise<boolean> {
+    const result: any = await jwtService.verifyPasswordRecoveryCode(recoveryCode)
+    if (!result) return false
+
+    const newPasswordHash = await bcrypt.hash(newPassword, 10)
+
+    return await usersRepository.changeUserPassword(result.userId, newPasswordHash)
+  },
+
   async refreshTokens(userId: string, deviceId: string): Promise<{accessToken: string, refreshToken: string}> {
     const accessToken = await jwtService.createAccessJWT(userId)
     const refreshToken = await jwtService.createRefreshJWT(userId, deviceId)

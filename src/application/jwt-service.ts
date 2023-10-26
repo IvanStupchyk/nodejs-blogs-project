@@ -14,6 +14,22 @@ export const jwtService = {
     )
   },
 
+  async createPasswordRecoveryJWT(userId: string) {
+    return jwt.sign(
+      {userId},
+      settings.JWT_PASSWORD_RECOVERY,
+      {expiresIn: '2h'}
+    )
+  },
+
+  async verifyPasswordRecoveryCode(token: string) {
+    try {
+      return jwt.verify(token, settings.JWT_PASSWORD_RECOVERY)
+    } catch (error) {
+      return null
+    }
+  },
+
   async verifyRefreshToken(token: string) {
     try {
       return jwt.verify(token, settings.JWT_REFRESH_SECRET)

@@ -40,6 +40,15 @@ export const usersRepository = {
     return result.modifiedCount === 1
   },
 
+  async changeUserPassword(userId: string, passwordHash: string): Promise<boolean> {
+    const result = await usersCollections.updateOne(
+      {id: userId},
+      {$set: {'accountData.passwordHash': passwordHash}}
+    )
+
+    return result.modifiedCount === 1
+  },
+
   async updateConfirmationCodeAndExpirationTime(id: string, newExpirationDate: Date, newCode: string): Promise<boolean> {
     const result = await usersCollections.updateOne(
       {id},
