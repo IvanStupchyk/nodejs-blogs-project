@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import {errorsConstants} from "../constants/errorsContants"
-import {blogsCollections} from "../db/db"
+import {BlogModel} from "../db/db"
 import {authBasicValidationMiddleware} from "./authBasicValidationMiddleware";
 
 export const postValidationMiddleware = [
@@ -27,7 +27,7 @@ export const postValidationMiddleware = [
   body('blogId')
     .isString()
     .custom(async value => {
-      const foundBlog = await blogsCollections.findOne({id: value})
+      const foundBlog = await BlogModel.findOne({id: value}).exec()
 
       if (foundBlog === null) {
         throw new Error(errorsConstants.post.blogId)

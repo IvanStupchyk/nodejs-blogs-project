@@ -1,4 +1,4 @@
-import {usersCollections} from "../db/db"
+import {UserModel} from "../db/db"
 import {UsersType, UserType} from "../types/generalTypes";
 import {
   createDefaultSortedParams,
@@ -46,14 +46,14 @@ export const usersQueryRepository = {
     const sortField = `accountData.${sortBy}`
 
     //@ts-ignore
-    const users = await usersCollections
-      .find(findCondition, { projection: {_id: 0}})
+    const users: Array<UserType> = await UserModel
+      .find(findCondition, {_id: 0, __v: 0})
       .sort({[sortField]: sortDirection === 'asc' ? 1 : -1})
       .skip(skipSize)
       .limit(pageSize)
-      .toArray()
+      .lean()
 
-    const usersCount = await usersCollections.countDocuments(findCondition)
+    const usersCount = await UserModel.countDocuments(findCondition)
 
     const pagesCount = getPagesCount(usersCount , pageSize)
 
@@ -74,7 +74,7 @@ export const usersQueryRepository = {
   },
 
   async findUserById(id: string): Promise<ViewUserModel | null> {
-    const user = await usersCollections.findOne({id}, { projection: {_id: 0}})
+    const user = await UserModel.findOne({id}, {_id: 0, __v: 0}).exec()
 
     return user ? {
       id: user.id,
@@ -85,7 +85,7 @@ export const usersQueryRepository = {
   },
 
   async fetchAllUserData(id: string): Promise<UserType | null> {
-    const user = await usersCollections.findOne({id}, { projection: {_id: 0}})
+    const user = await UserModel.findOne({id}, {_id: 0, __v: 0}).exec()
 
     return user ? {...user} : null
   }

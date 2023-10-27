@@ -1,14 +1,23 @@
-import {apiRequestsCountCollections} from "../db/db"
+import {ApiRequestModel} from "../db/db"
 import {APIRequestsCountType} from "../types/generalTypes";
 
 export const apiRequestRepository = {
   async addAPIRequest(newRequest: APIRequestsCountType): Promise<boolean> {
-    return !!await apiRequestsCountCollections.insertOne({...newRequest})
+    const apiRequestsCountInstance = new ApiRequestModel()
+
+    apiRequestsCountInstance.ip = newRequest.ip
+    apiRequestsCountInstance.URL = newRequest.URL
+    apiRequestsCountInstance.date = newRequest.date
+
+    await apiRequestsCountInstance.save()
+
+    return true
   },
 
   async getCountApiRequestToOneEndpoint(URL: string, ip: string, date: Date): Promise<number> {
-    return await apiRequestsCountCollections.countDocuments(
-      {URL, ip, date: {$gte: date}}
-    )
+    const blogsCount = await ApiRequestModel
+      .countDocuments({URL, ip, date: {$gte: date}})
+
+    return blogsCount
   }
 }

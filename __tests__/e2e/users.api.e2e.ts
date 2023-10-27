@@ -2,12 +2,13 @@ import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
 import {HTTP_STATUSES} from "../../src/utils";
 import {errorsConstants} from "../../src/constants/errorsContants";
-import {client} from "../../src/db/db";
+import {mongooseUri} from "../../src/db/db";
 import {mockBlogs, mockUsers} from "../../src/constants/blanks";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {LoginUserModel} from "../../src/features/auth/models/LoginUserModel";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
+import mongoose from "mongoose";
 
 const getRequest = () => {
   return request(app)
@@ -26,8 +27,12 @@ describe('tests for /users and /auth', () => {
     email: 'nickNick@gmail.com'
   }
   beforeAll( async () => {
-    await client.connect()
+    await mongoose.connect(mongooseUri)
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
+  })
+
+  afterAll(async () => {
+    await mongoose.connection.close()
   })
 
   let newUsers: Array<ViewUserModel> = []
@@ -234,9 +239,5 @@ describe('tests for /users and /auth', () => {
         totalCount: filteredUsers.length,
         items: filteredUsers
       })
-  })
-
-  afterAll(async () => {
-    await client.close()
   })
 })

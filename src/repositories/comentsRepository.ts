@@ -1,32 +1,40 @@
-import {commentsCollections} from "../db/db"
+import {CommentModel} from "../db/db"
 import {CommentType} from "../types/generalTypes";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 
 export const commentsRepository = {
   async createComment(comment: CommentType): Promise<CommentViewModel> {
-    await commentsCollections.insertOne({...comment})
+    const commentInstance = new CommentModel()
+
+    commentInstance.id = comment.id
+    commentInstance.content = comment.content
+    commentInstance.postId = comment.postId
+    commentInstance.commentatorInfo = comment.commentatorInfo
+    commentInstance.createdAt = comment.createdAt
+
+    await commentInstance.save()
 
     return {
-      id: comment.id,
-      content: comment.content,
+      id: commentInstance.id,
+      content: commentInstance.content,
       commentatorInfo: {
-        userId: comment.commentatorInfo.userId,
-        userLogin: comment.commentatorInfo.userLogin
+        userId: commentInstance.commentatorInfo.userId,
+        userLogin: commentInstance.commentatorInfo.userLogin
       },
-      createdAt: comment.createdAt
+      createdAt: commentInstance.createdAt
     }
   },
 
   async updateComment(content: string, id: string): Promise<boolean> {
-    const result = await commentsCollections
-      .updateOne({id}, {$set: {content}})
+    const result = await CommentModel
+      .updateOne({id}, {$set: {content}}).exec()
 
     return result.matchedCount === 1
   },
 
   async deleteComment(id: string): Promise<boolean> {
-    const result = await commentsCollections
-      .deleteOne({id})
+    const result = await CommentModel
+      .deleteOne({id}).exec()
 
     return result.deletedCount === 1
   }

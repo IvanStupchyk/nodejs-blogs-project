@@ -81,7 +81,7 @@ export type AccountDataType = {
   createdAt: string
 }
 
-type EmailConfirmationType = {
+export type EmailConfirmationType = {
   confirmationCode: string,
   expirationDate: Date,
   isConfirmed: boolean

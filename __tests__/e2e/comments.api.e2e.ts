@@ -1,7 +1,7 @@
 import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
 import {HTTP_STATUSES} from "../../src/utils";
-import {client} from "../../src/db/db";
+import {mongooseUri} from "../../src/db/db";
 import {BlogType, CommentType, PostType} from "../../src/types/generalTypes";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
@@ -13,6 +13,7 @@ import {commentsTestManager} from "../utils/commentsTestManager";
 import {CommentViewModel} from "../../src/features/comments/models/CommentViewModel";
 import {UpdateCommentModel} from "../../src/features/comments/models/UpdateCommentModel";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
+import mongoose from "mongoose";
 
 const getRequest = () => {
   return request(app)
@@ -34,12 +35,12 @@ describe('tests for /comments and posts/:id/comments', () => {
   }
 
   beforeAll( async () => {
-    await client.connect()
+    await mongoose.connect(mongooseUri)
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
   })
 
   afterAll(async () => {
-    await client.close()
+    await mongoose.connection.close()
   })
 
   let newPost: PostType
@@ -130,7 +131,7 @@ describe('tests for /comments and posts/:id/comments', () => {
       .createComment(validCommentData, '12', accessToken, HTTP_STATUSES.NOT_FOUND_404)
   })
 
-  it('should create a new comment for non-existent post', async () => {
+  it('should create a new comment for existing post', async () => {
     const {createdComment} = await commentsTestManager.createComment(
       validCommentData,
       newPost.id,

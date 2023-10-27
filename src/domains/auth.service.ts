@@ -161,7 +161,7 @@ export const authService = {
     const newDevice: RefreshTokenDeviceType = {
       id: uuidv4(),
       ip: req.headers['x-forwarded-for'] as string || (req.socket.remoteAddress ?? ''),
-      title: req.headers["user-agent"] ?? '',
+      title: req.headers["user-agent"] ?? 'unknown',
       lastActiveDate: new Date(),
       expirationDate: new Date(),
       deviceId,

@@ -1,27 +1,36 @@
-import {blogsCollections, postsCollections} from "../db/db"
-import {PostType} from "../types/generalTypes";
+import {BlogModel, PostModel} from "../db/db"
+import {BlogType, PostType} from "../types/generalTypes";
 
 export const postsRepository = {
-
   async createPost(
     newPost: PostType,
     blogId: string
   ): Promise<PostType> {
-    const linkedBlog = await blogsCollections.findOne({id: blogId})
+    const linkedBlog: BlogType | null = await BlogModel
+      .findOne({id: blogId}, {_id: 0, __v: 0})
+      .lean()
 
-    const newPostWithBlogName: PostType = {
-      id: newPost.id,
-      title: newPost.title,
-      content: newPost.content,
-      shortDescription: newPost.shortDescription,
-      blogId: newPost.blogId,
-      createdAt: newPost.createdAt,
-      blogName: linkedBlog?.name ?? ''
+    const postInstance = new PostModel()
+
+    postInstance.id = newPost.id
+    postInstance.title = newPost.title
+    postInstance.content = newPost.content
+    postInstance.shortDescription = newPost.shortDescription
+    postInstance.blogId = newPost.blogId
+    postInstance.createdAt = newPost.createdAt
+    postInstance.blogName = linkedBlog?.name ?? ''
+
+    await postInstance.save()
+
+    return {
+      id: postInstance.id,
+      title: postInstance.title,
+      content: postInstance.content,
+      shortDescription: postInstance.shortDescription,
+      blogId: postInstance.blogId,
+      createdAt: postInstance.createdAt,
+      blogName: postInstance.blogName,
     }
-
-    await postsCollections.insertOne({...newPostWithBlogName})
-
-    return {...newPostWithBlogName}
   },
 
   async updatePostById(
@@ -31,9 +40,11 @@ export const postsRepository = {
     shortDescription: string,
     blogId: string
   ): Promise<boolean> {
-    const linkedBlog = await blogsCollections.findOne({id: blogId})
+    const linkedBlog: BlogType | null = await BlogModel
+      .findOne({id: blogId}, {_id: 0, __v: 0})
+      .lean()
 
-    const result = await postsCollections.updateOne({id}, {
+    const result = await PostModel.findOneAndUpdate({id}, {
       $set: {
         title,
         content,
@@ -43,11 +54,11 @@ export const postsRepository = {
       }
     })
 
-    return result.matchedCount === 1
+    return !!result
   },
 
   async deletePost(id: string): Promise<boolean> {
-    const deletedPost = await postsCollections.deleteOne({id})
+    const deletedPost = await PostModel.deleteOne({id}).exec()
 
     return deletedPost.deletedCount === 1
   }

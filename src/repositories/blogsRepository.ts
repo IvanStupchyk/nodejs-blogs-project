@@ -1,9 +1,18 @@
-import {blogsCollections} from "../db/db"
+import {BlogModel} from "../db/db"
 import {BlogType} from "../types/generalTypes";
 
 export const blogsRepository = {
   async createBlog(newBlog: BlogType): Promise<BlogType> {
-    await blogsCollections.insertOne({...newBlog})
+    const blogInstance = new BlogModel()
+
+    blogInstance.id = newBlog.id
+    blogInstance.name = newBlog.name
+    blogInstance.description = newBlog.description
+    blogInstance.websiteUrl = newBlog.websiteUrl
+    blogInstance.createdAt = newBlog.createdAt
+    blogInstance.isMembership = newBlog.isMembership
+
+    await blogInstance.save()
 
     return {...newBlog}
   },
@@ -14,7 +23,7 @@ export const blogsRepository = {
     description: string,
     websiteUrl: string
   ): Promise<boolean> {
-    const result = await blogsCollections.updateOne({id}, {
+    const result = await BlogModel.findOneAndUpdate({id}, {
       $set: {
         name,
         description,
@@ -22,11 +31,11 @@ export const blogsRepository = {
       }
     })
 
-    return result.matchedCount === 1
+    return !!result
   },
 
   async deleteBlog(id: string): Promise<boolean> {
-    const result = await blogsCollections.deleteOne({id})
+    const result = await BlogModel.deleteOne({id}).exec()
 
     return result.deletedCount === 1
   }
