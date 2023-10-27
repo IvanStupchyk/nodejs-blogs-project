@@ -1,33 +1,31 @@
-import {MongoClient} from "mongodb";
 import dotenv from "dotenv";
+import * as mongoose from 'mongoose'
 import {
-  BlogType,
-  CommentType,
-  PostType,
-  APIRequestsCountType,
-  UserType,
-  RefreshTokenDeviceType
-} from "../types/generalTypes";
+  apiRequestSchema,
+  blogSchema,
+  commentSchema,
+  postSchema,
+  refreshTokenDeviceSchema,
+  userSchema
+} from "./schemas/schemas";
+
 dotenv.config()
 
-const mongoUri = process.env.DATABASE_URI ?? ''
+export const mongooseUri = process.env.DATABASE_MONGOOSE_URI ?? ''
 
-export const client = new MongoClient(mongoUri)
-export const blogsCollections = client.db().collection<BlogType>('blogs')
-export const postsCollections = client.db().collection<PostType>('posts')
-export const usersCollections = client.db().collection<UserType>('users')
-export const commentsCollections = client.db().collection<CommentType>('comments')
-export const refreshTokenDevicesCollections = client.db().collection<RefreshTokenDeviceType>('devices')
-export const apiRequestsCountCollections = client.db().collection<APIRequestsCountType>('requests')
+export const BlogModel = mongoose.model('blogs', blogSchema)
+export const PostModel = mongoose.model('posts', postSchema)
+export const UserModel = mongoose.model('users', userSchema)
+export const CommentModel = mongoose.model('comments', commentSchema)
+export const DeviceModel = mongoose.model('devices', refreshTokenDeviceSchema)
+export const ApiRequestModel = mongoose.model('requests', apiRequestSchema)
 
 export async function runDb () {
   try {
-    await client.connect()
-
-    await client.db().command({ ping: 1})
+    await mongoose.connect(mongooseUri)
     console.log('Connected successfully to mongo sever')
   } catch {
     console.log('Can\'t connect to db')
-    await client.close()
+    await mongoose.disconnect()
   }
 }

@@ -1,4 +1,4 @@
-import {blogsCollections} from "../db/db"
+import {BlogModel} from "../db/db"
 import {BlogsType, BlogType} from "../types/generalTypes";
 import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {SortOrder} from "../constants/sortOrder";
@@ -27,15 +27,14 @@ export const blogsQueryRepository = {
       ? { name: {$regex: searchNameTerm, $options: 'i'} }
       : {}
 
-    const blogs = await blogsCollections
-      .find(findCondition, { projection: {_id: 0} })
+    const blogsMongoose = await BlogModel
+      .find(findCondition, {_id: 0, __v: 0})
       .sort({[sortBy]: sortDirection === SortOrder.asc ? 1 : -1})
       .skip(skipSize)
       .limit(pageSize)
-      .toArray()
+      .exec()
 
-    const blogsCount = await blogsCollections.countDocuments(findCondition)
-
+    const blogsCount = await BlogModel.countDocuments(findCondition)
     const pagesCount = getPagesCount(blogsCount , pageSize)
 
     return {
@@ -43,11 +42,11 @@ export const blogsQueryRepository = {
       page: pageNumber,
       pageSize,
       totalCount: blogsCount,
-      items: [...blogs]
+      items: [...blogsMongoose]
     }
   },
 
   async findBlogById(id: string): Promise<BlogType | null> {
-    return blogsCollections.findOne({id}, { projection: {_id: 0}})
+    return await BlogModel.findOne({id}, {_id: 0, __v: 0}).exec()
   }
 }

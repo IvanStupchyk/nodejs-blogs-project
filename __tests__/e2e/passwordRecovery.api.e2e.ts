@@ -1,13 +1,14 @@
 import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
 import {HTTP_STATUSES} from "../../src/utils";
-import {client} from "../../src/db/db";
+import {mongooseUri} from "../../src/db/db";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 import {UserType} from "../../src/types/generalTypes";
 import {emailManager} from "../../src/managers/emailManager";
 import {jwtService} from "../../src/application/jwt-service";
+import mongoose from "mongoose";
 
 
 const getRequest = () => {
@@ -22,11 +23,15 @@ describe('tests for /auth password recovery', () => {
   }
 
   beforeAll( async () => {
-    await client.connect()
+    await mongoose.connect(mongooseUri)
 
     jest.mock('../../src/managers/emailManager')
 
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
+  })
+
+  afterAll(async () => {
+    await mongoose.connection.close()
   })
 
   let superAdminUser: ViewUserModel
@@ -151,9 +156,5 @@ describe('tests for /auth password recovery', () => {
         password: newPassword
       })
       .expect(HTTP_STATUSES.OK_200)
-  })
-
-  afterAll(async () => {
-    await client.close()
   })
 })

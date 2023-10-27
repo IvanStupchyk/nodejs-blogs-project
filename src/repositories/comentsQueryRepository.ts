@@ -1,5 +1,5 @@
-import {commentsCollections} from "../db/db"
-import {CommentsType} from "../types/generalTypes";
+import {CommentModel} from "../db/db"
+import {CommentsType, CommentType} from "../types/generalTypes";
 import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {mockCommentModel} from "../constants/blanks";
 import {GetSortedCommentsModel} from "../features/comments/models/GetSortedCommentsModel";
@@ -7,7 +7,7 @@ import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 
 export const commentsQueryRepository = {
   async findCommentById(id: string): Promise<CommentViewModel | null> {
-    const foundComment = await commentsCollections.findOne({id}, {projection: {_id: 0}})
+    const foundComment = await CommentModel.findOne({id}, {projection: {_id: 0}}).exec()
 
     return foundComment ?
       {
@@ -36,14 +36,14 @@ export const commentsQueryRepository = {
       model: mockCommentModel
     })
 
-    const comments = await commentsCollections
-      .find({postId}, { projection: {_id: 0}})
+    const comments: Array<CommentType> = await CommentModel
+      .find({postId}, {_id: 0, __v: 0})
       .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
       .skip(skipSize)
       .limit(pageSize)
-      .toArray()
+      .lean()
 
-    const commentsCount = await commentsCollections.countDocuments({postId})
+    const commentsCount = await CommentModel.countDocuments({postId})
 
     const pagesCount = getPagesCount(commentsCount, pageSize)
 

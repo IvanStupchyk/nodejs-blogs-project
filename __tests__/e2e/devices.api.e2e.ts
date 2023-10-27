@@ -1,11 +1,12 @@
 import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
 import {HTTP_STATUSES} from "../../src/utils";
-import {client} from "../../src/db/db";
+import {mongooseUri} from "../../src/db/db";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 import {UserType} from "../../src/types/generalTypes";
+import mongoose from "mongoose";
 const { parse } = require('cookie')
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
@@ -35,11 +36,15 @@ describe('tests for /devices and /auth', () => {
   }
 
   beforeAll( async () => {
-    await client.connect()
+    await mongoose.connect(mongooseUri)
 
     jest.mock('../../src/managers/emailManager')
 
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
+  })
+
+  afterAll(async () => {
+    await mongoose.connection.close()
   })
 
   let simpleUser: UserType
@@ -327,8 +332,4 @@ describe('tests for /devices and /auth', () => {
       })
       .expect(HTTP_STATUSES.TOO_MANY_REQUESTS_429)
   }, 20000)
-
-  afterAll(async () => {
-    await client.close()
-  })
 })

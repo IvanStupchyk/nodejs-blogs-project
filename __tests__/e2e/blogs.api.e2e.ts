@@ -4,11 +4,12 @@ import {HTTP_STATUSES} from "../../src/utils";
 import {CreateBlogModel} from "../../src/features/blogs/models/CreateBlogModel";
 import {blogsTestManager} from "../utils/blogsTestManager";
 import {errorsConstants} from "../../src/constants/errorsContants";
-import {client} from "../../src/db/db";
+import {mongooseUri} from "../../src/db/db";
 import {mockBlogs} from "../../src/constants/blanks";
 import {postsTestManager} from "../utils/postsTestManager";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
 import {BlogType, PostType} from "../../src/types/generalTypes";
+import mongoose from 'mongoose'
 
 const getRequest = () => {
   return request(app)
@@ -35,8 +36,12 @@ describe('tests for /blogs', () => {
   }
 
   beforeAll( async () => {
-    await client.connect()
+    await mongoose.connect(mongooseUri)
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
+  })
+
+  afterAll(async () => {
+    await mongoose.connection.close()
   })
 
   let newBlogs: Array<BlogType> = []
@@ -286,9 +291,5 @@ describe('tests for /blogs', () => {
         totalCount: filteredBlogs.length,
         items: filteredBlogs
       })
-  })
-
-  afterAll(async () => {
-    await client.close()
   })
 })

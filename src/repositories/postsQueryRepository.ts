@@ -1,4 +1,4 @@
-import {postsCollections} from "../db/db"
+import {PostModel} from "../db/db"
 import {PostsType, PostType} from "../types/generalTypes";
 import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {GetSortedPostsModel} from "../features/posts/models/GetSortedPostsModel";
@@ -20,14 +20,14 @@ export const postsQueryRepository = {
       model: mockPostModel
     })
 
-    const posts = await postsCollections
-      .find({}, { projection: {_id: 0}})
+    const posts = await PostModel
+      .find({}, {_id: 0, __v: 0})
       .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
       .skip(skipSize)
       .limit(pageSize)
-      .toArray()
+      .lean()
 
-    const postsCount = await postsCollections.countDocuments()
+    const postsCount = await PostModel.countDocuments()
 
     const pagesCount = getPagesCount(postsCount, pageSize)
 
@@ -41,7 +41,7 @@ export const postsQueryRepository = {
   },
 
   async findPostById(id: string): Promise<PostType | null> {
-    return postsCollections.findOne({id}, { projection: {_id: 0}})
+    return await PostModel.findOne({id}, {_id: 0, __v: 0}).exec()
   },
 
   async findPostsByIdForSpecificBlog(params: GetSortedPostsModel, id: string): Promise<PostsType | null> {
@@ -59,14 +59,14 @@ export const postsQueryRepository = {
       model: mockPostModel
     })
 
-    const posts = await postsCollections
-      .find({blogId: id}, { projection: {_id: 0}})
+    const posts = await PostModel
+      .find({blogId: id}, {_id: 0, __v: 0})
       .sort({[sortBy]: sortDirection === 'asc' ? 1 : -1})
       .skip(skipSize)
       .limit(pageSize)
-      .toArray()
+      .lean()
 
-    const postsCount = await postsCollections.countDocuments({blogId: id})
+    const postsCount = await PostModel.countDocuments({blogId: id})
 
     const pagesCount = getPagesCount(postsCount , pageSize)
 

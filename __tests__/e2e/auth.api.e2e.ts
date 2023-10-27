@@ -2,13 +2,14 @@ import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
 import {HTTP_STATUSES} from "../../src/utils";
 import {errorsConstants} from "../../src/constants/errorsContants";
-import {client} from "../../src/db/db";
+import {mongooseUri} from "../../src/db/db";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 import {UserType} from "../../src/types/generalTypes";
 import {emailManager} from "../../src/managers/emailManager";
 import {usersRepository} from "../../src/repositories/usersRepository";
+import mongoose from "mongoose";
 const { parse } = require('cookie')
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
@@ -37,11 +38,15 @@ describe('tests for /auth', () => {
   }
 
   beforeAll( async () => {
-    await client.connect()
+    await mongoose.connect(mongooseUri)
 
     jest.mock('../../src/managers/emailManager')
 
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
+  })
+
+  afterAll(async () => {
+    await mongoose.connection.close()
   })
 
   let simpleUser: UserType
@@ -112,8 +117,22 @@ describe('tests for /auth', () => {
 
     const newUser = await usersRepository.findUserByEmail(secondUserData.email)
     if (newUser) simpleUser = newUser
+
     expect(emailManager.sendEmailConfirmationMessage).toHaveBeenCalledTimes(1)
-    expect(emailManager.sendEmailConfirmationMessage).toHaveBeenCalledWith(newUser)
+    expect(emailManager.sendEmailConfirmationMessage).toHaveBeenCalledWith({
+      id: newUser?.id,
+      accountData: {
+        login: newUser?.accountData.login,
+        email: newUser?.accountData.email,
+        passwordHash: newUser?.accountData.passwordHash,
+        createdAt: newUser?.accountData.createdAt
+      },
+      emailConfirmation: {
+        confirmationCode: newUser?.emailConfirmation.confirmationCode,
+        expirationDate: newUser?.emailConfirmation.expirationDate,
+        isConfirmed: newUser?.emailConfirmation.isConfirmed
+      }
+    })
   })
 
   it('should not resend confirmation code to email if email is incorrect', async () => {
@@ -363,16 +382,11 @@ describe('tests for /auth', () => {
     expect(nextRefreshToken).not.toBe(refreshToken)
   }, 10000)
 
-
   it('should log out user with correct token', async () => {
     await sleep(1.5)
     await getRequest()
       .post(`${RouterPaths.auth}/logout`)
       .set('Cookie', `refreshToken=${nextRefreshToken}`)
       .expect(HTTP_STATUSES.NO_CONTENT_204)
-  })
-
-  afterAll(async () => {
-    await client.close()
   })
 })
