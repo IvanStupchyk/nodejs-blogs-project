@@ -10,6 +10,8 @@ import {UpdateCommentModel} from "./models/UpdateCommentModel";
 import {commentsService} from "../../domains/comments.service";
 import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
 import {DeleteCommentModel} from "./models/DeleteCommentModel";
+import {UpdateLikesModel} from "./models/UpdateLikesModel";
+import {commentLikesValidationMiddleware} from "../../middlewares/commentLikesValidationMiddleware";
 
 export const commentsRouter = () => {
   const router = express.Router()
@@ -44,6 +46,20 @@ export const commentsRouter = () => {
           : HTTP_STATUSES.NOT_FOUND_404
       )
   })
+
+  router.put(
+    '/:id/like-status',
+    ...commentLikesValidationMiddleware,
+    inputValidationErrorsMiddleware,
+    async (req: RequestWithParamsAndBody<URIParamsCommentModel, UpdateLikesModel>, res: Response) => {
+      const isLikesCountChanges = await commentsService.changeLikesCount(req.params.id, req.body.likeStatus)
+
+      res.sendStatus(
+        isLikesCountChanges
+          ? HTTP_STATUSES.NO_CONTENT_204
+          : HTTP_STATUSES.NOT_FOUND_404
+      )
+    })
 
   router.delete(
     '/:id',

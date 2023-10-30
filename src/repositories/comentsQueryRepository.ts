@@ -17,6 +17,11 @@ export const commentsQueryRepository = {
           userId: foundComment.commentatorInfo.userId,
           userLogin: foundComment.commentatorInfo.userLogin
         },
+        likesInfo: {
+          likesCount: foundComment.likesInfo.likesCount,
+          dislikesCount: foundComment.likesInfo.dislikesCount,
+          myStatus: foundComment.likesInfo.myStatus
+        },
         createdAt: foundComment.createdAt
       } : null
   },
@@ -59,6 +64,11 @@ export const commentsQueryRepository = {
           commentatorInfo: {
             userId: c.commentatorInfo.userId,
             userLogin: c.commentatorInfo.userLogin
+          },
+          likesInfo: {
+            likesCount: c.likesInfo.likesCount,
+            dislikesCount: c.likesInfo.dislikesCount,
+            myStatus: c.likesInfo.myStatus
           },
           createdAt: c.createdAt
         }

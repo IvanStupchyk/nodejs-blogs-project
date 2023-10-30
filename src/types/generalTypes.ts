@@ -25,11 +25,24 @@ export type CommentatorInfoType = {
   userLogin: string
 }
 
+export enum CommentStatus {
+  None = 'None',
+  Like = 'Like',
+  Dislike = 'Dislike'
+}
+
+export type CommentLikesInfoType = {
+  likesCount: number,
+  dislikesCount: number,
+  myStatus: CommentStatus
+}
+
 export type CommentType = {
   id: string,
   content: string
   postId: string
   commentatorInfo: CommentatorInfoType
+  likesInfo: CommentLikesInfoType
   createdAt: string
 }
 
