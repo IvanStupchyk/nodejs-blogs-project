@@ -3,14 +3,14 @@ import {settings} from "../settings";
 
 export const jwtService = {
   async createAccessJWT(userId: string) {
-    return jwt.sign({userId}, settings.JWT_ACCESS_SECRET, {expiresIn: 10})
+    return jwt.sign({userId}, settings.JWT_ACCESS_SECRET, {expiresIn: 500})
   },
 
   async createRefreshJWT(userId: string, deviceId: string) {
     return jwt.sign(
       {userId, deviceId},
       settings.JWT_REFRESH_SECRET,
-      {expiresIn: 20}
+      {expiresIn: 1000}
     )
   },
 

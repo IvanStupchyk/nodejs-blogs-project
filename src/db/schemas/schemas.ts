@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {
   AccountDataType, APIRequestsCountType,
   BlogType,
-  CommentatorInfoType, CommentType,
+  CommentatorInfoType, CommentLikesInfoType, CommentType,
   EmailConfirmationType,
   PostType, RefreshTokenDeviceType,
   UserType
@@ -57,12 +57,22 @@ const commentatorInfoSchema = new mongoose.Schema<CommentatorInfoType>({
   userLogin: {type: String, required: true}
 })
 
+const commentLikesInfoSchema = new mongoose.Schema<CommentLikesInfoType>({
+  likesCount: {type: Number, required: true},
+  dislikesCount: {type: Number, required: true},
+  myStatus: {type: String, required: true}
+})
+
 export const commentSchema = new mongoose.Schema<CommentType>({
   id: {type: String, required: true},
   content: {type: String, required: true},
   postId: {type: String, required: true},
   commentatorInfo: {
     type: commentatorInfoSchema,
+    required: true
+  },
+  likesInfo: {
+    type: commentLikesInfoSchema,
     required: true
   },
   createdAt: {type: String, required: true}

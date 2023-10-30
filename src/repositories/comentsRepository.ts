@@ -1,5 +1,5 @@
 import {CommentModel} from "../db/db"
-import {CommentType} from "../types/generalTypes";
+import {CommentLikesInfoType, CommentType} from "../types/generalTypes";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 
 export const commentsRepository = {
@@ -10,6 +10,7 @@ export const commentsRepository = {
     commentInstance.content = comment.content
     commentInstance.postId = comment.postId
     commentInstance.commentatorInfo = comment.commentatorInfo
+    commentInstance.likesInfo = comment.likesInfo
     commentInstance.createdAt = comment.createdAt
 
     await commentInstance.save()
@@ -21,6 +22,11 @@ export const commentsRepository = {
         userId: commentInstance.commentatorInfo.userId,
         userLogin: commentInstance.commentatorInfo.userLogin
       },
+      likesInfo: {
+        likesCount: commentInstance.likesInfo.likesCount,
+        dislikesCount: commentInstance.likesInfo.dislikesCount,
+        myStatus: commentInstance.likesInfo.myStatus
+      },
       createdAt: commentInstance.createdAt
     }
   },
@@ -28,6 +34,16 @@ export const commentsRepository = {
   async updateComment(content: string, id: string): Promise<boolean> {
     const result = await CommentModel
       .updateOne({id}, {$set: {content}}).exec()
+
+    return result.matchedCount === 1
+  },
+
+  async changeLikesCount(id: string, likesInfo: CommentLikesInfoType): Promise<boolean> {
+    const result = await CommentModel
+      .updateOne(
+        {id},
+        {$set: {likesInfo}})
+      .exec()
 
     return result.matchedCount === 1
   },
