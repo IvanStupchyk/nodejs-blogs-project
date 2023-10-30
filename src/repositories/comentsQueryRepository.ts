@@ -1,12 +1,12 @@
 import {CommentModel} from "../db/db"
-import {CommentsType, CommentType} from "../types/generalTypes";
+import {CommentStatus, CommentsType, CommentType} from "../types/generalTypes";
 import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {mockCommentModel} from "../constants/blanks";
 import {GetSortedCommentsModel} from "../features/comments/models/GetSortedCommentsModel";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 
 export const commentsQueryRepository = {
-  async findCommentById(id: string): Promise<CommentViewModel | null> {
+  async findCommentById(id: string, likedStatus: CommentStatus = CommentStatus.None): Promise<CommentViewModel | null> {
     const foundComment = await CommentModel.findOne({id}, {projection: {_id: 0}}).exec()
 
     return foundComment ?
@@ -20,7 +20,7 @@ export const commentsQueryRepository = {
         likesInfo: {
           likesCount: foundComment.likesInfo.likesCount,
           dislikesCount: foundComment.likesInfo.dislikesCount,
-          myStatus: foundComment.likesInfo.myStatus
+          myStatus: likedStatus
         },
         createdAt: foundComment.createdAt
       } : null
@@ -68,7 +68,7 @@ export const commentsQueryRepository = {
           likesInfo: {
             likesCount: c.likesInfo.likesCount,
             dislikesCount: c.likesInfo.dislikesCount,
-            myStatus: c.likesInfo.myStatus
+            myStatus: CommentStatus.Like
           },
           createdAt: c.createdAt
         }

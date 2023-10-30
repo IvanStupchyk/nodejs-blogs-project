@@ -1,5 +1,5 @@
 import {UserModel} from "../db/db"
-import {UsersType, UserType} from "../types/generalTypes";
+import {UserCommentLikesType, UsersType, UserType} from "../types/generalTypes";
 import {
   createDefaultSortedParams,
   getPagesCount
@@ -82,6 +82,12 @@ export const usersQueryRepository = {
       email: user.accountData.email,
       createdAt: user.accountData.createdAt
     } : null
+  },
+
+  async findUserCommentLikesById(id: string): Promise<Array<UserCommentLikesType> | null> {
+    const user = await UserModel.findOne({id}).exec()
+
+    return user ? [...user.commentsLikes] : null
   },
 
   async fetchAllUserData(id: string): Promise<UserType | null> {

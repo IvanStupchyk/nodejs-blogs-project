@@ -4,7 +4,7 @@ import {
   BlogType,
   CommentatorInfoType, CommentLikesInfoType, CommentType,
   EmailConfirmationType,
-  PostType, RefreshTokenDeviceType,
+  PostType, RefreshTokenDeviceType, UserCommentLikesType,
   UserType
 } from "../../types/generalTypes";
 
@@ -40,6 +40,11 @@ const emailConfirmationSchema = new mongoose.Schema<EmailConfirmationType>({
   isConfirmed: {type: Boolean, required: true}
 })
 
+const userCommentLikesSchema = new mongoose.Schema<UserCommentLikesType>({
+  commentId: {type: String, required: true},
+  myStatus: {type: String, required: true}
+})
+
 export const userSchema = new mongoose.Schema<UserType>({
   id: {type: String, required: true},
   accountData: {
@@ -49,7 +54,8 @@ export const userSchema = new mongoose.Schema<UserType>({
   emailConfirmation: {
     type: emailConfirmationSchema,
     required: true
-  }
+  },
+  commentsLikes: [userCommentLikesSchema]
 })
 
 const commentatorInfoSchema = new mongoose.Schema<CommentatorInfoType>({
@@ -59,8 +65,7 @@ const commentatorInfoSchema = new mongoose.Schema<CommentatorInfoType>({
 
 const commentLikesInfoSchema = new mongoose.Schema<CommentLikesInfoType>({
   likesCount: {type: Number, required: true},
-  dislikesCount: {type: Number, required: true},
-  myStatus: {type: String, required: true}
+  dislikesCount: {type: Number, required: true}
 })
 
 export const commentSchema = new mongoose.Schema<CommentType>({

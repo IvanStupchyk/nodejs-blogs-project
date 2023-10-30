@@ -45,5 +45,14 @@ export const jwtService = {
     } catch (error) {
       return null
     }
+  },
+
+  async getUserIdByRefreshToken(token: string) {
+    try {
+      const result: any = jwt.verify(token, settings.JWT_REFRESH_SECRET)
+      return result.userId
+    } catch (error) {
+      return null
+    }
   }
 }
