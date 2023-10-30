@@ -19,7 +19,7 @@ export const commentsRouter = () => {
   router.get(
     '/:id',
     async (req: RequestWithParams<GetCommentModel>, res: Response) => {
-    const foundComment = await commentsQueryRepository.findCommentById(req.params.id)
+    const foundComment = await commentsService.findCommentById(req.params.id, req.cookies.refreshToken)
 
     !foundComment
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

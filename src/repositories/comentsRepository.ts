@@ -1,5 +1,5 @@
 import {CommentModel} from "../db/db"
-import {CommentLikesInfoType, CommentType} from "../types/generalTypes";
+import {CommentLikesInfoType, CommentStatus, CommentType} from "../types/generalTypes";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 
 export const commentsRepository = {
@@ -25,7 +25,7 @@ export const commentsRepository = {
       likesInfo: {
         likesCount: commentInstance.likesInfo.likesCount,
         dislikesCount: commentInstance.likesInfo.dislikesCount,
-        myStatus: commentInstance.likesInfo.myStatus
+        myStatus: CommentStatus.None
       },
       createdAt: commentInstance.createdAt
     }

@@ -66,7 +66,8 @@ export const authService = {
           minutes: 30
         }),
         isConfirmed: false
-      }
+      },
+      commentsLikes: []
     }
 
     try {

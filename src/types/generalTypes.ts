@@ -31,7 +31,17 @@ export enum CommentStatus {
   Dislike = 'Dislike'
 }
 
+export type UserCommentLikesType = {
+  commentId: string,
+  myStatus: CommentStatus
+}
+
 export type CommentLikesInfoType = {
+  likesCount: number,
+  dislikesCount: number
+}
+
+export type CommentLikesViewType = {
   likesCount: number,
   dislikesCount: number,
   myStatus: CommentStatus
@@ -104,6 +114,7 @@ export type UserType = {
   id: string
   accountData: AccountDataType
   emailConfirmation: EmailConfirmationType
+  commentsLikes: Array<UserCommentLikesType>
 }
 
 export type PostsType = {
