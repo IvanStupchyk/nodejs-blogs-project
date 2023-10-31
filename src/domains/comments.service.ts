@@ -47,7 +47,7 @@ export const commentsService = {
   ): Promise<CommentViewModel | null> {
     const userId = await jwtService.getUserIdByRefreshToken(refreshToken)
 
-    let finalCommentStatus = CommentStatus.Dislike
+    let finalCommentStatus = CommentStatus.None
 
     if (userId) {
       const userCommentsLikes = await usersQueryRepository.findUserCommentLikesById(userId)
