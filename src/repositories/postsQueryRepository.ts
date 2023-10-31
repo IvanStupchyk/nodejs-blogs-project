@@ -3,6 +3,7 @@ import {PostsType, PostType} from "../types/generalTypes";
 import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {GetSortedPostsModel} from "../features/posts/models/GetSortedPostsModel";
 import {mockPostModel} from "../constants/blanks";
+import {ObjectId} from "mongodb";
 
 export const postsQueryRepository = {
   async getSortedPosts(params: GetSortedPostsModel): Promise<PostsType> {
@@ -40,7 +41,7 @@ export const postsQueryRepository = {
     }
   },
 
-  async findPostById(id: string): Promise<PostType | null> {
+  async findPostById(id: ObjectId): Promise<PostType | null> {
     return await PostModel.findOne({id}, {_id: 0, __v: 0}).exec()
   },
 

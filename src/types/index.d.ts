@@ -1,4 +1,5 @@
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
+import {ObjectId} from "mongodb";
 
 declare global {
   namespace Express {
@@ -11,8 +12,8 @@ declare global {
 declare global {
   namespace Express {
     export interface Request {
-      userId: string,
-      deviceId: string
+      userId: ObjectId,
+      deviceId: ObjectId
     }
   }
 }

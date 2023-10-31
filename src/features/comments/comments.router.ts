@@ -1,7 +1,6 @@
 import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 import {RequestWithParams, RequestWithParamsAndBody} from "../../types/types";
-import {commentsQueryRepository} from "../../repositories/comentsQueryRepository";
 import {GetCommentModel} from "./models/GetCommentModel";
 import {commentValidationMiddleware} from "../../middlewares/commentValidationMiddleware";
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
@@ -12,6 +11,7 @@ import {authValidationMiddleware} from "../../middlewares/authValidationMiddlewa
 import {DeleteCommentModel} from "./models/DeleteCommentModel";
 import {UpdateLikesModel} from "./models/UpdateLikesModel";
 import {commentLikesValidationMiddleware} from "../../middlewares/commentLikesValidationMiddleware";
+import {ObjectId} from "mongodb";
 
 export const commentsRouter = () => {
   const router = express.Router()
@@ -31,7 +31,7 @@ export const commentsRouter = () => {
     ...commentValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithParamsAndBody<URIParamsCommentModel, UpdateCommentModel>, res: Response) => {
-      const foundComment = await commentsQueryRepository.findCommentById(req.params.id)
+      const foundComment = await commentsService.findCommentByIdWithoutLikeStatus(req.params.id)
 
       if (foundComment && foundComment.commentatorInfo.userId !== req.user?.id) {
         res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
@@ -52,7 +52,7 @@ export const commentsRouter = () => {
     ...commentLikesValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithParamsAndBody<URIParamsCommentModel, UpdateLikesModel>, res: Response) => {
-      const isLikesCountChanges = await commentsService.changeLikesCount(req.params.id, req.body.likeStatus, req.user!.id)
+      const isLikesCountChanges = await commentsService.changeLikesCount(req.params.id, req.body.likeStatus, new ObjectId(req.user!.id))
 
       res.sendStatus(
         isLikesCountChanges
@@ -65,7 +65,7 @@ export const commentsRouter = () => {
     '/:id',
     authValidationMiddleware,
     async (req: RequestWithParams<DeleteCommentModel>, res: Response) => {
-      const foundComment = await commentsQueryRepository.findCommentById(req.params.id)
+      const foundComment = await commentsService.findCommentByIdWithoutLikeStatus(req.params.id)
 
       if (foundComment && foundComment.commentatorInfo.userId !== req.user?.id) {
         res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)

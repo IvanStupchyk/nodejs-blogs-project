@@ -42,7 +42,8 @@ const emailConfirmationSchema = new mongoose.Schema<EmailConfirmationType>({
 
 const userCommentLikesSchema = new mongoose.Schema<UserCommentLikesType>({
   commentId: {type: String, required: true},
-  myStatus: {type: String, required: true}
+  myStatus: {type: String, required: true},
+  createdAt: {type: String, required: true}
 })
 
 export const userSchema = new mongoose.Schema<UserType>({

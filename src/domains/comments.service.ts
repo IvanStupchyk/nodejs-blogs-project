@@ -1,4 +1,3 @@
-import {v4 as uuidv4} from 'uuid'
 import {CommentStatus, CommentsType, CommentType} from "../types/generalTypes";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 import {commentsRepository} from "../repositories/comentsRepository";
@@ -8,16 +7,17 @@ import {usersQueryRepository} from "../repositories/usersQueryRepository";
 import {usersRepository} from "../repositories/usersRepository";
 import {GetSortedCommentsModel} from "../features/comments/models/GetSortedCommentsModel";
 import {postsQueryRepository} from "../repositories/postsQueryRepository";
+import {ObjectId} from "mongodb";
 
 export const commentsService = {
   async createComment(
     content: string,
-    id: string,
-    userId: string,
+    id: ObjectId,
+    userId: ObjectId,
     userLogin: string
   ): Promise<CommentViewModel> {
     const newComment: CommentType = {
-      id: uuidv4(),
+      id: new ObjectId(),
       content,
       postId: id,
       commentatorInfo: {
@@ -45,6 +45,8 @@ export const commentsService = {
     commentId: string,
     accessTokenHeader: string | undefined
   ): Promise<CommentViewModel | null> {
+    if (!ObjectId.isValid(commentId)) return null
+    const commentObjectId = new ObjectId(commentId)
 
     let userId
     if (accessTokenHeader) {
@@ -59,7 +61,7 @@ export const commentsService = {
 
       if (Array.isArray(userCommentsLikes) && userCommentsLikes.length) {
         const initialCommentData = userCommentsLikes
-          .find(c => c.commentId === commentId)
+          .find(c => new ObjectId(c.commentId).equals(commentObjectId))
 
         if (initialCommentData) {
           finalCommentStatus = initialCommentData.myStatus
@@ -67,15 +69,17 @@ export const commentsService = {
       }
     }
 
-    return await commentsQueryRepository.findCommentById(commentId, finalCommentStatus)
+    return await commentsQueryRepository.findCommentById(commentObjectId, finalCommentStatus)
   },
 
   async changeLikesCount(
     id: string,
     myStatus: string,
-    userId: string
+    userId: ObjectId
   ): Promise<boolean> {
-    const foundComment = await commentsQueryRepository.findCommentById(id)
+    if (!ObjectId.isValid(id)) return false
+    const commentObjectId = new ObjectId(id)
+    const foundComment = await commentsQueryRepository.findCommentById(commentObjectId)
     if (!foundComment) return false
 
     const likesInfo = {...foundComment.likesInfo}
@@ -84,7 +88,7 @@ export const commentsService = {
 
     if (Array.isArray(userCommentsLikes) && userCommentsLikes.length) {
       initialCommentData = userCommentsLikes
-        .find(c => c.commentId === id)
+        .find(c => new ObjectId(c.commentId).equals(commentObjectId))
     }
 
     if (initialCommentData?.myStatus === myStatus) return true
@@ -138,9 +142,9 @@ export const commentsService = {
     }
 
     if (initialCommentData?.myStatus) {
-      await usersRepository.updateExistingUserCommentLike(userId, newStatus, id)
+      await usersRepository.updateExistingUserCommentLike(userId, newStatus, commentObjectId)
     } else {
-      await usersRepository.setNewUserCommentLike(userId, newStatus, id)
+      await usersRepository.setNewUserCommentLike(userId, newStatus, commentObjectId, new Date().toISOString())
     }
 
     return await commentsRepository.changeLikesCount(id, likesInfo)
@@ -151,7 +155,10 @@ export const commentsService = {
     query: GetSortedCommentsModel,
     accessTokenHeader: string | undefined
   ): Promise<CommentsType | boolean>  {
-    const foundPost = await postsQueryRepository.findPostById(id)
+    if (!ObjectId.isValid(id)) return false
+    const postObjectId = new ObjectId(id)
+
+    const foundPost = await postsQueryRepository.findPostById(postObjectId)
     if (!foundPost) return false
 
     let userId
@@ -160,7 +167,12 @@ export const commentsService = {
       userId = await jwtService.getUserIdByAccessToken(accessToken)
     }
 
-    return  await commentsQueryRepository.getSortedComments(query, id, userId)
+    return  await commentsQueryRepository.getSortedComments(query, postObjectId, userId)
+  },
+
+  async findCommentByIdWithoutLikeStatus(id: string): Promise<CommentViewModel | null> {
+    if (!ObjectId.isValid(id)) return null
+    return await commentsQueryRepository.findCommentById(new ObjectId(id))
   },
 
   async deleteComment(commentId: string): Promise<boolean> {

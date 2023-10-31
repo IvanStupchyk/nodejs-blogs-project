@@ -126,7 +126,8 @@ describe('tests for /auth password recovery', () => {
         confirmationCode: 'string',
         expirationDate: new Date(),
         isConfirmed: true
-      }
+      },
+      commentsLikes: []
     }
     const recoveryCode = await jwtService.createPasswordRecoveryJWT(superAdminUser.id)
     const newPassword = '777777'

@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken'
 import {settings} from "../settings";
+import {ObjectId} from "mongodb";
 
 export const jwtService = {
-  async createAccessJWT(userId: string) {
+  async createAccessJWT(userId: ObjectId) {
     return jwt.sign({userId}, settings.JWT_ACCESS_SECRET, {expiresIn: 500})
   },
 
-  async createRefreshJWT(userId: string, deviceId: string) {
+  async createRefreshJWT(userId: ObjectId, deviceId: ObjectId) {
     return jwt.sign(
       {userId, deviceId},
       settings.JWT_REFRESH_SECRET,
@@ -14,7 +15,7 @@ export const jwtService = {
     )
   },
 
-  async createPasswordRecoveryJWT(userId: string) {
+  async createPasswordRecoveryJWT(userId: ObjectId) {
     return jwt.sign(
       {userId},
       settings.JWT_PASSWORD_RECOVERY,

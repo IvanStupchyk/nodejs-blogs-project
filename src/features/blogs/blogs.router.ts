@@ -23,6 +23,7 @@ import {GetSortedPostsModel} from "../posts/models/GetSortedPostsModel";
 import {blogsQueryRepository} from "../../repositories/blogsQueryRepository";
 import {postsQueryRepository} from "../../repositories/postsQueryRepository";
 import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
+import {ObjectId} from "mongodb";
 
 export const getBlogRouter = () => {
   const router = express.Router()
@@ -36,7 +37,7 @@ export const getBlogRouter = () => {
   router.get(
     '/:id',
     async (req: RequestWithParams<GetBlogModel>, res: Response) => {
-    const foundBlog = await blogsQueryRepository.findBlogById(req.params.id)
+    const foundBlog = await blogsService.findBlogById(req.params.id)
 
     !foundBlog
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -47,7 +48,7 @@ export const getBlogRouter = () => {
     req: RequestWithParamsAndQuery<GetBlogModel, GetSortedPostsModel>,
     res: Response
   ) => {
-    const foundBlog = await blogsQueryRepository.findBlogById(req.params.id)
+    const foundBlog = await blogsService.findBlogById(req.params.id)
 
     if (!foundBlog) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -80,14 +81,14 @@ export const getBlogRouter = () => {
       const {title, content, shortDescription} = req.body
       const blogId = req.params.id
 
-      const foundBlog = await blogsQueryRepository.findBlogById(req.params.id)
+      const foundBlog = await blogsService.findBlogById(req.params.id)
 
       if (!foundBlog) {
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         return
       }
 
-      const newPost = await postsService.createPost(title, content, shortDescription, blogId)
+      const newPost = await postsService.createPost(title, content, shortDescription, new ObjectId(blogId))
       res.status(HTTP_STATUSES.CREATED_201).send(newPost)
     })
 

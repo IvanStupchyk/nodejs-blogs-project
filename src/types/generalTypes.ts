@@ -2,9 +2,10 @@ import {SortOrder} from "../constants/sortOrder";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {mockBlogModel, mockCommentModel, mockPostModel, mockUserModel} from "../constants/blanks";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
+import {ObjectId} from "mongodb";
 
 export type BlogType = {
-  id: string,
+  id: ObjectId,
   name: string
   description: string
   websiteUrl: string
@@ -21,7 +22,7 @@ export type BlogsType = {
 }
 
 export type CommentatorInfoType = {
-  userId: string,
+  userId: ObjectId,
   userLogin: string
 }
 
@@ -32,8 +33,9 @@ export enum CommentStatus {
 }
 
 export type UserCommentLikesType = {
-  commentId: string,
-  myStatus: CommentStatus
+  commentId: ObjectId,
+  myStatus: CommentStatus,
+  createdAt: string
 }
 
 export type CommentLikesInfoType = {
@@ -48,29 +50,29 @@ export type CommentLikesViewType = {
 }
 
 export type CommentType = {
-  id: string,
+  id: ObjectId,
   content: string
-  postId: string
+  postId: ObjectId
   commentatorInfo: CommentatorInfoType
   likesInfo: CommentLikesInfoType
   createdAt: string
 }
 
 export type RefreshTokenDeviceType = {
-  id: string,
+  id: ObjectId,
   ip: string,
   title: string
   lastActiveDate: Date
   expirationDate: Date
-  deviceId: string
-  userId: string
+  deviceId: ObjectId
+  userId: ObjectId
 }
 
 export type RefreshTokenDeviceViewType = {
   ip: string,
   title: string
   lastActiveDate: Date
-  deviceId: string
+  deviceId: ObjectId
 }
 
 export type CommentsType = {
@@ -88,11 +90,11 @@ export type APIRequestsCountType = {
 }
 
 export type PostType = {
-  id: string
+  id: ObjectId
   title: string
   shortDescription: string
   content: string
-  blogId: string
+  blogId: ObjectId
   createdAt: string
   blogName: string
 }
@@ -111,7 +113,7 @@ export type EmailConfirmationType = {
 }
 
 export type UserType = {
-  id: string
+  id: ObjectId
   accountData: AccountDataType
   emailConfirmation: EmailConfirmationType
   commentsLikes: Array<UserCommentLikesType>

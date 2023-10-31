@@ -5,7 +5,7 @@ import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
 
 export const postsTestManager = {
   async createPost(
-    data: CreatePostModel,
+    data: any,
     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
     password = 'qwerty'
   ) {
@@ -36,7 +36,7 @@ export const postsTestManager = {
 
   async createPostForSpecifiedBlog(
     data: CreatePostModel,
-    blogId: string,
+    blogId: any,
     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
     password = 'qwerty'
   ) {

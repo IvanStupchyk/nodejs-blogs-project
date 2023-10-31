@@ -1,10 +1,11 @@
 import {BlogModel, PostModel} from "../db/db"
 import {BlogType, PostType} from "../types/generalTypes";
+import {ObjectId} from "mongodb";
 
 export const postsRepository = {
   async createPost(
     newPost: PostType,
-    blogId: string
+    blogId: ObjectId
   ): Promise<PostType> {
     const linkedBlog: BlogType | null = await BlogModel
       .findOne({id: blogId}, {_id: 0, __v: 0})

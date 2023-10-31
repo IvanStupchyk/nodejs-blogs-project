@@ -2,14 +2,15 @@ import {HTTP_STATUSES, HttpStatusType} from "../../src/utils";
 import request from "supertest";
 import {app, RouterPaths} from "../../src/app";
 import {CreateCommentModel} from "../../src/features/comments/models/CreateCommentModel";
+import {ObjectId} from "mongodb";
 
 export const commentsTestManager = {
   async createComment(
     data: CreateCommentModel,
-    postId: string,
+    postId: any,
     token: string,
     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
-    userId: string = '',
+    userId: ObjectId = new ObjectId(),
     userLogin: string = ''
   ) {
     const response = await request(app)
@@ -29,6 +30,11 @@ export const commentsTestManager = {
         commentatorInfo: {
           userId,
           userLogin
+        },
+        likesInfo: {
+          dislikesCount: 0,
+          likesCount: 0,
+          myStatus: 'None'
         },
         createdAt: expect.any(String)
       })

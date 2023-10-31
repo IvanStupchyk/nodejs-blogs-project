@@ -7,6 +7,7 @@ import {
 import {GetSortedUsersModel} from "../features/users/models/GetSortedUsersModel";
 import {mockUserModel} from "../constants/blanks";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
+import {ObjectId} from "mongodb";
 
 export const usersQueryRepository = {
   async getSortedUsers(params: GetSortedUsersModel): Promise<UsersType> {
@@ -73,7 +74,7 @@ export const usersQueryRepository = {
     }
   },
 
-  async findUserById(id: string): Promise<ViewUserModel | null> {
+  async findUserById(id: ObjectId): Promise<ViewUserModel | null> {
     const user = await UserModel.findOne({id}, {_id: 0, __v: 0}).exec()
 
     return user ? {
@@ -84,13 +85,13 @@ export const usersQueryRepository = {
     } : null
   },
 
-  async findUserCommentLikesById(id: string): Promise<Array<UserCommentLikesType> | null> {
+  async findUserCommentLikesById(id: ObjectId): Promise<Array<UserCommentLikesType> | null> {
     const user = await UserModel.findOne({id}).exec()
 
     return user ? [...user.commentsLikes] : null
   },
 
-  async fetchAllUserData(id: string): Promise<UserType | null> {
+  async fetchAllUserData(id: ObjectId): Promise<UserType | null> {
     const user = await UserModel.findOne({id}, {_id: 0, __v: 0}).exec()
 
     return user ? {...user} : null

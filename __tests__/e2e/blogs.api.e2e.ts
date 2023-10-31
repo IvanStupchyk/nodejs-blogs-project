@@ -10,6 +10,7 @@ import {postsTestManager} from "../utils/postsTestManager";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
 import {BlogType, PostType} from "../../src/types/generalTypes";
 import mongoose from 'mongoose'
+import {ObjectId} from "mongodb";
 
 const getRequest = () => {
   return request(app)
@@ -31,7 +32,7 @@ describe('tests for /blogs', () => {
   let validPostData: CreatePostModel = {
     title: 'title',
     content: 'content',
-    blogId: '',
+    blogId: new ObjectId(),
     shortDescription: 'shortDescription'
   }
 

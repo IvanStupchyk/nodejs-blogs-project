@@ -1,16 +1,17 @@
-import {v4 as uuidv4} from 'uuid'
 import {postsRepository} from "../repositories/postsRepository";
 import {PostType} from "../types/generalTypes";
+import {ObjectId} from "mongodb";
+import {postsQueryRepository} from "../repositories/postsQueryRepository";
 
 export const postsService = {
   async createPost(
     title: string,
     content: string,
     shortDescription: string,
-    blogId: string
+    blogId: ObjectId
   ): Promise<PostType> {
     const newPost: PostType = {
-      id: uuidv4(),
+      id: new ObjectId(),
       title,
       content,
       shortDescription,
@@ -36,6 +37,11 @@ export const postsService = {
       shortDescription,
       blogId
     )
+  },
+
+  async findPostById(id: string): Promise<PostType | null> {
+    if (!ObjectId.isValid(id)) return null
+    return await postsQueryRepository.findPostById(new ObjectId(id))
   },
 
   async deletePost(id: string): Promise<boolean> {
