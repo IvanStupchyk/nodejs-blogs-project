@@ -1,11 +1,12 @@
-import { v4 as uuidv4 } from 'uuid'
 import {blogsRepository} from "../repositories/blogsRepository";
 import {BlogType} from "../types/generalTypes";
+import {ObjectId} from "mongodb";
+import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
 
 export const blogsService = {
   async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogType> {
     const newBlog: BlogType = {
-      id: uuidv4(),
+      id: new ObjectId(),
       name,
       description,
       websiteUrl,
@@ -28,6 +29,11 @@ export const blogsService = {
       description,
       websiteUrl
     )
+  },
+
+  async findBlogById(id: string): Promise<BlogType | null> {
+    if (!ObjectId.isValid(id)) return null
+    return await blogsQueryRepository.findBlogById(new ObjectId(id))
   },
 
   async deleteBlog(id: string): Promise<boolean> {

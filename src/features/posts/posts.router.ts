@@ -23,6 +23,7 @@ import {commentsService} from "../../domains/comments.service";
 import {commentValidationMiddleware} from "../../middlewares/commentValidationMiddleware";
 import {GetSortedCommentsModel} from "../comments/models/GetSortedCommentsModel";
 import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
+import {ObjectId} from "mongodb";
 
 export const getPostRouter = () => {
   const router = express.Router()
@@ -32,7 +33,12 @@ export const getPostRouter = () => {
   })
 
   router.get('/:id', async (req: RequestWithParams<GetPostModel>, res: Response) => {
-    const foundPost = await postsQueryRepository.findPostById(req.params.id)
+    if (!ObjectId.isValid(req.params.id)) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return
+    }
+
+    const foundPost = await postsQueryRepository.findPostById(new ObjectId(req.params.id))
 
     !foundPost
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -55,7 +61,7 @@ export const getPostRouter = () => {
     ...commentValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithParamsAndBody<URIParamsCommentModel, CreateCommentModel>, res: Response) => {
-      const foundPost = await postsQueryRepository.findPostById(req.params.id)
+      const foundPost = await postsService.findPostById(req.params.id)
 
       if (!foundPost) {
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -64,8 +70,8 @@ export const getPostRouter = () => {
 
       const newComment = await commentsService.createComment(
         req.body.content,
-        req.params.id,
-        req.user!.id,
+        new ObjectId(req.params.id),
+        new ObjectId(req.user!.id),
         req.user!.login
       )
 

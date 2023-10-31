@@ -3,13 +3,14 @@ import {UserType} from "../types/generalTypes";
 import bcrypt from 'bcrypt'
 import {usersRepository} from "../repositories/usersRepository";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
+import {ObjectId} from "mongodb";
 
 export const usersService = {
   async createUser(login: string, password: string, email: string): Promise<ViewUserModel> {
     const passwordHash = await bcrypt.hash(password, 10)
 
     const newUser: UserType = {
-      id: uuidv4(),
+      id: new ObjectId(),
       accountData: {
         login,
         email,
@@ -28,6 +29,7 @@ export const usersService = {
   },
 
   async deleteUser(id: string): Promise<boolean> {
-    return await usersRepository.deleteUser(id)
+    if (!ObjectId.isValid(id)) return false
+    return await usersRepository.deleteUser(new ObjectId(id))
   }
 }

@@ -5,9 +5,10 @@ import {mockCommentModel} from "../constants/blanks";
 import {GetSortedCommentsModel} from "../features/comments/models/GetSortedCommentsModel";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 import {usersQueryRepository} from "./usersQueryRepository";
+import {ObjectId} from "mongodb";
 
 export const commentsQueryRepository = {
-  async findCommentById(id: string, likedStatus: CommentStatus = CommentStatus.None): Promise<CommentViewModel | null> {
+  async findCommentById(id: ObjectId, likedStatus: CommentStatus = CommentStatus.None): Promise<CommentViewModel | null> {
     const foundComment = await CommentModel.findOne({id}, {projection: {_id: 0}}).exec()
 
     return foundComment ?
@@ -27,7 +28,7 @@ export const commentsQueryRepository = {
       } : null
   },
 
-  async getSortedComments(params: GetSortedCommentsModel, postId: string, userId: string | undefined): Promise<CommentsType> {
+  async getSortedComments(params: GetSortedCommentsModel, postId: ObjectId, userId: ObjectId | undefined): Promise<CommentsType> {
     const {
       pageNumber,
       pageSize,

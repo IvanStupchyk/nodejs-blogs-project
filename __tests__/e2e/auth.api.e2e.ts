@@ -10,6 +10,7 @@ import {UserType} from "../../src/types/generalTypes";
 import {emailManager} from "../../src/managers/emailManager";
 import {usersRepository} from "../../src/repositories/usersRepository";
 import mongoose from "mongoose";
+import {ObjectId} from "mongodb";
 const { parse } = require('cookie')
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
@@ -120,7 +121,7 @@ describe('tests for /auth', () => {
 
     expect(emailManager.sendEmailConfirmationMessage).toHaveBeenCalledTimes(1)
     expect(emailManager.sendEmailConfirmationMessage).toHaveBeenCalledWith({
-      id: newUser?.id,
+      id: expect.any(ObjectId),
       accountData: {
         login: newUser?.accountData.login,
         email: newUser?.accountData.email,
@@ -131,7 +132,8 @@ describe('tests for /auth', () => {
         confirmationCode: newUser?.emailConfirmation.confirmationCode,
         expirationDate: newUser?.emailConfirmation.expirationDate,
         isConfirmed: newUser?.emailConfirmation.isConfirmed
-      }
+      },
+      commentsLikes: []
     })
   })
 

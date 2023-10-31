@@ -1,6 +1,7 @@
 import {UserModel} from "../db/db"
 import {CommentStatus, UserType} from "../types/generalTypes";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
+import {ObjectId} from "mongodb";
 
 export const usersRepository = {
   async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserType | null> {
@@ -36,7 +37,7 @@ export const usersRepository = {
     return await UserModel.findOne({'accountData.email' : email}, {_id: 0, __v: 0}).exec()
   },
 
-  async updateConfirmation(id: string): Promise<boolean> {
+  async updateConfirmation(id: ObjectId): Promise<boolean> {
     const result = await UserModel.findOneAndUpdate(
       {id},
       {$set: {'emailConfirmation.isConfirmed' : true}}
@@ -45,7 +46,7 @@ export const usersRepository = {
     return !!result
   },
 
-  async changeUserPassword(userId: string, passwordHash: string): Promise<boolean> {
+  async changeUserPassword(userId: ObjectId, passwordHash: string): Promise<boolean> {
     const result = await UserModel.findOneAndUpdate(
       {id: userId},
       {$set: {'accountData.passwordHash': passwordHash}}
@@ -54,7 +55,7 @@ export const usersRepository = {
     return !!result
   },
 
-  async updateConfirmationCodeAndExpirationTime(id: string, newExpirationDate: Date, newCode: string): Promise<boolean> {
+  async updateConfirmationCodeAndExpirationTime(id: ObjectId, newExpirationDate: Date, newCode: string): Promise<boolean> {
     const result = await UserModel.findOneAndUpdate(
       {id},
       {$set: {
@@ -66,7 +67,7 @@ export const usersRepository = {
     return !!result
   },
 
-  async updateExistingUserCommentLike(userId: string, myStatus: CommentStatus, commentId: string): Promise<any> {
+  async updateExistingUserCommentLike(userId: ObjectId, myStatus: CommentStatus, commentId: ObjectId): Promise<any> {
     const result = await UserModel.findOneAndUpdate(
       {id: userId, 'commentsLikes.commentId': commentId},
       {$set: { 'commentsLikes.$.myStatus': myStatus }}
@@ -75,19 +76,20 @@ export const usersRepository = {
     return !!result
   },
 
-  async setNewUserCommentLike(userId: string, myStatus: CommentStatus, commentId: string): Promise<any> {
+  async setNewUserCommentLike(userId: ObjectId, myStatus: CommentStatus, commentId: ObjectId, createdAt: string): Promise<any> {
     const result = await UserModel.findOneAndUpdate(
       {id: userId},
       {$push: { commentsLikes: {
           commentId,
-          myStatus
+          myStatus,
+          createdAt
       }}}
     ).exec()
 
     return !!result
   },
 
-  async deleteUser(id: string): Promise<boolean> {
+  async deleteUser(id: ObjectId): Promise<boolean> {
     const result = await UserModel.deleteOne({id}).exec()
 
     return result.deletedCount === 1

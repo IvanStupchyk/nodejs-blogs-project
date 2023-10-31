@@ -1,6 +1,8 @@
+import {ObjectId} from "mongodb";
+
 export type CreatePostModel = {
   title: string,
   shortDescription: string,
   content: string,
-  blogId: string
+  blogId: ObjectId
 }

@@ -9,6 +9,7 @@ import {RefreshTokenDeviceType, UserType} from "../types/generalTypes";
 import {v4 as uuidv4} from "uuid";
 import {emailManager} from "../managers/emailManager";
 import {refreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
+import {ObjectId} from "mongodb";
 
 export const authService = {
   async loginUser(req: Request, loginOrEmail: string, password: string):
@@ -20,7 +21,7 @@ export const authService = {
     const isCredentialsCorrect = await bcrypt.compare(password, user.accountData.passwordHash)
 
     if (isCredentialsCorrect) {
-      const deviceId = uuidv4()
+      const deviceId = new ObjectId()
       const accessToken = await jwtService.createAccessJWT(user.id)
       const refreshToken = await jwtService.createRefreshJWT(user.id, deviceId)
 
@@ -52,7 +53,7 @@ export const authService = {
     const passwordHash = await bcrypt.hash(password, 10)
 
     const newUser: UserType = {
-      id: uuidv4(),
+      id: new ObjectId(),
       accountData: {
         login,
         email,
@@ -104,7 +105,7 @@ export const authService = {
     return await usersRepository.changeUserPassword(result.userId, newPasswordHash)
   },
 
-  async refreshTokens(userId: string, deviceId: string): Promise<{accessToken: string, refreshToken: string}> {
+  async refreshTokens(userId: ObjectId, deviceId: ObjectId): Promise<{accessToken: string, refreshToken: string}> {
     const accessToken = await jwtService.createAccessJWT(userId)
     const refreshToken = await jwtService.createRefreshJWT(userId, deviceId)
 
@@ -143,7 +144,6 @@ export const authService = {
         console.log('resendEmailConfirmationMessage error', error)
       }
 
-
       return true
     } catch (error) {
       console.log('sendEmailConfirmationMessage error', error)
@@ -152,15 +152,15 @@ export const authService = {
   },
 
   async checkAndFindUserByAccessToken(token: string): Promise<ViewUserModel | null> {
-    const userId: string | null = await jwtService.getUserIdByAccessToken(token)
+    const userId: ObjectId | null = await jwtService.getUserIdByAccessToken(token)
     if (!userId) return null
 
     return await usersQueryRepository.findUserById(userId)
   },
 
-  async _createRefreshTokenDeviceModel(req: Request, deviceId: string, userId: string, refreshToken: string): Promise<RefreshTokenDeviceType> {
+  async _createRefreshTokenDeviceModel(req: Request, deviceId: ObjectId, userId: ObjectId, refreshToken: string): Promise<RefreshTokenDeviceType> {
     const newDevice: RefreshTokenDeviceType = {
-      id: uuidv4(),
+      id: new ObjectId(),
       ip: req.headers['x-forwarded-for'] as string || (req.socket.remoteAddress ?? ''),
       title: req.headers["user-agent"] ?? 'unknown',
       lastActiveDate: new Date(),

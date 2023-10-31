@@ -1,8 +1,9 @@
 import {DeviceModel} from "../db/db"
 import {RefreshTokenDeviceType, RefreshTokenDeviceViewType} from "../types/generalTypes";
+import {ObjectId} from "mongodb";
 
 export const refreshTokenDevicesRepository = {
-  async getUserSessions(userId: string): Promise<Array<RefreshTokenDeviceViewType>> {
+  async getUserSessions(userId: ObjectId): Promise<Array<RefreshTokenDeviceViewType>> {
     const result: Array<RefreshTokenDeviceType> = await DeviceModel
       .find({userId}, {_id: 0, __v: 0}).lean()
 
@@ -30,7 +31,7 @@ export const refreshTokenDevicesRepository = {
     return !!await deviceInstance.save()
   },
 
-  async updateExistingSession(deviceId: string, lastActiveDate: Date, expirationDate: Date): Promise<boolean> {
+  async updateExistingSession(deviceId: ObjectId, lastActiveDate: Date, expirationDate: Date): Promise<boolean> {
     const isUpdated = await DeviceModel
       .updateOne({deviceId}, {$set: {lastActiveDate, expirationDate}})
       .exec()
@@ -38,7 +39,7 @@ export const refreshTokenDevicesRepository = {
     return isUpdated.modifiedCount === 1
   },
 
-  async removeSpecifiedSession(userId: string, deviceId: string): Promise<boolean> {
+  async removeSpecifiedSession(userId: ObjectId, deviceId: string): Promise<boolean> {
     const isDeleted = await DeviceModel
       .deleteOne({userId, deviceId})
       .exec()
@@ -50,7 +51,7 @@ export const refreshTokenDevicesRepository = {
     return !!await DeviceModel.findOne({deviceId}).exec()
   },
 
-  async removeAllExceptCurrentSessions(deviceId: string, userId: string): Promise<boolean> {
+  async removeAllExceptCurrentSessions(deviceId: ObjectId, userId: ObjectId): Promise<boolean> {
     const deletedCount = await DeviceModel
       .deleteMany({deviceId: {$ne: deviceId}, userId})
       .exec()

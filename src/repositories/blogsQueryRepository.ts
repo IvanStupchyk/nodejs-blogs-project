@@ -4,6 +4,7 @@ import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {SortOrder} from "../constants/sortOrder";
 import {mockBlogModel} from "../constants/blanks";
 import {GetSortedBlogsModel} from "../features/blogs/models/GetSortedBlogsModel";
+import {ObjectId} from "mongodb";
 
 export const blogsQueryRepository = {
   async getSortedBlogs(params: GetSortedBlogsModel): Promise<BlogsType> {
@@ -46,7 +47,7 @@ export const blogsQueryRepository = {
     }
   },
 
-  async findBlogById(id: string): Promise<BlogType | null> {
+  async findBlogById(id: ObjectId): Promise<BlogType | null> {
     return await BlogModel.findOne({id}, {_id: 0, __v: 0}).exec()
   }
 }
