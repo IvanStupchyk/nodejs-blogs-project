@@ -52,7 +52,7 @@ export const commentsRouter = () => {
     ...commentLikesValidationMiddleware,
     inputValidationErrorsMiddleware,
     async (req: RequestWithParamsAndBody<URIParamsCommentModel, UpdateLikesModel>, res: Response) => {
-      const isLikesCountChanges = await commentsService.changeLikesCount(req.params.id, req.body.likeStatus)
+      const isLikesCountChanges = await commentsService.changeLikesCount(req.params.id, req.body.likeStatus, req.user!.id)
 
       res.sendStatus(
         isLikesCountChanges

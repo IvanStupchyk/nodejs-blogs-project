@@ -22,7 +22,6 @@ import {URIParamsCommentModel} from "../comments/models/URIParamsCommentModel";
 import {commentsService} from "../../domains/comments.service";
 import {commentValidationMiddleware} from "../../middlewares/commentValidationMiddleware";
 import {GetSortedCommentsModel} from "../comments/models/GetSortedCommentsModel";
-import {commentsQueryRepository} from "../../repositories/comentsQueryRepository";
 import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
 
 export const getPostRouter = () => {
@@ -74,13 +73,13 @@ export const getPostRouter = () => {
   })
 
   router.get('/:id/comments', async (req: RequestWithParamsAndQuery<URIParamsCommentModel, GetSortedCommentsModel>, res: Response) => {
-    const foundPost = await postsQueryRepository.findPostById(req.params.id)
+    const foundComments = await commentsService.getSortedComments(req.params.id, req.query, req.cookies?.refreshToken)
 
-    if (!foundPost) {
+    if (!foundComments) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
-    res.json(await commentsQueryRepository.getSortedComments(req.query, req.params.id))
+    res.json(foundComments)
   })
 
   router.put(

@@ -1,5 +1,5 @@
 import {UserModel} from "../db/db"
-import {UserType} from "../types/generalTypes";
+import {CommentStatus, UserType} from "../types/generalTypes";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 
 export const usersRepository = {
@@ -17,6 +17,7 @@ export const usersRepository = {
     userInstance.id = newUser.id
     userInstance.accountData = newUser.accountData
     userInstance.emailConfirmation= newUser.emailConfirmation
+    userInstance.commentsLikes = newUser.commentsLikes
     await userInstance.save()
 
     return {
@@ -60,6 +61,27 @@ export const usersRepository = {
         'emailConfirmation.expirationDate': newExpirationDate,
          'emailConfirmation.confirmationCode': newCode
       }}
+    ).exec()
+
+    return !!result
+  },
+
+  async updateExistingUserCommentLike(userId: string, myStatus: CommentStatus, commentId: string): Promise<any> {
+    const result = await UserModel.findOneAndUpdate(
+      {id: userId, 'commentsLikes.commentId': commentId},
+      {$set: { 'commentsLikes.$.myStatus': myStatus }}
+    ).exec()
+
+    return !!result
+  },
+
+  async setNewUserCommentLike(userId: string, myStatus: CommentStatus, commentId: string): Promise<any> {
+    const result = await UserModel.findOneAndUpdate(
+      {id: userId},
+      {$push: { commentsLikes: {
+          commentId,
+          myStatus
+      }}}
     ).exec()
 
     return !!result
