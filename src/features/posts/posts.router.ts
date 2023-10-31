@@ -73,7 +73,7 @@ export const getPostRouter = () => {
   })
 
   router.get('/:id/comments', async (req: RequestWithParamsAndQuery<URIParamsCommentModel, GetSortedCommentsModel>, res: Response) => {
-    const foundComments = await commentsService.getSortedComments(req.params.id, req.query, req.cookies?.refreshToken)
+    const foundComments = await commentsService.getSortedComments(req.params.id, req.query, req.headers?.authorization)
 
     if (!foundComments) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

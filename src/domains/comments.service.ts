@@ -43,9 +43,14 @@ export const commentsService = {
 
   async findCommentById(
     commentId: string,
-    refreshToken: string
+    accessTokenHeader: string | undefined
   ): Promise<CommentViewModel | null> {
-    const userId = await jwtService.getUserIdByRefreshToken(refreshToken)
+
+    let userId
+    if (accessTokenHeader) {
+      const accessToken = accessTokenHeader.split(' ')[1]
+      userId = await jwtService.getUserIdByAccessToken(accessToken)
+    }
 
     let finalCommentStatus = CommentStatus.None
 
@@ -144,15 +149,15 @@ export const commentsService = {
   async getSortedComments(
     id: string,
     query: GetSortedCommentsModel,
-    refreshTokenCookie: string | undefined
+    accessTokenHeader: string | undefined
   ): Promise<CommentsType | boolean>  {
     const foundPost = await postsQueryRepository.findPostById(id)
     if (!foundPost) return false
 
     let userId
-    if (refreshTokenCookie) {
-      const result: any = await jwtService.verifyRefreshToken(refreshTokenCookie)
-      userId = result?.userId
+    if (accessTokenHeader) {
+      const accessToken = accessTokenHeader.split(' ')[1]
+      userId = await jwtService.getUserIdByAccessToken(accessToken)
     }
 
     return  await commentsQueryRepository.getSortedComments(query, id, userId)
