@@ -50,7 +50,8 @@ export const commentsRepository = {
 
   async deleteComment(id: string): Promise<boolean> {
     const result = await CommentModel
-      .deleteOne({id}).exec()
+      .deleteOne({id})
+      .exec()
 
     return result.deletedCount === 1
   }
