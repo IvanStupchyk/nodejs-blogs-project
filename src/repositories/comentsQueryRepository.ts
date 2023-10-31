@@ -1,9 +1,10 @@
 import {CommentModel} from "../db/db"
-import {CommentStatus, CommentsType, CommentType} from "../types/generalTypes";
+import {CommentStatus, CommentsType, CommentType, UserCommentLikesType} from "../types/generalTypes";
 import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {mockCommentModel} from "../constants/blanks";
 import {GetSortedCommentsModel} from "../features/comments/models/GetSortedCommentsModel";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
+import {usersQueryRepository} from "./usersQueryRepository";
 
 export const commentsQueryRepository = {
   async findCommentById(id: string, likedStatus: CommentStatus = CommentStatus.None): Promise<CommentViewModel | null> {
@@ -26,7 +27,7 @@ export const commentsQueryRepository = {
       } : null
   },
 
-  async getSortedComments(params: GetSortedCommentsModel, postId: string): Promise<CommentsType> {
+  async getSortedComments(params: GetSortedCommentsModel, postId: string, userId: string | undefined): Promise<CommentsType> {
     const {
       pageNumber,
       pageSize,
@@ -51,6 +52,10 @@ export const commentsQueryRepository = {
     const commentsCount = await CommentModel.countDocuments({postId})
 
     const pagesCount = getPagesCount(commentsCount, pageSize)
+    let usersCommentsLikes: any
+    if (userId) {
+      usersCommentsLikes = await usersQueryRepository.findUserCommentLikesById(userId)
+    }
 
     return {
       pagesCount,
@@ -68,7 +73,7 @@ export const commentsQueryRepository = {
           likesInfo: {
             likesCount: c.likesInfo.likesCount,
             dislikesCount: c.likesInfo.dislikesCount,
-            myStatus: CommentStatus.Like
+            myStatus: usersCommentsLikes?.find((uc: UserCommentLikesType) => uc.commentId === c.id)?.myStatus ?? CommentStatus.None
           },
           createdAt: c.createdAt
         }
