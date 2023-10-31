@@ -84,7 +84,7 @@ export const commentsService = {
 
     if (initialCommentData?.myStatus === myStatus) return true
 
-    let newStatus: CommentStatus = CommentStatus.None
+    let newStatus: CommentStatus = CommentStatus.Like
 
     if (initialCommentData?.myStatus) {
       if (myStatus === 'Like' && initialCommentData?.myStatus === 'Dislike') {
