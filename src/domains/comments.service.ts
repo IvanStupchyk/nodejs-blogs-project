@@ -74,7 +74,6 @@ export const commentsService = {
     if (!foundComment) return false
 
     const likesInfo = {...foundComment.likesInfo}
-
     let userCommentsLikes = await usersQueryRepository.findUserCommentLikesById(userId)
     let initialCommentData
 
