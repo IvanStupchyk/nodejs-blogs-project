@@ -1,27 +1,31 @@
-import {postsRepository} from "../repositories/postsRepository";
+import {PostsRepository} from "../repositories/postsRepository";
 import {PostType} from "../types/generalTypes";
 import {ObjectId} from "mongodb";
-import {postsQueryRepository} from "../repositories/postsQueryRepository";
+import {PostsQueryRepository} from "../repositories/postsQueryRepository";
 
-export const postsService = {
+export class PostsService {
+  constructor(protected postsQueryRepository: PostsQueryRepository,
+              protected postsRepository: PostsRepository
+  ) {}
+
   async createPost(
     title: string,
     content: string,
     shortDescription: string,
     blogId: ObjectId
   ): Promise<PostType> {
-    const newPost: PostType = {
-      id: new ObjectId(),
+    const newPost: PostType = new PostType(
+      new ObjectId(),
       title,
-      content,
       shortDescription,
+      content,
       blogId,
-      createdAt: new Date().toISOString(),
-      blogName: ''
-    }
+      new Date().toISOString(),
+      ''
+    )
 
-    return await postsRepository.createPost(newPost, blogId)
-  },
+    return await this.postsRepository.createPost(newPost, blogId)
+  }
 
   async updatePostById(
     id: string,
@@ -30,21 +34,21 @@ export const postsService = {
     shortDescription: string,
     blogId: string
   ): Promise<boolean> {
-    return await postsRepository.updatePostById(
+    return await this.postsRepository.updatePostById(
       id,
       title,
       content,
       shortDescription,
       blogId
     )
-  },
+  }
 
   async findPostById(id: string): Promise<PostType | null> {
     if (!ObjectId.isValid(id)) return null
-    return await postsQueryRepository.findPostById(new ObjectId(id))
-  },
+    return await this.postsQueryRepository.findPostById(new ObjectId(id))
+  }
 
   async deletePost(id: string): Promise<boolean> {
-    return await postsRepository.deletePost(id)
+    return await this.postsRepository.deletePost(id)
   }
 }

@@ -1,35 +1,37 @@
 import { v4 as uuidv4 } from 'uuid'
 import {UserType} from "../types/generalTypes";
 import bcrypt from 'bcrypt'
-import {usersRepository} from "../repositories/usersRepository";
+import {UsersRepository} from "../repositories/usersRepository";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {ObjectId} from "mongodb";
 
-export const usersService = {
+export class UsersService {
+  constructor(protected usersRepository: UsersRepository) {}
+
   async createUser(login: string, password: string, email: string): Promise<ViewUserModel> {
     const passwordHash = await bcrypt.hash(password, 10)
 
-    const newUser: UserType = {
-      id: new ObjectId(),
-      accountData: {
-        login,
-        email,
-        passwordHash,
-        createdAt: new Date().toISOString()
-      },
-      emailConfirmation: {
-        confirmationCode: uuidv4(),
-        expirationDate: new Date(),
-        isConfirmed: true
-      },
-      commentsLikes: []
-    }
+    const newUser: UserType = new UserType(
+      new ObjectId(),
+      {
+      login,
+      email,
+      passwordHash,
+      createdAt: new Date().toISOString()
+    },
+      {
+      confirmationCode: uuidv4(),
+      expirationDate: new Date(),
+      isConfirmed: true
+    },
+      []
+    )
 
-    return await usersRepository.createUser(newUser)
-  },
+    return await this.usersRepository.createUser(newUser)
+  }
 
   async deleteUser(id: string): Promise<boolean> {
     if (!ObjectId.isValid(id)) return false
-    return await usersRepository.deleteUser(new ObjectId(id))
+    return await this.usersRepository.deleteUser(new ObjectId(id))
   }
 }

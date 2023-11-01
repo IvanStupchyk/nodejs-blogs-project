@@ -1,127 +1,45 @@
-import express, {Response} from "express";
-import {HTTP_STATUSES} from "../../utils";
-import {
-  RequestWithBody,
-  RequestWithParams,
-  RequestWithParamsAndBody,
-  RequestWithParamsAndQuery,
-  RequestWithQuery
-} from "../../types/types";
-import {CreateBlogModel} from "./models/CreateBlogModel";
-import {GetBlogModel} from "./models/GetBlogModel";
+import express from "express";
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
-import {UpdateBlogModel} from "./models/UpdateBlogModel";
-import {URIParamsBlogIdModel} from "./models/URIParamsBlogIdModel";
-import {DeleteBlogModel} from "./models/DeleteBlogModel";
 import {blogValidationMiddleware} from "../../middlewares/blogValidationMiddleware";
-import {blogsService} from "../../domains/blogs.service";
-import {postsService} from "../../domains/posts.service";
-import {CreatePostForSpecificBlogModel} from "../posts/models/CreatePostForSpecificBlogModel";
 import {postForSpecificBlogValidationMiddleware} from "../../middlewares/postForSpecifigBlogValidationMiddleware";
-import {GetSortedBlogsModel} from "./models/GetSortedBlogsModel";
-import {GetSortedPostsModel} from "../posts/models/GetSortedPostsModel";
-import {blogsQueryRepository} from "../../repositories/blogsQueryRepository";
-import {postsQueryRepository} from "../../repositories/postsQueryRepository";
 import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
-import {ObjectId} from "mongodb";
+import {blogController} from "../../compositionRoots/compositionRootBlogs";
 
-export const getBlogRouter = () => {
+export const blogRouter = () => {
   const router = express.Router()
 
-  router.get(
-    '/',
-    async (req: RequestWithQuery<GetSortedBlogsModel>, res: Response) => {
-    res.json(await blogsQueryRepository.getSortedBlogs(req.query))
-  })
+  router.get('/', blogController.getBlogs.bind(blogController))
 
-  router.get(
-    '/:id',
-    async (req: RequestWithParams<GetBlogModel>, res: Response) => {
-    const foundBlog = await blogsService.findBlogById(req.params.id)
+  router.get('/:id',blogController.getCurrentBlog.bind(blogController))
 
-    !foundBlog
-      ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-      : res.send(foundBlog)
-  })
-
-  router.get('/:id/posts', async (
-    req: RequestWithParamsAndQuery<GetBlogModel, GetSortedPostsModel>,
-    res: Response
-  ) => {
-    const foundBlog = await blogsService.findBlogById(req.params.id)
-
-    if (!foundBlog) {
-      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-      return
-    }
-
-    const foundPosts = await postsQueryRepository.findPostsByIdForSpecificBlog(req.query, req.params.id)
-    res.send(foundPosts)
-  })
+  router.get('/:id/posts', blogController.getPostsForBlog.bind(blogController))
 
   router.post(
     '/',
     ...blogValidationMiddleware,
     inputValidationErrorsMiddleware,
-    async (req: RequestWithBody<CreateBlogModel>, res: Response) => {
-    const {name, websiteUrl, description} = req.body
-    const newBlog = await blogsService.createBlog(name, description, websiteUrl)
-
-    res.status(HTTP_STATUSES.CREATED_201).send(newBlog)
-  })
+    blogController.createBlog.bind(blogController)
+  )
 
   router.post(
     '/:id/posts',
     ...postForSpecificBlogValidationMiddleware,
     inputValidationErrorsMiddleware,
-    async (
-      req: RequestWithParamsAndBody<URIParamsBlogIdModel, CreatePostForSpecificBlogModel>,
-      res: Response
-    ) => {
-      const {title, content, shortDescription} = req.body
-      const blogId = req.params.id
-
-      const foundBlog = await blogsService.findBlogById(req.params.id)
-
-      if (!foundBlog) {
-        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-        return
-      }
-
-      const newPost = await postsService.createPost(title, content, shortDescription, new ObjectId(blogId))
-      res.status(HTTP_STATUSES.CREATED_201).send(newPost)
-    })
+    blogController.createPostForSpecificBlog.bind(blogController)
+  )
 
   router.put(
     '/:id',
     ...blogValidationMiddleware,
     inputValidationErrorsMiddleware,
-    async (req: RequestWithParamsAndBody<URIParamsBlogIdModel, UpdateBlogModel>, res: Response) => {
-      const {name, websiteUrl, description} = req.body
-
-      const updatedBlog = await blogsService.updateBlogById(
-        req.params.id,
-        name,
-        description,
-        websiteUrl
-      )
-
-      !updatedBlog
-        ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-        : res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-  })
+    blogController.updateBlog.bind(blogController)
+  )
 
   router.delete(
     '/:id',
     authBasicValidationMiddleware,
-    async (req: RequestWithParams<DeleteBlogModel>, res: Response) => {
-      const isBlogExist = await blogsService.deleteBlog(req.params.id)
-
-      res.sendStatus(!isBlogExist
-        ? HTTP_STATUSES.NOT_FOUND_404
-        : HTTP_STATUSES.NO_CONTENT_204
-      )
-  })
+    blogController.deleteBlog.bind(blogController)
+  )
 
   return router
 }

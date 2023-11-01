@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUSES} from "../utils";
-import {authService} from "../domains/auth.service";
+import {authService} from "../compositionRoots/compositionRootAuth";
 
 export const authValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.headers.authorization) {

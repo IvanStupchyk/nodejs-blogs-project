@@ -2,7 +2,7 @@ import {CommentModel} from "../db/db"
 import {CommentLikesInfoType, CommentStatus, CommentType} from "../types/generalTypes";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 
-export const commentsRepository = {
+export class CommentsRepository {
   async createComment(comment: CommentType): Promise<CommentViewModel> {
     const commentInstance = new CommentModel()
 
@@ -29,14 +29,14 @@ export const commentsRepository = {
       },
       createdAt: commentInstance.createdAt
     }
-  },
+  }
 
   async updateComment(content: string, id: string): Promise<boolean> {
     const result = await CommentModel
       .updateOne({id}, {$set: {content}}).exec()
 
     return result.matchedCount === 1
-  },
+  }
 
   async changeLikesCount(id: string, likesInfo: CommentLikesInfoType): Promise<boolean> {
     const result = await CommentModel
@@ -46,7 +46,7 @@ export const commentsRepository = {
       .exec()
 
     return result.matchedCount === 1
-  },
+  }
 
   async deleteComment(id: string): Promise<boolean> {
     const result = await CommentModel

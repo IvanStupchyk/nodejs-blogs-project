@@ -4,10 +4,16 @@ import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {mockCommentModel} from "../constants/blanks";
 import {GetSortedCommentsModel} from "../features/comments/models/GetSortedCommentsModel";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
-import {usersQueryRepository} from "./usersQueryRepository";
+import {UsersQueryRepository} from "./usersQueryRepository";
 import {ObjectId} from "mongodb";
 
-export const commentsQueryRepository = {
+export class CommentsQueryRepository {
+  usersQueryRepository: UsersQueryRepository
+
+  constructor() {
+    this.usersQueryRepository = new UsersQueryRepository()
+  }
+
   async findCommentById(id: ObjectId, likedStatus: CommentStatus = CommentStatus.None): Promise<CommentViewModel | null> {
     const foundComment = await CommentModel.findOne({id}, {projection: {_id: 0}}).exec()
 
@@ -26,7 +32,7 @@ export const commentsQueryRepository = {
         },
         createdAt: foundComment.createdAt
       } : null
-  },
+  }
 
   async getSortedComments(params: GetSortedCommentsModel, postId: ObjectId, userId: ObjectId | undefined): Promise<CommentsType> {
     const {
@@ -55,7 +61,7 @@ export const commentsQueryRepository = {
     const pagesCount = getPagesCount(commentsCount, pageSize)
     let usersCommentsLikes: any
     if (userId) {
-      usersCommentsLikes = await usersQueryRepository.findUserCommentLikesById(userId)
+      usersCommentsLikes = await this.usersQueryRepository.findUserCommentLikesById(userId)
     }
 
     return {
@@ -80,5 +86,5 @@ export const commentsQueryRepository = {
         }
       })
     }
-  },
+  }
 }

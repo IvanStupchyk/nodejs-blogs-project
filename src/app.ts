@@ -1,10 +1,10 @@
 import express from 'express'
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import {getBlogRouter} from "./features/blogs/blogs.router";
+import {blogRouter} from "./features/blogs/blogs.router";
 import {resetDBRouterRouter} from "./features/testing/resetDBRouter.router";
-import {getPostRouter} from "./features/posts/posts.router";
-import {getUserRouter} from "./features/users/users.router";
+import {postRouter} from "./features/posts/posts.router";
+import {userRouter} from "./features/users/users.router";
 import {authRouter} from "./features/auth/auth.router";
 import {commentsRouter} from "./features/comments/comments.router";
 import cookieParser from "cookie-parser";
@@ -28,9 +28,9 @@ export const RouterPaths = {
   testing: '/testing'
 }
 
-app.use(RouterPaths.blogs, getBlogRouter())
-app.use(RouterPaths.posts, getPostRouter())
-app.use(RouterPaths.users, getUserRouter())
+app.use(RouterPaths.blogs, blogRouter())
+app.use(RouterPaths.posts, postRouter())
+app.use(RouterPaths.users, userRouter())
 app.use(RouterPaths.auth, authRouter())
 app.use(RouterPaths.comments, commentsRouter())
 app.use(RouterPaths.security, devicesRouter())

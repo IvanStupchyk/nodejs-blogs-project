@@ -1,6 +1,8 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUSES} from "../utils";
-import {apiRequestRepository} from "../repositories/apiRequestsRepository";
+import {ApiRequestRepository} from "../repositories/apiRequestsRepository";
+
+const apiRequestRepository = new ApiRequestRepository()
 
 export const apiRequestCountValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] as string || (req.socket.remoteAddress ?? '')

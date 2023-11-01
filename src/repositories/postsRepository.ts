@@ -2,7 +2,7 @@ import {BlogModel, PostModel} from "../db/db"
 import {BlogType, PostType} from "../types/generalTypes";
 import {ObjectId} from "mongodb";
 
-export const postsRepository = {
+export class PostsRepository {
   async createPost(
     newPost: PostType,
     blogId: ObjectId
@@ -32,7 +32,7 @@ export const postsRepository = {
       createdAt: postInstance.createdAt,
       blogName: postInstance.blogName,
     }
-  },
+  }
 
   async updatePostById(
     id: string,
@@ -56,7 +56,7 @@ export const postsRepository = {
     })
 
     return !!result
-  },
+  }
 
   async deletePost(id: string): Promise<boolean> {
     const deletedPost = await PostModel.deleteOne({id}).exec()
