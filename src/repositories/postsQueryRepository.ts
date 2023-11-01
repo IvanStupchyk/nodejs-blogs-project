@@ -5,7 +5,7 @@ import {GetSortedPostsModel} from "../features/posts/models/GetSortedPostsModel"
 import {mockPostModel} from "../constants/blanks";
 import {ObjectId} from "mongodb";
 
-export const postsQueryRepository = {
+export class PostsQueryRepository {
   async getSortedPosts(params: GetSortedPostsModel): Promise<PostsType> {
     const {
       pageNumber,
@@ -39,11 +39,11 @@ export const postsQueryRepository = {
       totalCount: postsCount,
       items: [...posts]
     }
-  },
+  }
 
   async findPostById(id: ObjectId): Promise<PostType | null> {
     return await PostModel.findOne({id}, {_id: 0, __v: 0}).exec()
-  },
+  }
 
   async findPostsByIdForSpecificBlog(params: GetSortedPostsModel, id: string): Promise<PostsType | null> {
     const {

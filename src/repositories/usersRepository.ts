@@ -3,7 +3,7 @@ import {CommentStatus, UserType} from "../types/generalTypes";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {ObjectId} from "mongodb";
 
-export const usersRepository = {
+export class UsersRepository {
   async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserType | null> {
     return await UserModel.findOne({
       $or: [
@@ -11,7 +11,7 @@ export const usersRepository = {
         { 'accountData.email': loginOrEmail }
       ]
     }).exec()
-  },
+  }
 
   async createUser(newUser: UserType): Promise<ViewUserModel> {
     let userInstance = new UserModel()
@@ -27,15 +27,15 @@ export const usersRepository = {
       email: userInstance.accountData.email,
       createdAt: userInstance.accountData.createdAt
     }
-  },
+  }
 
   async findUserByConfirmationCode(code: string): Promise<UserType | null> {
     return await UserModel.findOne({'emailConfirmation.confirmationCode' : code}).exec()
-  },
+  }
 
   async findUserByEmail(email: string): Promise<UserType | null> {
     return await UserModel.findOne({'accountData.email' : email}, {_id: 0, __v: 0}).exec()
-  },
+  }
 
   async updateConfirmation(id: ObjectId): Promise<boolean> {
     const result = await UserModel.findOneAndUpdate(
@@ -44,7 +44,7 @@ export const usersRepository = {
     ).exec()
 
     return !!result
-  },
+  }
 
   async changeUserPassword(userId: ObjectId, passwordHash: string): Promise<boolean> {
     const result = await UserModel.findOneAndUpdate(
@@ -53,7 +53,7 @@ export const usersRepository = {
     ).exec()
 
     return !!result
-  },
+  }
 
   async updateConfirmationCodeAndExpirationTime(id: ObjectId, newExpirationDate: Date, newCode: string): Promise<boolean> {
     const result = await UserModel.findOneAndUpdate(
@@ -65,7 +65,7 @@ export const usersRepository = {
     ).exec()
 
     return !!result
-  },
+  }
 
   async updateExistingUserCommentLike(userId: ObjectId, myStatus: CommentStatus, commentId: ObjectId): Promise<any> {
     const result = await UserModel.findOneAndUpdate(
@@ -74,7 +74,7 @@ export const usersRepository = {
     ).exec()
 
     return !!result
-  },
+  }
 
   async setNewUserCommentLike(userId: ObjectId, myStatus: CommentStatus, commentId: ObjectId, createdAt: string): Promise<any> {
     const result = await UserModel.findOneAndUpdate(
@@ -87,7 +87,7 @@ export const usersRepository = {
     ).exec()
 
     return !!result
-  },
+  }
 
   async deleteUser(id: ObjectId): Promise<boolean> {
     const result = await UserModel.deleteOne({id}).exec()

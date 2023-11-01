@@ -1,7 +1,7 @@
 import {BlogModel} from "../db/db"
 import {BlogType} from "../types/generalTypes";
 
-export const blogsRepository = {
+export class BlogsRepository {
   async createBlog(newBlog: BlogType): Promise<BlogType> {
     const blogInstance = new BlogModel()
 
@@ -15,7 +15,7 @@ export const blogsRepository = {
     await blogInstance.save()
 
     return {...newBlog}
-  },
+  }
 
   async updateBlogById(
     id: string,
@@ -32,7 +32,7 @@ export const blogsRepository = {
     })
 
     return !!result
-  },
+  }
 
   async deleteBlog(id: string): Promise<boolean> {
     const result = await BlogModel.deleteOne({id}).exec()

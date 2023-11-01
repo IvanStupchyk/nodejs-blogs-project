@@ -9,7 +9,7 @@ import {mockUserModel} from "../constants/blanks";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {ObjectId} from "mongodb";
 
-export const usersQueryRepository = {
+export class UsersQueryRepository  {
   async getSortedUsers(params: GetSortedUsersModel): Promise<UsersType> {
     const {searchLoginTerm, searchEmailTerm,} = params
 
@@ -72,7 +72,7 @@ export const usersQueryRepository = {
         }
       })
     }
-  },
+  }
 
   async findUserById(id: ObjectId): Promise<ViewUserModel | null> {
     const user = await UserModel.findOne({id}, {_id: 0, __v: 0}).exec()
@@ -83,13 +83,13 @@ export const usersQueryRepository = {
       email: user.accountData.email,
       createdAt: user.accountData.createdAt
     } : null
-  },
+  }
 
   async findUserCommentLikesById(id: ObjectId): Promise<Array<UserCommentLikesType> | null> {
     const user = await UserModel.findOne({id}).exec()
 
     return user ? [...user.commentsLikes] : null
-  },
+  }
 
   async fetchAllUserData(id: ObjectId): Promise<UserType | null> {
     const user = await UserModel.findOne({id}, {_id: 0, __v: 0}).exec()

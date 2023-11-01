@@ -6,7 +6,7 @@ import {mockBlogModel} from "../constants/blanks";
 import {GetSortedBlogsModel} from "../features/blogs/models/GetSortedBlogsModel";
 import {ObjectId} from "mongodb";
 
-export const blogsQueryRepository = {
+export class BlogsQueryRepository {
   async getSortedBlogs(params: GetSortedBlogsModel): Promise<BlogsType> {
     const { searchNameTerm } = params
 
@@ -45,7 +45,7 @@ export const blogsQueryRepository = {
       totalCount: blogsCount,
       items: [...blogsMongoose]
     }
-  },
+  }
 
   async findBlogById(id: ObjectId): Promise<BlogType | null> {
     return await BlogModel.findOne({id}, {_id: 0, __v: 0}).exec()

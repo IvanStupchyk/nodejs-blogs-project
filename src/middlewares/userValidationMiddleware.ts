@@ -1,6 +1,8 @@
 import {body} from "express-validator";
 import {errorsConstants} from "../constants/errorsContants";
-import {usersRepository} from "../repositories/usersRepository";
+import {UsersRepository} from "../repositories/usersRepository";
+
+const usersRepository = new UsersRepository()
 
 export const userValidationMiddleware = [
   body('login')

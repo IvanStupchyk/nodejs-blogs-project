@@ -8,7 +8,7 @@ import {usersTestManager} from "../utils/usersTestManager";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 import {UserType} from "../../src/types/generalTypes";
 import {emailManager} from "../../src/managers/emailManager";
-import {usersRepository} from "../../src/repositories/usersRepository";
+import {UsersRepository} from "../../src/repositories/usersRepository";
 import mongoose from "mongoose";
 import {ObjectId} from "mongodb";
 const { parse } = require('cookie')
@@ -37,6 +37,8 @@ describe('tests for /auth', () => {
     password: '123456',
     email: 'ivan@gmail.com'
   }
+
+  const usersRepository = new UsersRepository()
 
   beforeAll( async () => {
     await mongoose.connect(mongooseUri)

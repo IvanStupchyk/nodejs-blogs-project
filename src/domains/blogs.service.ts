@@ -1,21 +1,25 @@
-import {blogsRepository} from "../repositories/blogsRepository";
+import {BlogsRepository} from "../repositories/blogsRepository";
 import {BlogType} from "../types/generalTypes";
 import {ObjectId} from "mongodb";
-import {blogsQueryRepository} from "../repositories/blogsQueryRepository";
+import {BlogsQueryRepository} from "../repositories/blogsQueryRepository";
 
-export const blogsService = {
+export class BlogsService  {
+  constructor(protected blogsRepository: BlogsRepository,
+              protected blogsQueryRepository: BlogsQueryRepository
+  ) {}
+
   async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogType> {
-    const newBlog: BlogType = {
-      id: new ObjectId(),
+    const newBlog: BlogType = new BlogType(
+      new ObjectId(),
       name,
       description,
       websiteUrl,
-      createdAt: new Date().toISOString(),
-      isMembership: false
-    }
+      new Date().toISOString(),
+      false
+  )
 
-    return await blogsRepository.createBlog(newBlog)
-  },
+    return await this.blogsRepository.createBlog(newBlog)
+  }
 
   async updateBlogById(
     id: string,
@@ -23,20 +27,20 @@ export const blogsService = {
     description: string,
     websiteUrl: string
   ): Promise<boolean> {
-    return await blogsRepository.updateBlogById(
+    return await this.blogsRepository.updateBlogById(
       id,
       name,
       description,
       websiteUrl
     )
-  },
+  }
 
   async findBlogById(id: string): Promise<BlogType | null> {
     if (!ObjectId.isValid(id)) return null
-    return await blogsQueryRepository.findBlogById(new ObjectId(id))
-  },
+    return await this.blogsQueryRepository.findBlogById(new ObjectId(id))
+  }
 
   async deleteBlog(id: string): Promise<boolean> {
-    return await blogsRepository.deleteBlog(id)
+    return await this.blogsRepository.deleteBlog(id)
   }
 }

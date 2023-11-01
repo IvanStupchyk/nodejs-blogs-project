@@ -1,7 +1,7 @@
 import {ApiRequestModel} from "../db/db"
 import {APIRequestsCountType} from "../types/generalTypes";
 
-export const apiRequestRepository = {
+export class ApiRequestRepository {
   async addAPIRequest(newRequest: APIRequestsCountType): Promise<boolean> {
     const apiRequestsCountInstance = new ApiRequestModel()
 
@@ -12,7 +12,7 @@ export const apiRequestRepository = {
     await apiRequestsCountInstance.save()
 
     return true
-  },
+  }
 
   async getCountApiRequestToOneEndpoint(URL: string, ip: string, date: Date): Promise<number> {
     const blogsCount = await ApiRequestModel
