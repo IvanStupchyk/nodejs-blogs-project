@@ -20,11 +20,13 @@ import {GetSortedCommentsModel} from "../comments/models/GetSortedCommentsModel"
 import {URIParamsPostIdModel} from "./models/URIParamsPostIdModel";
 import {UpdatePostModel} from "./models/UpdatePostModel";
 import {DeletePostModel} from "./models/DeletePostModel";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class PostController {
-  constructor(protected postsQueryRepository: PostsQueryRepository,
-              protected commentsService: CommentsService,
-              protected postsService: PostsService
+  constructor(@inject(PostsQueryRepository) protected postsQueryRepository: PostsQueryRepository,
+              @inject(CommentsService)  protected commentsService: CommentsService,
+              @inject(PostsService)  protected postsService: PostsService
   ) {
   }
 

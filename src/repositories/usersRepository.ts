@@ -2,7 +2,10 @@ import {UserModel} from "../db/db"
 import {CommentStatus, UserType} from "../types/generalTypes";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {ObjectId} from "mongodb";
+import {injectable} from "inversify";
+import 'reflect-metadata'
 
+@injectable()
 export class UsersRepository {
   async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserType | null> {
     return await UserModel.findOne({

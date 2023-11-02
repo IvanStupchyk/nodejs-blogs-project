@@ -1,7 +1,10 @@
 import {DeviceModel} from "../db/db"
 import {RefreshTokenDeviceType, RefreshTokenDeviceViewType} from "../types/generalTypes";
 import {ObjectId} from "mongodb";
+import 'reflect-metadata'
+import {injectable} from "inversify";
 
+@injectable()
 export class RefreshTokenDevicesRepository {
   async getUserSessions(userId: ObjectId): Promise<Array<RefreshTokenDeviceViewType>> {
     const result: Array<RefreshTokenDeviceType> = await DeviceModel

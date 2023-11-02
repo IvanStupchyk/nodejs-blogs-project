@@ -4,7 +4,10 @@ import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {GetSortedPostsModel} from "../features/posts/models/GetSortedPostsModel";
 import {mockPostModel} from "../constants/blanks";
 import {ObjectId} from "mongodb";
+import 'reflect-metadata'
+import {injectable} from "inversify";
 
+@injectable()
 export class PostsQueryRepository {
   async getSortedPosts(params: GetSortedPostsModel): Promise<PostsType> {
     const {

@@ -8,7 +8,10 @@ import {GetSortedUsersModel} from "../features/users/models/GetSortedUsersModel"
 import {mockUserModel} from "../constants/blanks";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {ObjectId} from "mongodb";
+import {injectable} from "inversify";
+import 'reflect-metadata'
 
+@injectable()
 export class UsersQueryRepository  {
   async getSortedUsers(params: GetSortedUsersModel): Promise<UsersType> {
     const {searchLoginTerm, searchEmailTerm,} = params

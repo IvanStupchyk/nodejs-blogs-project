@@ -8,13 +8,15 @@ import {UsersRepository} from "../repositories/usersRepository";
 import {GetSortedCommentsModel} from "../features/comments/models/GetSortedCommentsModel";
 import {PostsQueryRepository} from "../repositories/postsQueryRepository";
 import {ObjectId} from "mongodb";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class CommentsService {
-  constructor(  protected usersQueryRepository: UsersQueryRepository,
-                protected usersRepository: UsersRepository,
-                protected commentsRepository: CommentsRepository,
-                protected commentsQueryRepository: CommentsQueryRepository,
-                protected postsQueryRepository: PostsQueryRepository
+  constructor(  @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository,
+                @inject(UsersRepository) protected usersRepository: UsersRepository,
+                @inject(CommentsRepository) protected commentsRepository: CommentsRepository,
+                @inject(CommentsQueryRepository) protected commentsQueryRepository: CommentsQueryRepository,
+                @inject(PostsQueryRepository) protected postsQueryRepository: PostsQueryRepository
   ) {}
 
   async createComment(

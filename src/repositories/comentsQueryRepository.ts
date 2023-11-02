@@ -6,7 +6,10 @@ import {GetSortedCommentsModel} from "../features/comments/models/GetSortedComme
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 import {UsersQueryRepository} from "./usersQueryRepository";
 import {ObjectId} from "mongodb";
+import 'reflect-metadata'
+import {injectable} from "inversify";
 
+@injectable()
 export class CommentsQueryRepository {
   usersQueryRepository: UsersQueryRepository
 

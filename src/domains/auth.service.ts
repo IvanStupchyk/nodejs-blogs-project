@@ -10,11 +10,13 @@ import {v4 as uuidv4} from "uuid";
 import {emailManager} from "../managers/emailManager";
 import {RefreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
 import {ObjectId} from "mongodb";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class AuthService {
-  constructor(  protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
-                protected usersQueryRepository: UsersQueryRepository,
-                protected usersRepository: UsersRepository
+  constructor(@inject(RefreshTokenDevicesRepository) protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
+              @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository,
+              @inject(UsersRepository) protected usersRepository: UsersRepository
   ) {}
 
   async loginUser(req: Request, loginOrEmail: string, password: string):

@@ -1,21 +1,16 @@
+import 'reflect-metadata'
 import {BlogsQueryRepository} from "../repositories/blogsQueryRepository";
 import {PostsQueryRepository} from "../repositories/postsQueryRepository";
 import {BlogsService} from "../domains/blogs.service";
 import {PostsService} from "../domains/posts.service";
 import {PostsRepository} from "../repositories/postsRepository";
 import {BlogsRepository} from "../repositories/blogsRepository";
-import {BlogController} from "../features/blogs/blogController";
+import {Container} from "inversify";
 
-const blogsQueryRepository = new BlogsQueryRepository()
-const blogsRepository = new BlogsRepository()
-const postsQueryRepository = new PostsQueryRepository()
-const postsRepository = new PostsRepository()
-const blogsService = new BlogsService(blogsRepository, blogsQueryRepository)
-const postsService = new PostsService(postsQueryRepository, postsRepository)
-
-export const blogController = new BlogController(
-  blogsQueryRepository,
-  postsQueryRepository,
-  blogsService,
-  postsService
-)
+export const blogsContainer = new Container()
+blogsContainer.bind(BlogsQueryRepository).to(BlogsQueryRepository)
+blogsContainer.bind(BlogsRepository).to(BlogsRepository)
+blogsContainer.bind(PostsQueryRepository).to(PostsQueryRepository)
+blogsContainer.bind(PostsRepository).to(PostsRepository)
+blogsContainer.bind(BlogsService).to(BlogsService)
+blogsContainer.bind(PostsService).to(PostsService)

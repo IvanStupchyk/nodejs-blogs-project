@@ -4,11 +4,13 @@ import {UsersQueryRepository} from "../repositories/usersQueryRepository";
 import {UserType} from "../types/generalTypes";
 import {RefreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
 import {HTTP_STATUSES} from "../utils";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class DevicesService  {
   constructor(
-    protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
-    protected usersQueryRepository: UsersQueryRepository
+    @inject(RefreshTokenDevicesRepository) protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
+    @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository
   ) {}
 
   async deleteSession(req: Request, deviceId: string): Promise<number> {

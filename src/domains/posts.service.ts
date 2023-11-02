@@ -2,10 +2,12 @@ import {PostsRepository} from "../repositories/postsRepository";
 import {PostType} from "../types/generalTypes";
 import {ObjectId} from "mongodb";
 import {PostsQueryRepository} from "../repositories/postsQueryRepository";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class PostsService {
-  constructor(protected postsQueryRepository: PostsQueryRepository,
-              protected postsRepository: PostsRepository
+  constructor(@inject(PostsQueryRepository) protected postsQueryRepository: PostsQueryRepository,
+              @inject(PostsRepository) protected postsRepository: PostsRepository
   ) {}
 
   async createPost(

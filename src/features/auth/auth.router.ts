@@ -9,7 +9,10 @@ import {refreshTokenMiddleware} from "../../middlewares/refreshTokenMiddleware";
 import {apiRequestCountValidationMiddleware} from "../../middlewares/apiRequestCountValidationMiddleware";
 import {passwordRecoveryValidationMiddleware} from "../../middlewares/passwordRecoveryValidationMiddleware";
 import {newPasswordValidationMiddleware} from "../../middlewares/newPasswordValidationMiddleware";
-import {authController} from "../../compositionRoots/compositionRootAuth";
+import {authContainer} from "../../compositionRoots/compositionRootAuth";
+import {AuthController} from "./authController";
+
+const authController = authContainer.resolve(AuthController)
 
 export const authRouter = () => {
   const router = express.Router()

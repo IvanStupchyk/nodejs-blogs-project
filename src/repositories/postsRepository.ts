@@ -1,7 +1,10 @@
 import {BlogModel, PostModel} from "../db/db"
 import {BlogType, PostType} from "../types/generalTypes";
 import {ObjectId} from "mongodb";
+import 'reflect-metadata'
+import {injectable} from "inversify";
 
+@injectable()
 export class PostsRepository {
   async createPost(
     newPost: PostType,

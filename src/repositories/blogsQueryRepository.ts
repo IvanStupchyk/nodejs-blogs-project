@@ -5,7 +5,10 @@ import {SortOrder} from "../constants/sortOrder";
 import {mockBlogModel} from "../constants/blanks";
 import {GetSortedBlogsModel} from "../features/blogs/models/GetSortedBlogsModel";
 import {ObjectId} from "mongodb";
+import 'reflect-metadata'
+import {injectable} from "inversify";
 
+@injectable()
 export class BlogsQueryRepository {
   async getSortedBlogs(params: GetSortedBlogsModel): Promise<BlogsType> {
     const { searchNameTerm } = params

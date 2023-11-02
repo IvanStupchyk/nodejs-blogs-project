@@ -1,6 +1,9 @@
 import express from "express";
 import {refreshTokenMiddleware} from "../../middlewares/refreshTokenMiddleware";
-import {devicesController} from "../../compositionRoots/compositionRootDevices";
+import {devicesContainer} from "../../compositionRoots/compositionRootDevices";
+import {DevicesController} from "./devicesController";
+
+const devicesController = devicesContainer.resolve(DevicesController)
 
 export const devicesRouter = () => {
   const router = express.Router()
