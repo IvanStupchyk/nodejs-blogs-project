@@ -1,5 +1,5 @@
 import {RefreshTokenDevicesRepository} from "../../repositories/refreshTokenDevicesRepository";
-import {DevicesService} from "../../domains/devices.service";
+import {DevicesService} from "../../domains/devices/devices.service";
 import {Request, Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 import {RequestWithParams} from "../../types/types";

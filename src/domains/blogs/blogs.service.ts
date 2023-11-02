@@ -1,8 +1,8 @@
-import {BlogsRepository} from "../repositories/blogsRepository";
-import {BlogType} from "../types/generalTypes";
+import {BlogsRepository} from "../../repositories/blogsRepository";
 import {ObjectId} from "mongodb";
-import {BlogsQueryRepository} from "../repositories/blogsQueryRepository";
+import {BlogsQueryRepository} from "../../repositories/blogsQueryRepository";
 import {inject, injectable} from "inversify";
+import {BlogType} from "./dto/createBlogDto";
 
 @injectable()
 export class BlogsService  {

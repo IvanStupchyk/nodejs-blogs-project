@@ -1,4 +1,4 @@
-import {CommentsService} from "../../domains/comments.service";
+import {CommentsService} from "../../domains/comments/comments.service";
 import {RequestWithParams, RequestWithParamsAndBody} from "../../types/types";
 import {GetCommentModel} from "./models/GetCommentModel";
 import {Response} from "express";

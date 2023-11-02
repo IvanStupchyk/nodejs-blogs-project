@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import {PostsQueryRepository} from "../repositories/postsQueryRepository";
-import {CommentsService} from "../domains/comments.service";
+import {CommentsService} from "../domains/comments/comments.service";
 import {UsersRepository} from "../repositories/usersRepository";
 import {UsersQueryRepository} from "../repositories/usersQueryRepository";
 import {CommentsRepository} from "../repositories/comentsRepository";

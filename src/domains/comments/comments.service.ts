@@ -1,14 +1,15 @@
-import {CommentStatus, CommentsType, CommentType} from "../types/generalTypes";
-import {CommentViewModel} from "../features/comments/models/CommentViewModel";
-import {CommentsRepository} from "../repositories/comentsRepository";
-import {CommentsQueryRepository} from "../repositories/comentsQueryRepository";
-import {jwtService} from "../application/jwt-service";
-import {UsersQueryRepository} from "../repositories/usersQueryRepository";
-import {UsersRepository} from "../repositories/usersRepository";
-import {GetSortedCommentsModel} from "../features/comments/models/GetSortedCommentsModel";
-import {PostsQueryRepository} from "../repositories/postsQueryRepository";
+import {CommentStatus, CommentsType} from "../../types/generalTypes";
+import {CommentViewModel} from "../../features/comments/models/CommentViewModel";
+import {CommentsRepository} from "../../repositories/comentsRepository";
+import {CommentsQueryRepository} from "../../repositories/comentsQueryRepository";
+import {jwtService} from "../../application/jwt-service";
+import {UsersQueryRepository} from "../../repositories/usersQueryRepository";
+import {UsersRepository} from "../../repositories/usersRepository";
+import {GetSortedCommentsModel} from "../../features/comments/models/GetSortedCommentsModel";
+import {PostsQueryRepository} from "../../repositories/postsQueryRepository";
 import {ObjectId} from "mongodb";
 import {inject, injectable} from "inversify";
+import {CommentType} from "./dto/createCommentDto";
 
 @injectable()
 export class CommentsService {

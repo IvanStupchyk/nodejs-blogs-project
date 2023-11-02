@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'
-import {UserType} from "../types/generalTypes";
 import bcrypt from 'bcrypt'
-import {UsersRepository} from "../repositories/usersRepository";
-import {ViewUserModel} from "../features/users/models/ViewUserModel";
+import {UsersRepository} from "../../repositories/usersRepository";
+import {ViewUserModel} from "../../features/users/models/ViewUserModel";
 import {ObjectId} from "mongodb";
 import {inject, injectable} from "inversify";
+import {UserType} from "./dto/createUserDto";
 
 @injectable()
 export class UsersService {

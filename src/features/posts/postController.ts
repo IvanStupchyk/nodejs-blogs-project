@@ -1,6 +1,6 @@
 import {PostsQueryRepository} from "../../repositories/postsQueryRepository";
-import {CommentsService} from "../../domains/comments.service";
-import {PostsService} from "../../domains/posts.service";
+import {CommentsService} from "../../domains/comments/comments.service";
+import {PostsService} from "../../domains/posts/posts.service";
 import {
   RequestWithBody,
   RequestWithParams,

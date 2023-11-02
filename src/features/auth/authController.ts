@@ -1,4 +1,4 @@
-import {AuthService} from "../../domains/auth.service";
+import {AuthService} from "../../domains/auth/auth.service";
 import {Request, Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 import {RequestWithBody} from "../../types/types";

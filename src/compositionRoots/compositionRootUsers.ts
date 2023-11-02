@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import {UsersRepository} from "../repositories/usersRepository";
-import {UsersService} from "../domains/users.service";
+import {UsersService} from "../domains/users/users.service";
 import {UsersController} from "../features/users/usersController";
 import {UsersQueryRepository} from "../repositories/usersQueryRepository";
 import {Container} from "inversify";

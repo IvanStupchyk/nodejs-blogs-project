@@ -1,8 +1,9 @@
 import {BlogModel, PostModel} from "../db/db"
-import {BlogType, PostType} from "../types/generalTypes";
 import {ObjectId} from "mongodb";
 import 'reflect-metadata'
 import {injectable} from "inversify";
+import {PostType} from "../domains/posts/dto/createPostDto";
+import {BlogType} from "../domains/blogs/dto/createBlogDto";
 
 @injectable()
 export class PostsRepository {

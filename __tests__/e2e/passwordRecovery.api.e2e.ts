@@ -5,10 +5,10 @@ import {mongooseUri} from "../../src/db/db";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
-import {UserType} from "../../src/types/generalTypes";
 import {emailManager} from "../../src/managers/emailManager";
 import {jwtService} from "../../src/application/jwt-service";
 import mongoose from "mongoose";
+import {UserType} from "../../src/domains/users/dto/createUserDto";
 
 
 const getRequest = () => {

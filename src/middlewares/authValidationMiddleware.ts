@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUSES} from "../utils";
 import {authServiceContainer} from "../compositionRoots/compositionRootAuthService";
-import {AuthService} from "../domains/auth.service";
+import {AuthService} from "../domains/auth/auth.service";
 
 const authService = authServiceContainer.resolve(AuthService)
 

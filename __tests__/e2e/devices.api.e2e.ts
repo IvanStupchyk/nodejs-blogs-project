@@ -5,8 +5,8 @@ import {mongooseUri} from "../../src/db/db";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
-import {UserType} from "../../src/types/generalTypes";
 import mongoose from "mongoose";
+import {UserType} from "../../src/domains/users/dto/createUserDto";
 const { parse } = require('cookie')
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
