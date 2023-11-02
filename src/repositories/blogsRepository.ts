@@ -1,6 +1,9 @@
 import {BlogModel} from "../db/db"
-import {BlogType} from "../types/generalTypes";
+import 'reflect-metadata'
+import {injectable} from "inversify";
+import {BlogType} from "../domains/blogs/dto/createBlogDto";
 
+@injectable()
 export class BlogsRepository {
   async createBlog(newBlog: BlogType): Promise<BlogType> {
     const blogInstance = new BlogModel()

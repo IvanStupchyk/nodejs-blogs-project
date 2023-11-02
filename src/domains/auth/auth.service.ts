@@ -1,20 +1,23 @@
 import bcrypt from 'bcrypt'
 import {Request} from "express";
-import {UsersRepository} from "../repositories/usersRepository";
+import {UsersRepository} from "../../repositories/usersRepository";
 import add from 'date-fns/add'
-import {jwtService} from "../application/jwt-service";
-import {UsersQueryRepository} from "../repositories/usersQueryRepository";
-import {ViewUserModel} from "../features/users/models/ViewUserModel";
-import {RefreshTokenDeviceType, UserType} from "../types/generalTypes";
+import {jwtService} from "../../application/jwt-service";
+import {UsersQueryRepository} from "../../repositories/usersQueryRepository";
+import {ViewUserModel} from "../../features/users/models/ViewUserModel";
 import {v4 as uuidv4} from "uuid";
-import {emailManager} from "../managers/emailManager";
-import {RefreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
+import {emailManager} from "../../managers/emailManager";
+import {RefreshTokenDevicesRepository} from "../../repositories/refreshTokenDevicesRepository";
 import {ObjectId} from "mongodb";
+import {inject, injectable} from "inversify";
+import {UserType} from "../users/dto/createUserDto";
+import {DeviceType} from "../devices/dto/createDeviceDto";
 
+@injectable()
 export class AuthService {
-  constructor(  protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
-                protected usersQueryRepository: UsersQueryRepository,
-                protected usersRepository: UsersRepository
+  constructor(@inject(RefreshTokenDevicesRepository) protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
+              @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository,
+              @inject(UsersRepository) protected usersRepository: UsersRepository
   ) {}
 
   async loginUser(req: Request, loginOrEmail: string, password: string):
@@ -163,8 +166,8 @@ export class AuthService {
     return await this.usersQueryRepository.findUserById(userId)
   }
 
-  async _createRefreshTokenDeviceModel(req: Request, deviceId: ObjectId, userId: ObjectId, refreshToken: string): Promise<RefreshTokenDeviceType> {
-    const newDevice: RefreshTokenDeviceType = new RefreshTokenDeviceType(
+  async _createRefreshTokenDeviceModel(req: Request, deviceId: ObjectId, userId: ObjectId, refreshToken: string): Promise<DeviceType> {
+    const newDevice: DeviceType = new DeviceType(
       new ObjectId(),
       req.headers['x-forwarded-for'] as string || (req.socket.remoteAddress ?? ''),
       req.headers["user-agent"] ?? 'unknown',

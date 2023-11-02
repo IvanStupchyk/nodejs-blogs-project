@@ -1,8 +1,13 @@
 import {UserModel} from "../db/db"
-import {CommentStatus, UserType} from "../types/generalTypes";
+import {CommentStatus} from "../types/generalTypes";
+// import {UserType} from "../types/generalTypes";
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {ObjectId} from "mongodb";
+import {injectable} from "inversify";
+import 'reflect-metadata'
+import {UserType} from "../domains/users/dto/createUserDto";
 
+@injectable()
 export class UsersRepository {
   async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserType | null> {
     return await UserModel.findOne({
@@ -14,14 +19,15 @@ export class UsersRepository {
   }
 
   async createUser(newUser: UserType): Promise<ViewUserModel> {
-    let userInstance = new UserModel()
-    userInstance.id = newUser.id
-    userInstance.accountData = newUser.accountData
-    userInstance.emailConfirmation= newUser.emailConfirmation
-    userInstance.commentsLikes = newUser.commentsLikes
+    let userInstance = new UserModel(newUser)
+    // userInstance.id = newUser.id
+    // userInstance.accountData = newUser.accountData
+    // userInstance.emailConfirmation= newUser.emailConfirmation
+    // userInstance.commentsLikes = newUser.commentsLikes
     await userInstance.save()
 
     return {
+
       id: userInstance.id,
       login: userInstance.accountData.login,
       email: userInstance.accountData.email,

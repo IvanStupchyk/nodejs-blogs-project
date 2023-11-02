@@ -1,14 +1,19 @@
 import {UsersQueryRepository} from "../../repositories/usersQueryRepository";
-import {UsersService} from "../../domains/users.service";
+import {UsersService} from "../../domains/users/users.service";
 import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../../types/types";
 import {CreateUserModel} from "./models/CreateUserModel";
 import {Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 import {GetSortedUsersModel} from "./models/GetSortedUsersModel";
 import {DeleteUserModel} from "./models/DeleteUserModel";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class UsersController {
-  constructor(protected usersService: UsersService, protected usersQueryRepository: UsersQueryRepository) {}
+  constructor(
+    @inject(UsersService) protected usersService: UsersService,
+    @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository
+  ) { }
 
   async createUser(req: RequestWithBody<CreateUserModel>, res: Response) {
     const {login, password, email} = req.body

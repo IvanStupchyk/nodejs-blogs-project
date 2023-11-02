@@ -3,25 +3,8 @@ import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {mockBlogModel, mockCommentModel, mockPostModel, mockUserModel} from "../constants/blanks";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 import {ObjectId} from "mongodb";
-
-export class BlogType {
-  constructor(public id: ObjectId,
-              public name: string,
-              public description: string,
-              public websiteUrl: string,
-              public createdAt: string,
-              public isMembership: boolean
-  ) {}
-}
-
-// export type BlogType = {
-//   id: ObjectId,
-//   name: string
-//   description: string
-//   websiteUrl: string
-//   createdAt: string
-//   isMembership: boolean
-// }
+import {PostType} from "../domains/posts/dto/createPostDto";
+import {BlogType} from "../domains/blogs/dto/createBlogDto";
 
 export type BlogsType = {
   pagesCount: number,
@@ -59,45 +42,7 @@ export type CommentLikesViewType = {
   myStatus: CommentStatus
 }
 
-export class CommentType {
-  constructor( public id: ObjectId,
-               public content: string,
-               public postId: ObjectId,
-               public commentatorInfo: CommentatorInfoType,
-               public likesInfo: CommentLikesInfoType,
-               public createdAt: string
-  ) {}
-}
-// export type CommentType = {
-//   id: ObjectId,
-//   content: string
-//   postId: ObjectId
-//   commentatorInfo: CommentatorInfoType
-//   likesInfo: CommentLikesInfoType
-//   createdAt: string
-// }
-
-export class RefreshTokenDeviceType {
-  constructor(public id: ObjectId,
-              public ip: string,
-              public title: string,
-              public lastActiveDate: Date,
-              public expirationDate: Date,
-              public deviceId: ObjectId,
-              public userId: ObjectId,
-  ) {}
-}
-// export type RefreshTokenDeviceType = {
-//   id: ObjectId,
-//   ip: string,
-//   title: string
-//   lastActiveDate: Date
-//   expirationDate: Date
-//   deviceId: ObjectId
-//   userId: ObjectId
-// }
-
-export type RefreshTokenDeviceViewType = {
+export type DeviceViewType = {
   ip: string,
   title: string
   lastActiveDate: Date
@@ -118,26 +63,6 @@ export type APIRequestsCountType = {
   date: Date
 }
 
-export class PostType {
-  constructor(public id: ObjectId,
-              public title: string,
-              public shortDescription: string,
-              public content: string,
-              public blogId: ObjectId,
-              public createdAt: string,
-              public blogName: string,
-  ) {}
-}
-// export type PostType = {
-//   id: ObjectId
-//   title: string
-//   shortDescription: string
-//   content: string
-//   blogId: ObjectId
-//   createdAt: string
-//   blogName: string
-// }
-
 export type AccountDataType = {
   login: string
   email: string
@@ -150,21 +75,6 @@ export type EmailConfirmationType = {
   expirationDate: Date,
   isConfirmed: boolean
 }
-
-export class UserType  {
-  constructor( public id: ObjectId,
-               public accountData: AccountDataType,
-               public emailConfirmation: EmailConfirmationType,
-               public commentsLikes: Array<UserCommentLikesType>
-  ) {}
-}
-
-// export type UserType = {
-//   id: ObjectId
-//   accountData: AccountDataType
-//   emailConfirmation: EmailConfirmationType
-//   commentsLikes: Array<UserCommentLikesType>
-// }
 
 export type PostsType = {
   pagesCount: number,

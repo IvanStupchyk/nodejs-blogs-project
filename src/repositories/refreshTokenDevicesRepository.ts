@@ -1,10 +1,14 @@
 import {DeviceModel} from "../db/db"
-import {RefreshTokenDeviceType, RefreshTokenDeviceViewType} from "../types/generalTypes";
+import {DeviceViewType} from "../types/generalTypes";
 import {ObjectId} from "mongodb";
+import 'reflect-metadata'
+import {injectable} from "inversify";
+import {DeviceType} from "../domains/devices/dto/createDeviceDto";
 
+@injectable()
 export class RefreshTokenDevicesRepository {
-  async getUserSessions(userId: ObjectId): Promise<Array<RefreshTokenDeviceViewType>> {
-    const result: Array<RefreshTokenDeviceType> = await DeviceModel
+  async getUserSessions(userId: ObjectId): Promise<Array<DeviceViewType>> {
+    const result: Array<DeviceType> = await DeviceModel
       .find({userId}, {_id: 0, __v: 0}).lean()
 
     return result.length ? result.map(el => {
@@ -17,7 +21,7 @@ export class RefreshTokenDevicesRepository {
     }) : []
   }
 
-  async setNewDevice(device: RefreshTokenDeviceType): Promise<boolean> {
+  async setNewDevice(device: DeviceType): Promise<boolean> {
     const deviceInstance = new DeviceModel()
 
     deviceInstance.id = device.id

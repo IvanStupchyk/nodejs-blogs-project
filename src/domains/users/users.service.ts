@@ -1,12 +1,14 @@
 import { v4 as uuidv4 } from 'uuid'
-import {UserType} from "../types/generalTypes";
 import bcrypt from 'bcrypt'
-import {UsersRepository} from "../repositories/usersRepository";
-import {ViewUserModel} from "../features/users/models/ViewUserModel";
+import {UsersRepository} from "../../repositories/usersRepository";
+import {ViewUserModel} from "../../features/users/models/ViewUserModel";
 import {ObjectId} from "mongodb";
+import {inject, injectable} from "inversify";
+import {UserType} from "./dto/createUserDto";
 
+@injectable()
 export class UsersService {
-  constructor(protected usersRepository: UsersRepository) {}
+  constructor(@inject(UsersRepository) protected usersRepository: UsersRepository) {}
 
   async createUser(login: string, password: string, email: string): Promise<ViewUserModel> {
     const passwordHash = await bcrypt.hash(password, 10)

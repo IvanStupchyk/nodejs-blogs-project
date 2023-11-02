@@ -1,6 +1,9 @@
 import {ApiRequestModel} from "../db/db"
 import {APIRequestsCountType} from "../types/generalTypes";
+import 'reflect-metadata'
+import {injectable} from "inversify";
 
+@injectable()
 export class ApiRequestRepository {
   async addAPIRequest(newRequest: APIRequestsCountType): Promise<boolean> {
     const apiRequestsCountInstance = new ApiRequestModel()

@@ -1,11 +1,13 @@
-import {BlogsRepository} from "../repositories/blogsRepository";
-import {BlogType} from "../types/generalTypes";
+import {BlogsRepository} from "../../repositories/blogsRepository";
 import {ObjectId} from "mongodb";
-import {BlogsQueryRepository} from "../repositories/blogsQueryRepository";
+import {BlogsQueryRepository} from "../../repositories/blogsQueryRepository";
+import {inject, injectable} from "inversify";
+import {BlogType} from "./dto/createBlogDto";
 
+@injectable()
 export class BlogsService  {
-  constructor(protected blogsRepository: BlogsRepository,
-              protected blogsQueryRepository: BlogsQueryRepository
+  constructor(@inject(BlogsRepository) protected blogsRepository: BlogsRepository,
+              @inject(BlogsQueryRepository) protected blogsQueryRepository: BlogsQueryRepository
   ) {}
 
   async createBlog(name: string, description: string, websiteUrl: string): Promise<BlogType> {

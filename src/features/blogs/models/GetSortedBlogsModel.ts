@@ -1,5 +1,5 @@
 import {SortOrder} from "../../../constants/sortOrder";
-import {BlogType} from "../../../types/generalTypes";
+import {BlogType} from "../../../domains/blogs/dto/createBlogDto";
 
 export type GetSortedBlogsModel = {
   searchNameTerm: string

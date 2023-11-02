@@ -1,7 +1,11 @@
 import {CommentModel} from "../db/db"
-import {CommentLikesInfoType, CommentStatus, CommentType} from "../types/generalTypes";
+import {CommentLikesInfoType, CommentStatus} from "../types/generalTypes";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
+import 'reflect-metadata'
+import {injectable} from "inversify";
+import {CommentType} from "../domains/comments/dto/createCommentDto";
 
+@injectable()
 export class CommentsRepository {
   async createComment(comment: CommentType): Promise<CommentViewModel> {
     const commentInstance = new CommentModel()

@@ -1,10 +1,10 @@
+import 'reflect-metadata'
 import {UsersQueryRepository} from "../repositories/usersQueryRepository";
 import {RefreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
-import {DevicesService} from "../domains/devices.service";
-import {DevicesController} from "../features/devices/devicesController";
+import {DevicesService} from "../domains/devices/devices.service";
+import {Container} from "inversify";
 
-const refreshTokenDevicesRepository = new RefreshTokenDevicesRepository()
-const usersQueryRepository = new UsersQueryRepository()
-const devicesService = new DevicesService(refreshTokenDevicesRepository, usersQueryRepository)
-
-export const devicesController = new DevicesController(refreshTokenDevicesRepository, devicesService)
+export const devicesContainer = new Container()
+devicesContainer.bind(RefreshTokenDevicesRepository).to(RefreshTokenDevicesRepository)
+devicesContainer.bind(UsersQueryRepository).to(UsersQueryRepository)
+devicesContainer.bind(DevicesService).to(DevicesService)

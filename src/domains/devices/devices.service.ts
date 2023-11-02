@@ -1,14 +1,16 @@
 import {Request} from "express";
-import {jwtService} from "../application/jwt-service";
-import {UsersQueryRepository} from "../repositories/usersQueryRepository";
-import {UserType} from "../types/generalTypes";
-import {RefreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
-import {HTTP_STATUSES} from "../utils";
+import {jwtService} from "../../application/jwt-service";
+import {UsersQueryRepository} from "../../repositories/usersQueryRepository";
+import {RefreshTokenDevicesRepository} from "../../repositories/refreshTokenDevicesRepository";
+import {HTTP_STATUSES} from "../../utils";
+import {inject, injectable} from "inversify";
+import {UserType} from "../users/dto/createUserDto";
 
+@injectable()
 export class DevicesService  {
   constructor(
-    protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
-    protected usersQueryRepository: UsersQueryRepository
+    @inject(RefreshTokenDevicesRepository) protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
+    @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository
   ) {}
 
   async deleteSession(req: Request, deviceId: string): Promise<number> {

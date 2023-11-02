@@ -8,9 +8,10 @@ import {mongooseUri} from "../../src/db/db";
 import {mockBlogs} from "../../src/constants/blanks";
 import {postsTestManager} from "../utils/postsTestManager";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
-import {BlogType, PostType} from "../../src/types/generalTypes";
 import mongoose from 'mongoose'
 import {ObjectId} from "mongodb";
+import {PostType} from "../../src/domains/posts/dto/createPostDto";
+import {BlogType} from "../../src/domains/blogs/dto/createBlogDto";
 
 const getRequest = () => {
   return request(app)

@@ -1,4 +1,4 @@
-import {CommentsService} from "../../domains/comments.service";
+import {CommentsService} from "../../domains/comments/comments.service";
 import {RequestWithParams, RequestWithParamsAndBody} from "../../types/types";
 import {GetCommentModel} from "./models/GetCommentModel";
 import {Response} from "express";
@@ -8,9 +8,11 @@ import {UpdateCommentModel} from "./models/UpdateCommentModel";
 import {UpdateLikesModel} from "./models/UpdateLikesModel";
 import {ObjectId} from "mongodb";
 import {DeleteCommentModel} from "./models/DeleteCommentModel";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class CommentsController {
-  constructor(protected commentsService: CommentsService) {
+  constructor(@inject(CommentsService) protected commentsService: CommentsService) {
   }
 
   async getComment(req: RequestWithParams<GetCommentModel>, res: Response) {

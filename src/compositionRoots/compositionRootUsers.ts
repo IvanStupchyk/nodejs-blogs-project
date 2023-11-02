@@ -1,9 +1,12 @@
+import 'reflect-metadata'
 import {UsersRepository} from "../repositories/usersRepository";
-import {UsersService} from "../domains/users.service";
+import {UsersService} from "../domains/users/users.service";
 import {UsersController} from "../features/users/usersController";
 import {UsersQueryRepository} from "../repositories/usersQueryRepository";
+import {Container} from "inversify";
 
-const usersRepository = new UsersRepository()
-const usersQueryRepository = new UsersQueryRepository()
-const usersService = new UsersService(usersRepository)
-export const usersController = new UsersController(usersService, usersQueryRepository)
+export const usersContainer = new Container()
+usersContainer.bind(UsersController).to(UsersController)
+usersContainer.bind(UsersService).to(UsersService)
+usersContainer.bind(UsersRepository).to(UsersRepository)
+usersContainer.bind(UsersQueryRepository).to(UsersQueryRepository)

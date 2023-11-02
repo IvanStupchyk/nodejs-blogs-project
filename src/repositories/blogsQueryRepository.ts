@@ -1,11 +1,15 @@
 import {BlogModel} from "../db/db"
-import {BlogsType, BlogType} from "../types/generalTypes";
+import {BlogsType} from "../types/generalTypes";
 import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
 import {SortOrder} from "../constants/sortOrder";
 import {mockBlogModel} from "../constants/blanks";
 import {GetSortedBlogsModel} from "../features/blogs/models/GetSortedBlogsModel";
 import {ObjectId} from "mongodb";
+import 'reflect-metadata'
+import {injectable} from "inversify";
+import {BlogType} from "../domains/blogs/dto/createBlogDto";
 
+@injectable()
 export class BlogsQueryRepository {
   async getSortedBlogs(params: GetSortedBlogsModel): Promise<BlogsType> {
     const { searchNameTerm } = params

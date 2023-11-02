@@ -1,4 +1,4 @@
-import {AuthService} from "../../domains/auth.service";
+import {AuthService} from "../../domains/auth/auth.service";
 import {Request, Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 import {RequestWithBody} from "../../types/types";
@@ -8,9 +8,11 @@ import {RecoveryCodeToEmailModel} from "./models/RecoveryCodeToEmailModel";
 import {NewPasswordModel} from "./models/NewPasswordModel";
 import {ConfirmEmailModel} from "./models/ConfirmEmailModel";
 import {ResendingCodeToEmailModel} from "./models/ResendingCodeToEmailModel";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class AuthController {
-  constructor(protected authService: AuthService) {
+  constructor(@inject(AuthService) protected authService: AuthService) {
   }
 
   async getOwnData(req: Request, res: Response) {

@@ -1,31 +1,20 @@
+import 'reflect-metadata'
 import {PostsQueryRepository} from "../repositories/postsQueryRepository";
-import {CommentsService} from "../domains/comments.service";
+import {CommentsService} from "../domains/comments/comments.service";
 import {UsersRepository} from "../repositories/usersRepository";
 import {UsersQueryRepository} from "../repositories/usersQueryRepository";
 import {CommentsRepository} from "../repositories/comentsRepository";
 import {CommentsQueryRepository} from "../repositories/comentsQueryRepository";
-import {PostsService} from "../domains/posts.service";
+import {PostsService} from "../domains/posts/posts.service";
 import {PostsRepository} from "../repositories/postsRepository";
-import {PostController} from "../features/posts/postController";
+import {Container} from "inversify";
 
-const usersRepository = new UsersRepository()
-const usersQueryRepository = new UsersQueryRepository()
-const commentsRepository = new CommentsRepository()
-const commentsQueryRepository = new CommentsQueryRepository()
-const postsQueryRepository = new PostsQueryRepository()
-const postsRepository = new PostsRepository()
-const postsService = new PostsService(postsQueryRepository, postsRepository)
-
-const commentsService = new CommentsService(
-  usersQueryRepository,
-  usersRepository,
-  commentsRepository,
-  commentsQueryRepository,
-  postsQueryRepository
-)
-
-export const postController = new PostController(
-  postsQueryRepository,
-  commentsService,
-  postsService
-)
+export const postContainer = new Container()
+postContainer.bind(UsersRepository).to(UsersRepository)
+postContainer.bind(UsersQueryRepository).to(UsersQueryRepository)
+postContainer.bind(CommentsRepository).to(CommentsRepository)
+postContainer.bind(CommentsQueryRepository).to(CommentsQueryRepository)
+postContainer.bind(PostsQueryRepository).to(PostsQueryRepository)
+postContainer.bind(PostsRepository).to(PostsRepository)
+postContainer.bind(PostsService).to(PostsService)
+postContainer.bind(CommentsService).to(CommentsService)

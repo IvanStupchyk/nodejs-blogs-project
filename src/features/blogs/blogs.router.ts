@@ -3,7 +3,10 @@ import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidation
 import {blogValidationMiddleware} from "../../middlewares/blogValidationMiddleware";
 import {postForSpecificBlogValidationMiddleware} from "../../middlewares/postForSpecifigBlogValidationMiddleware";
 import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
-import {blogController} from "../../compositionRoots/compositionRootBlogs";
+import {blogsContainer} from "../../compositionRoots/compositionRootBlogs";
+import {BlogController} from "./blogController";
+
+const blogController = blogsContainer.resolve(BlogController)
 
 export const blogRouter = () => {
   const router = express.Router()

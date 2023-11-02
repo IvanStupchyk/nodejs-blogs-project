@@ -1,7 +1,7 @@
 import {BlogsQueryRepository} from "../../repositories/blogsQueryRepository";
 import {PostsQueryRepository} from "../../repositories/postsQueryRepository";
-import {BlogsService} from "../../domains/blogs.service";
-import {PostsService} from "../../domains/posts.service";
+import {BlogsService} from "../../domains/blogs/blogs.service";
+import {PostsService} from "../../domains/posts/posts.service";
 import {
   RequestWithBody,
   RequestWithParams,
@@ -20,12 +20,14 @@ import {CreatePostForSpecificBlogModel} from "../posts/models/CreatePostForSpeci
 import {ObjectId} from "mongodb";
 import {UpdateBlogModel} from "./models/UpdateBlogModel";
 import {DeleteBlogModel} from "./models/DeleteBlogModel";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class BlogController {
-  constructor(protected blogsQueryRepository: BlogsQueryRepository,
-              protected postsQueryRepository: PostsQueryRepository,
-              protected blogsService: BlogsService,
-              protected postsService: PostsService) {
+  constructor(@inject(BlogsQueryRepository) protected blogsQueryRepository: BlogsQueryRepository,
+              @inject(PostsQueryRepository) protected postsQueryRepository: PostsQueryRepository,
+              @inject(BlogsService) protected blogsService: BlogsService,
+              @inject(PostsService) protected postsService: PostsService) {
   }
 
   async getBlogs(req: RequestWithQuery<GetSortedBlogsModel>, res: Response) {

@@ -2,7 +2,7 @@ import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
 import {HTTP_STATUSES} from "../../src/utils";
 import {mongooseUri} from "../../src/db/db";
-import {BlogType, CommentStatus, PostType} from "../../src/types/generalTypes";
+import {CommentStatus} from "../../src/types/generalTypes";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {LoginUserModel} from "../../src/features/auth/models/LoginUserModel";
@@ -14,6 +14,8 @@ import {CommentViewModel} from "../../src/features/comments/models/CommentViewMo
 import {UpdateCommentModel} from "../../src/features/comments/models/UpdateCommentModel";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 import mongoose from "mongoose";
+import {PostType} from "../../src/domains/posts/dto/createPostDto";
+import {BlogType} from "../../src/domains/blogs/dto/createBlogDto";
 
 const getRequest = () => {
   return request(app)
