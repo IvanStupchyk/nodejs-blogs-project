@@ -1,5 +1,5 @@
-import {UsersQueryRepository} from "../../repositories/usersQueryRepository";
-import {UsersService} from "../../domains/users/users.service";
+import {UsersQueryRepository} from "../../infrastructure/repositories/usersQueryRepository";
+import {UsersService} from "../../application/users.service";
 import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../../types/types";
 import {CreateUserModel} from "./models/CreateUserModel";
 import {Response} from "express";

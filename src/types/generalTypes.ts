@@ -3,7 +3,7 @@ import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {mockBlogModel, mockCommentModel, mockPostModel, mockUserModel} from "../constants/blanks";
 import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 import {ObjectId} from "mongodb";
-import {PostType} from "../domains/posts/dto/createPostDto";
+import {PostType} from "../dto/postDto";
 import {BlogType} from "../domains/blogs/dto/createBlogDto";
 
 export type BlogsType = {

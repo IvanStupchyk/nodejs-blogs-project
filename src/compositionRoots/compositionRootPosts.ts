@@ -1,13 +1,14 @@
 import 'reflect-metadata'
-import {PostsQueryRepository} from "../repositories/postsQueryRepository";
+import {PostsQueryRepository} from "../infrastructure/repositories/postsQueryRepository";
 import {CommentsService} from "../domains/comments/comments.service";
-import {UsersRepository} from "../repositories/usersRepository";
-import {UsersQueryRepository} from "../repositories/usersQueryRepository";
-import {CommentsRepository} from "../repositories/comentsRepository";
-import {CommentsQueryRepository} from "../repositories/comentsQueryRepository";
+import {UsersRepository} from "../infrastructure/repositories/usersRepository";
+import {UsersQueryRepository} from "../infrastructure/repositories/usersQueryRepository";
+import {CommentsRepository} from "../infrastructure/repositories/comentsRepository";
+import {CommentsQueryRepository} from "../infrastructure/repositories/comentsQueryRepository";
 import {PostsService} from "../domains/posts/posts.service";
-import {PostsRepository} from "../repositories/postsRepository";
+import {PostsRepository} from "../infrastructure/repositories/postsRepository";
 import {Container} from "inversify";
+import {BlogsQueryRepository} from "../infrastructure/repositories/blogsQueryRepository";
 
 export const postContainer = new Container()
 postContainer.bind(UsersRepository).to(UsersRepository)
@@ -16,5 +17,6 @@ postContainer.bind(CommentsRepository).to(CommentsRepository)
 postContainer.bind(CommentsQueryRepository).to(CommentsQueryRepository)
 postContainer.bind(PostsQueryRepository).to(PostsQueryRepository)
 postContainer.bind(PostsRepository).to(PostsRepository)
+postContainer.bind(BlogsQueryRepository).to(BlogsQueryRepository)
 postContainer.bind(PostsService).to(PostsService)
 postContainer.bind(CommentsService).to(CommentsService)

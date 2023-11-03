@@ -1,17 +1,17 @@
 import bcrypt from 'bcrypt'
 import {Request} from "express";
-import {UsersRepository} from "../../repositories/usersRepository";
+import {UsersRepository} from "../infrastructure/repositories/usersRepository";
 import add from 'date-fns/add'
-import {jwtService} from "../../application/jwt-service";
-import {UsersQueryRepository} from "../../repositories/usersQueryRepository";
-import {ViewUserModel} from "../../features/users/models/ViewUserModel";
+import {jwtService} from "./jwt-service";
+import {UsersQueryRepository} from "../infrastructure/repositories/usersQueryRepository";
+import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {v4 as uuidv4} from "uuid";
-import {emailManager} from "../../managers/emailManager";
-import {RefreshTokenDevicesRepository} from "../../repositories/refreshTokenDevicesRepository";
+import {emailTemplatesManager} from "./emailTemplatesManager";
+import {RefreshTokenDevicesRepository} from "../infrastructure/repositories/refreshTokenDevicesRepository";
 import {ObjectId} from "mongodb";
 import {inject, injectable} from "inversify";
-import {UserType} from "../users/dto/createUserDto";
-import {DeviceType} from "../devices/dto/createDeviceDto";
+import {DeviceType} from "../domains/devices/dto/createDeviceDto";
+import {UserModel} from "../db/db";
 
 @injectable()
 export class AuthService {
@@ -22,7 +22,7 @@ export class AuthService {
 
   async loginUser(req: Request, loginOrEmail: string, password: string):
     Promise<{accessToken: string, refreshToken: string} | boolean> {
-    const user = await this.usersRepository.findUserByLoginOrEmail(loginOrEmail)
+    const user = await this.usersQueryRepository.findUserByLoginOrEmail(loginOrEmail)
     if (!user) return false
     if (!user.emailConfirmation.isConfirmed) return false
 
@@ -60,44 +60,26 @@ export class AuthService {
   async createUser(email: string, login: string, password: string): Promise<boolean> {
     const passwordHash = await bcrypt.hash(password, 10)
 
-    const newUser: UserType = {
-      id: new ObjectId(),
-      accountData: {
-        login,
-        email,
-        passwordHash,
-        createdAt: new Date().toISOString()
-      },
-      emailConfirmation: {
-        confirmationCode: uuidv4(),
-        expirationDate: add(new Date(), {
-          hours: 1,
-          minutes: 30
-        }),
-        isConfirmed: false
-      },
-      commentsLikes: []
-    }
+    const smartUserModel = UserModel.makeInstance(login, email, passwordHash, false)
 
     try {
-      await emailManager.sendEmailConfirmationMessage(newUser)
+      await emailTemplatesManager.sendEmailConfirmationMessage(smartUserModel)
     } catch (error) {
       console.log('sendEmailConfirmationMessage error', error)
-      await this.usersRepository.deleteUser(newUser.id)
       return false
     }
 
-    return !!await this.usersRepository.createUser(newUser)
+    return !!await this.usersRepository.save(smartUserModel)
   }
 
   async sendRecoveryPasswordCode(email: string) {
-    const user = await this.usersRepository.findUserByLoginOrEmail(email)
+    const user = await this.usersQueryRepository.findUserByLoginOrEmail(email)
 
     if (user) {
       try {
         const recoveryCode = await jwtService.createPasswordRecoveryJWT(user.id)
 
-        await emailManager.sendPasswordRecoveryMessage(user, recoveryCode)
+        await emailTemplatesManager.sendPasswordRecoveryMessage(user, recoveryCode)
       } catch (error) {
         console.log('sendPasswordRecoveryMessage error', error)
       }
@@ -110,7 +92,12 @@ export class AuthService {
 
     const newPasswordHash = await bcrypt.hash(newPassword, 10)
 
-    return await this.usersRepository.changeUserPassword(result.userId, newPasswordHash)
+    const user = await this.usersQueryRepository.fetchAllUserDataById(result.userId)
+    if (!user) return false
+
+    user.changeUserPassword(newPasswordHash)
+
+    return !!await this.usersRepository.save(user)
   }
 
   async refreshTokens(userId: ObjectId, deviceId: ObjectId): Promise<{accessToken: string, refreshToken: string}> {
@@ -131,32 +118,33 @@ export class AuthService {
   }
 
   async confirmEmail(code: string): Promise<boolean> {
-    const user = await this.usersRepository.findUserByConfirmationCode(code)
+    const user = await this.usersQueryRepository.findUserByConfirmationCode(code)
     if (!user) return false
 
-    return await this.usersRepository.updateConfirmation(user.id)
+    if (user.canBeConfirmed(code)) {
+      user.confirm(code)
+      return !!await this.usersRepository.save(user)
+    }
+    return false
   }
 
   async resendEmail(email: string): Promise<boolean> {
-    const user = await this.usersRepository.findUserByEmail(email)
+    const user = await this.usersQueryRepository.findUserByLoginOrEmail(email)
     if (!user) return false
 
+    const newCode = uuidv4()
+    const newExpirationDate = add(new Date(), {hours: 1, minutes: 30})
+
+    user.updateConfirmationCodeAndExpirationTime(newExpirationDate, newCode)
+    await this.usersRepository.save(user)
+
     try {
-      const newCode = uuidv4()
-      const newExpirationDate = add(new Date(), {hours: 1, minutes: 30})
-      await this.usersRepository.updateConfirmationCodeAndExpirationTime(user.id, newExpirationDate, newCode)
-
-      try {
-        await emailManager.resendEmailConfirmationMessage(user.accountData.email, newCode)
-      } catch (error) {
-        console.log('resendEmailConfirmationMessage error', error)
-      }
-
-      return true
+      await emailTemplatesManager.resendEmailConfirmationMessage(user.accountData.email, newCode)
     } catch (error) {
-      console.log('sendEmailConfirmationMessage error', error)
-      return false
+      console.log('resendEmailConfirmationMessage error', error)
     }
+
+    return true
   }
 
   async checkAndFindUserByAccessToken(token: string): Promise<ViewUserModel | null> {

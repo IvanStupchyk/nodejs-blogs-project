@@ -1,7 +1,7 @@
-import {emailAdapter} from "../adapters/emailAdapter";
-import { UserType } from "../domains/users/dto/createUserDto";
+import {emailAdapter} from "../infrastructure/emailAdapter";
+import { UserType } from "../dto/userDto";
 
-export const emailManager = {
+export const emailTemplatesManager = {
   async sendEmailConfirmationMessage(user: UserType) {
     await emailAdapter.sendEmail(
       user.accountData.email,

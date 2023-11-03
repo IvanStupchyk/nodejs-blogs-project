@@ -3,7 +3,7 @@ import {
   AccountDataType,
   EmailConfirmationType,
   UserCommentLikesType
-} from "../../../types/generalTypes";
+} from "../types/generalTypes";
 
 export class UserType  {
   constructor( public id: ObjectId,

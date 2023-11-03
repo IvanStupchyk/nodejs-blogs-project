@@ -1,7 +1,7 @@
 import 'reflect-metadata'
-import {UsersQueryRepository} from "../repositories/usersQueryRepository";
-import {RefreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
-import {UsersRepository} from "../repositories/usersRepository";
+import {UsersQueryRepository} from "../infrastructure/repositories/usersQueryRepository";
+import {RefreshTokenDevicesRepository} from "../infrastructure/repositories/refreshTokenDevicesRepository";
+import {UsersRepository} from "../infrastructure/repositories/usersRepository";
 import {Container} from "inversify";
 
 export const authServiceContainer = new Container()

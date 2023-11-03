@@ -1,7 +1,7 @@
-import {BlogModel} from "../db/db"
+import {BlogModel} from "../../db/db"
 import 'reflect-metadata'
 import {injectable} from "inversify";
-import {BlogType} from "../domains/blogs/dto/createBlogDto";
+import {BlogType} from "../../domains/blogs/dto/createBlogDto";
 
 @injectable()
 export class BlogsRepository {

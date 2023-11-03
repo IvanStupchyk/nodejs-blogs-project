@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUSES} from "../utils";
 import {jwtService} from "../application/jwt-service";
-import {RefreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
+import {RefreshTokenDevicesRepository} from "../infrastructure/repositories/refreshTokenDevicesRepository";
 
 const refreshTokenDevicesRepository = new RefreshTokenDevicesRepository()
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {

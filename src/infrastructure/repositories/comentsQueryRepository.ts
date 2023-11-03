@@ -1,14 +1,14 @@
-import {CommentModel} from "../db/db"
-import {CommentStatus, CommentsType, UserCommentLikesType} from "../types/generalTypes";
-import {createDefaultSortedParams, getPagesCount} from "../utils/utils";
-import {mockCommentModel} from "../constants/blanks";
-import {GetSortedCommentsModel} from "../features/comments/models/GetSortedCommentsModel";
-import {CommentViewModel} from "../features/comments/models/CommentViewModel";
+import {CommentModel} from "../../db/db"
+import {CommentStatus, CommentsType, UserCommentLikesType} from "../../types/generalTypes";
+import {createDefaultSortedParams, getPagesCount} from "../../utils/utils";
+import {mockCommentModel} from "../../constants/blanks";
+import {GetSortedCommentsModel} from "../../features/comments/models/GetSortedCommentsModel";
+import {CommentViewModel} from "../../features/comments/models/CommentViewModel";
 import {UsersQueryRepository} from "./usersQueryRepository";
 import {ObjectId} from "mongodb";
 import 'reflect-metadata'
 import {injectable} from "inversify";
-import {CommentType} from "../domains/comments/dto/createCommentDto";
+import {CommentType} from "../../domains/comments/dto/createCommentDto";
 
 @injectable()
 export class CommentsQueryRepository {

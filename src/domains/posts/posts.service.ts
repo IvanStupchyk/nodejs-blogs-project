@@ -1,13 +1,16 @@
-import {PostsRepository} from "../../repositories/postsRepository";
+import {PostsRepository} from "../../infrastructure/repositories/postsRepository";
 import {ObjectId} from "mongodb";
-import {PostsQueryRepository} from "../../repositories/postsQueryRepository";
+import {PostsQueryRepository} from "../../infrastructure/repositories/postsQueryRepository";
 import {inject, injectable} from "inversify";
-import {PostType} from "./dto/createPostDto";
+import {PostType} from "../../dto/postDto";
+import {PostModel} from "../../db/db";
+import {BlogsQueryRepository} from "../../infrastructure/repositories/blogsQueryRepository";
 
 @injectable()
 export class PostsService {
   constructor(@inject(PostsQueryRepository) protected postsQueryRepository: PostsQueryRepository,
-              @inject(PostsRepository) protected postsRepository: PostsRepository
+              @inject(PostsRepository) protected postsRepository: PostsRepository,
+              @inject(BlogsQueryRepository) protected blogsQueryRepository: BlogsQueryRepository
   ) {}
 
   async createPost(
@@ -16,17 +19,27 @@ export class PostsService {
     shortDescription: string,
     blogId: ObjectId
   ): Promise<PostType> {
-    const newPost: PostType = new PostType(
-      new ObjectId(),
+    const blog = await this.blogsQueryRepository.findBlogById(blogId)
+
+    const initialPostModel = PostModel.makeInstance(
       title,
       shortDescription,
       content,
       blogId,
-      new Date().toISOString(),
-      ''
+      blog?.name ?? ''
     )
 
-    return await this.postsRepository.createPost(newPost, blogId)
+    await this.postsRepository.save(initialPostModel)
+
+    return {
+      id: initialPostModel.id,
+      title: initialPostModel.title,
+      content: initialPostModel.content,
+      shortDescription: initialPostModel.shortDescription,
+      blogId: initialPostModel.blogId,
+      createdAt: initialPostModel.createdAt,
+      blogName: initialPostModel.blogName
+    }
   }
 
   async updatePostById(

@@ -5,10 +5,10 @@ import {mongooseUri} from "../../src/db/db";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
-import {emailManager} from "../../src/managers/emailManager";
 import {jwtService} from "../../src/application/jwt-service";
 import mongoose from "mongoose";
-import {UserType} from "../../src/domains/users/dto/createUserDto";
+import {UserType} from "../../src/dto/userDto";
+import {emailTemplatesManager} from "../../src/application/emailTemplatesManager";
 
 
 const getRequest = () => {
@@ -25,7 +25,7 @@ describe('tests for /auth password recovery', () => {
   beforeAll( async () => {
     await mongoose.connect(mongooseUri)
 
-    jest.mock('../../src/managers/emailManager')
+    jest.mock('../../src/application/emailTemplatesManager')
 
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
   })
@@ -53,7 +53,7 @@ describe('tests for /auth password recovery', () => {
   })
 
   it('should not send password recovery code if email is invalid or does not exist in the system', async () => {
-    emailManager.sendPasswordRecoveryMessage = jest.fn()
+    emailTemplatesManager.sendPasswordRecoveryMessage = jest.fn()
 
     await getRequest()
       .post(`${RouterPaths.auth}/password-recovery`)
@@ -76,7 +76,7 @@ describe('tests for /auth password recovery', () => {
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-    expect(emailManager.sendPasswordRecoveryMessage).not.toHaveBeenCalled()
+    expect(emailTemplatesManager.sendPasswordRecoveryMessage).not.toHaveBeenCalled()
   })
 
   it('should send password recovery code if email is valid', async () => {
@@ -87,7 +87,7 @@ describe('tests for /auth password recovery', () => {
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-    expect(emailManager.sendPasswordRecoveryMessage).toHaveBeenCalledTimes(1)
+    expect(emailTemplatesManager.sendPasswordRecoveryMessage).toHaveBeenCalledTimes(1)
   })
 
   it('should generate an error if input data is incorrect for new password breakpoint', async () => {
@@ -112,7 +112,7 @@ describe('tests for /auth password recovery', () => {
   })
 
   it('should change user password and log in with new credentials', async () => {
-    emailManager.sendPasswordRecoveryMessage = jest.fn()
+    emailTemplatesManager.sendPasswordRecoveryMessage = jest.fn()
 
     const userMock: UserType = {
       id: superAdminUser.id,
@@ -132,7 +132,7 @@ describe('tests for /auth password recovery', () => {
     const recoveryCode = await jwtService.createPasswordRecoveryJWT(superAdminUser.id)
     const newPassword = '777777'
 
-    await emailManager.sendPasswordRecoveryMessage(userMock, recoveryCode)
+    await emailTemplatesManager.sendPasswordRecoveryMessage(userMock, recoveryCode)
 
     await getRequest()
       .post(`${RouterPaths.auth}/new-password`)

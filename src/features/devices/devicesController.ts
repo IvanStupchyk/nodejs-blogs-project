@@ -1,4 +1,4 @@
-import {RefreshTokenDevicesRepository} from "../../repositories/refreshTokenDevicesRepository";
+import {RefreshTokenDevicesRepository} from "../../infrastructure/repositories/refreshTokenDevicesRepository";
 import {DevicesService} from "../../domains/devices/devices.service";
 import {Request, Response} from "express";
 import {HTTP_STATUSES} from "../../utils";

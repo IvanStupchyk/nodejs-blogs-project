@@ -1,6 +1,6 @@
-import {BlogsRepository} from "../../repositories/blogsRepository";
+import {BlogsRepository} from "../../infrastructure/repositories/blogsRepository";
 import {ObjectId} from "mongodb";
-import {BlogsQueryRepository} from "../../repositories/blogsQueryRepository";
+import {BlogsQueryRepository} from "../../infrastructure/repositories/blogsQueryRepository";
 import {inject, injectable} from "inversify";
 import {BlogType} from "./dto/createBlogDto";
 

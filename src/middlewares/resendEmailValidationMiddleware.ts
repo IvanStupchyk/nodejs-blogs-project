@@ -1,7 +1,7 @@
 import {body} from "express-validator";
-import {UsersRepository} from "../repositories/usersRepository";
+import {UsersQueryRepository} from "../infrastructure/repositories/usersQueryRepository";
 
-const usersRepository = new UsersRepository()
+const usersQueryRepository = new UsersQueryRepository()
 
 export const resendEmailValidationMiddleware = [
   body('email')
@@ -9,7 +9,7 @@ export const resendEmailValidationMiddleware = [
     .trim()
     .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
     .custom(async value => {
-      const user = await usersRepository.findUserByEmail(value)
+      const user = await usersQueryRepository.findUserByLoginOrEmail(value)
 
       if (user === null) {
         throw new Error("email doesn't exist in the system")

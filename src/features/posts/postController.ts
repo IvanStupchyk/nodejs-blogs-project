@@ -1,4 +1,4 @@
-import {PostsQueryRepository} from "../../repositories/postsQueryRepository";
+import {PostsQueryRepository} from "../../infrastructure/repositories/postsQueryRepository";
 import {CommentsService} from "../../domains/comments/comments.service";
 import {PostsService} from "../../domains/posts/posts.service";
 import {
