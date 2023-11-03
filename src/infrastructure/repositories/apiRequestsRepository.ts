@@ -1,5 +1,5 @@
-import {ApiRequestModel} from "../db/db"
-import {APIRequestsCountType} from "../types/generalTypes";
+import {ApiRequestModel} from "../../db/db"
+import {APIRequestsCountType} from "../../types/generalTypes";
 import 'reflect-metadata'
 import {injectable} from "inversify";
 

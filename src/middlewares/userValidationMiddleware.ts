@@ -1,8 +1,8 @@
 import {body} from "express-validator";
 import {errorsConstants} from "../constants/errorsContants";
-import {UsersRepository} from "../repositories/usersRepository";
+import {UsersQueryRepository} from "../infrastructure/repositories/usersQueryRepository";
 
-const usersRepository = new UsersRepository()
+const usersQueryRepository = new UsersQueryRepository()
 
 export const userValidationMiddleware = [
   body('login')
@@ -11,7 +11,7 @@ export const userValidationMiddleware = [
     .matches(/^[a-zA-Z0-9_-]*$/)
     .isLength({min: 3, max: 10})
     .custom(async value => {
-      const foundUser = await usersRepository.findUserByLoginOrEmail(value)
+      const foundUser = await usersQueryRepository.findUserByLoginOrEmail(value)
 
       if (foundUser !== null) {
         throw new Error('It should be unique login')
@@ -29,7 +29,7 @@ export const userValidationMiddleware = [
     .trim()
     .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
     .custom(async value => {
-      const foundUser = await usersRepository.findUserByLoginOrEmail(value)
+      const foundUser = await usersQueryRepository.findUserByLoginOrEmail(value)
 
       if (foundUser !== null) {
         throw new Error('It should be unique email')

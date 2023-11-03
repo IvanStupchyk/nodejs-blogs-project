@@ -1,16 +1,17 @@
-import {UserModel} from "../db/db"
-import {UserCommentLikesType, UsersType} from "../types/generalTypes";
+import {UserModel} from "../../db/db"
+import {UserCommentLikesType, UsersType} from "../../types/generalTypes";
 import {
   createDefaultSortedParams,
   getPagesCount
-} from "../utils/utils";
-import {GetSortedUsersModel} from "../features/users/models/GetSortedUsersModel";
-import {mockUserModel} from "../constants/blanks";
-import {ViewUserModel} from "../features/users/models/ViewUserModel";
+} from "../../utils/utils";
+import {GetSortedUsersModel} from "../../features/users/models/GetSortedUsersModel";
+import {mockUserModel} from "../../constants/blanks";
+import {ViewUserModel} from "../../features/users/models/ViewUserModel";
 import {ObjectId} from "mongodb";
 import {injectable} from "inversify";
 import 'reflect-metadata'
-import {UserType} from "../domains/users/dto/createUserDto";
+import {UserType} from "../../dto/userDto";
+import {HydratedUserType} from "../../types/usersTypes";
 
 @injectable()
 export class UsersQueryRepository  {
@@ -89,15 +90,26 @@ export class UsersQueryRepository  {
     } : null
   }
 
+  async findUserByLoginOrEmail(loginOrEmail: string): Promise<HydratedUserType | null> {
+    return UserModel.findOne({
+      $or: [
+        { 'accountData.login': loginOrEmail },
+        { 'accountData.email': loginOrEmail }
+      ]
+    })
+  }
+
+  async findUserByConfirmationCode(code: string): Promise<HydratedUserType | null> {
+    return UserModel.findOne({'emailConfirmation.confirmationCode' : code})
+  }
+
   async findUserCommentLikesById(id: ObjectId): Promise<Array<UserCommentLikesType> | null> {
     const user = await UserModel.findOne({id}).exec()
 
     return user ? [...user.commentsLikes] : null
   }
 
-  async fetchAllUserData(id: ObjectId): Promise<UserType | null> {
-    const user = await UserModel.findOne({id}, {_id: 0, __v: 0}).exec()
-
-    return user ? {...user} : null
+  async fetchAllUserDataById(id: ObjectId): Promise<HydratedUserType | null> {
+    return UserModel.findOne({id})
   }
 }

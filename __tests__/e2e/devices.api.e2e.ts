@@ -6,7 +6,7 @@ import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 import mongoose from "mongoose";
-import {UserType} from "../../src/domains/users/dto/createUserDto";
+import {UserType} from "../../src/dto/userDto";
 const { parse } = require('cookie')
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
@@ -38,7 +38,7 @@ describe('tests for /devices and /auth', () => {
   beforeAll( async () => {
     await mongoose.connect(mongooseUri)
 
-    jest.mock('../../src/managers/emailManager')
+    jest.mock('../../src/application/emailTemplatesManager')
 
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
   })

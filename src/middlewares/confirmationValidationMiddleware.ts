@@ -1,19 +1,19 @@
 import {body} from "express-validator";
-import {UsersRepository} from "../repositories/usersRepository";
+import {UsersQueryRepository} from "../infrastructure/repositories/usersQueryRepository";
 
-const usersRepository = new UsersRepository()
+const usersQueryRepository = new UsersQueryRepository()
 
 export const confirmationValidationMiddleware = [
   body('code')
     .isString()
     .trim()
     .custom(async value => {
-      const user = await usersRepository.findUserByConfirmationCode(value)
+      const user = await usersQueryRepository.findUserByConfirmationCode(value)
 
       if (user === null) {
         throw new Error('code is incorrect')
       }
-      if (user.emailConfirmation.expirationDate < new Date()) {
+      if (!user.canBeConfirmed(value)) {
         throw new Error('code is expired')
       }
       if (user.emailConfirmation.isConfirmed) {

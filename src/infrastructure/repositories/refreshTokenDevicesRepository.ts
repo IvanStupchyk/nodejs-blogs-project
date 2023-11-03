@@ -1,9 +1,9 @@
-import {DeviceModel} from "../db/db"
-import {DeviceViewType} from "../types/generalTypes";
+import {DeviceModel} from "../../db/db"
+import {DeviceViewType} from "../../types/generalTypes";
 import {ObjectId} from "mongodb";
 import 'reflect-metadata'
 import {injectable} from "inversify";
-import {DeviceType} from "../domains/devices/dto/createDeviceDto";
+import {DeviceType} from "../../domains/devices/dto/createDeviceDto";
 
 @injectable()
 export class RefreshTokenDevicesRepository {

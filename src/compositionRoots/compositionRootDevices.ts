@@ -1,6 +1,6 @@
 import 'reflect-metadata'
-import {UsersQueryRepository} from "../repositories/usersQueryRepository";
-import {RefreshTokenDevicesRepository} from "../repositories/refreshTokenDevicesRepository";
+import {UsersQueryRepository} from "../infrastructure/repositories/usersQueryRepository";
+import {RefreshTokenDevicesRepository} from "../infrastructure/repositories/refreshTokenDevicesRepository";
 import {DevicesService} from "../domains/devices/devices.service";
 import {Container} from "inversify";
 

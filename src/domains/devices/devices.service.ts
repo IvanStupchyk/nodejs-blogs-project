@@ -1,10 +1,10 @@
 import {Request} from "express";
 import {jwtService} from "../../application/jwt-service";
-import {UsersQueryRepository} from "../../repositories/usersQueryRepository";
-import {RefreshTokenDevicesRepository} from "../../repositories/refreshTokenDevicesRepository";
+import {UsersQueryRepository} from "../../infrastructure/repositories/usersQueryRepository";
+import {RefreshTokenDevicesRepository} from "../../infrastructure/repositories/refreshTokenDevicesRepository";
 import {HTTP_STATUSES} from "../../utils";
 import {inject, injectable} from "inversify";
-import {UserType} from "../users/dto/createUserDto";
+import {UserType} from "../../dto/userDto";
 
 @injectable()
 export class DevicesService  {
@@ -21,7 +21,7 @@ export class DevicesService  {
       const result: any = await jwtService.verifyRefreshToken(req.cookies.refreshToken)
       if (!result?.userId) return HTTP_STATUSES.UNAUTHORIZED_401
 
-      const user: UserType | null = await this.usersQueryRepository.fetchAllUserData(result.userId)
+      const user: UserType | null = await this.usersQueryRepository.fetchAllUserDataById(result.userId)
       if (!user) return HTTP_STATUSES.UNAUTHORIZED_401
 
       const isDeviceIdExist = await this.refreshTokenDevicesRepository.findDeviceById(deviceId)

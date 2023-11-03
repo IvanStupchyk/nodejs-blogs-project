@@ -1,12 +1,12 @@
 import {CommentStatus, CommentsType} from "../../types/generalTypes";
 import {CommentViewModel} from "../../features/comments/models/CommentViewModel";
-import {CommentsRepository} from "../../repositories/comentsRepository";
-import {CommentsQueryRepository} from "../../repositories/comentsQueryRepository";
+import {CommentsRepository} from "../../infrastructure/repositories/comentsRepository";
+import {CommentsQueryRepository} from "../../infrastructure/repositories/comentsQueryRepository";
 import {jwtService} from "../../application/jwt-service";
-import {UsersQueryRepository} from "../../repositories/usersQueryRepository";
-import {UsersRepository} from "../../repositories/usersRepository";
+import {UsersQueryRepository} from "../../infrastructure/repositories/usersQueryRepository";
+import {UsersRepository} from "../../infrastructure/repositories/usersRepository";
 import {GetSortedCommentsModel} from "../../features/comments/models/GetSortedCommentsModel";
-import {PostsQueryRepository} from "../../repositories/postsQueryRepository";
+import {PostsQueryRepository} from "../../infrastructure/repositories/postsQueryRepository";
 import {ObjectId} from "mongodb";
 import {inject, injectable} from "inversify";
 import {CommentType} from "./dto/createCommentDto";
@@ -152,11 +152,16 @@ export class CommentsService {
       }
     }
 
+    const user = await this.usersQueryRepository.fetchAllUserDataById(userId)
+    if (!user) return false
+
     if (initialCommentData?.myStatus) {
-      await this.usersRepository.updateExistingUserCommentLike(userId, newStatus, commentObjectId)
+      user.updateExistingUserCommentLike(newStatus, commentObjectId)
     } else {
-      await this.usersRepository.setNewUserCommentLike(userId, newStatus, commentObjectId, new Date().toISOString())
+      user.setNewUserCommentLike(newStatus, commentObjectId)
     }
+
+    await this.usersRepository.save(user)
 
     return await this.commentsRepository.changeLikesCount(id, likesInfo)
   }

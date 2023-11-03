@@ -10,7 +10,7 @@ import {postsTestManager} from "../utils/postsTestManager";
 import {mockPosts} from "../../src/constants/blanks";
 import mongoose from "mongoose";
 import {ObjectId} from "mongodb";
-import {PostType} from "../../src/domains/posts/dto/createPostDto";
+import {PostType} from "../../src/dto/postDto";
 import {BlogType} from "../../src/domains/blogs/dto/createBlogDto";
 
 const getRequest = () => {

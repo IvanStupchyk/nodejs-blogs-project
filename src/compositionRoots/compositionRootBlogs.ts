@@ -1,10 +1,10 @@
 import 'reflect-metadata'
-import {BlogsQueryRepository} from "../repositories/blogsQueryRepository";
-import {PostsQueryRepository} from "../repositories/postsQueryRepository";
+import {BlogsQueryRepository} from "../infrastructure/repositories/blogsQueryRepository";
+import {PostsQueryRepository} from "../infrastructure/repositories/postsQueryRepository";
 import {BlogsService} from "../domains/blogs/blogs.service";
 import {PostsService} from "../domains/posts/posts.service";
-import {PostsRepository} from "../repositories/postsRepository";
-import {BlogsRepository} from "../repositories/blogsRepository";
+import {PostsRepository} from "../infrastructure/repositories/postsRepository";
+import {BlogsRepository} from "../infrastructure/repositories/blogsRepository";
 import {Container} from "inversify";
 
 export const blogsContainer = new Container()

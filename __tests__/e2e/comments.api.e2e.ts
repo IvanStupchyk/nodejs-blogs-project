@@ -14,7 +14,7 @@ import {CommentViewModel} from "../../src/features/comments/models/CommentViewMo
 import {UpdateCommentModel} from "../../src/features/comments/models/UpdateCommentModel";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 import mongoose from "mongoose";
-import {PostType} from "../../src/domains/posts/dto/createPostDto";
+import {PostType} from "../../src/dto/postDto";
 import {BlogType} from "../../src/domains/blogs/dto/createBlogDto";
 
 const getRequest = () => {

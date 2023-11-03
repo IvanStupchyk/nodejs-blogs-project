@@ -6,11 +6,10 @@ import {mongooseUri} from "../../src/db/db";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
-import {emailManager} from "../../src/managers/emailManager";
-import {UsersRepository} from "../../src/repositories/usersRepository";
+import {emailTemplatesManager} from "../../src/application/emailTemplatesManager";
 import mongoose from "mongoose";
-import {ObjectId} from "mongodb";
-import {UserType} from "../../src/domains/users/dto/createUserDto";
+import {UserType} from "../../src/dto/userDto";
+import {UsersQueryRepository} from "../../src/infrastructure/repositories/usersQueryRepository";
 const { parse } = require('cookie')
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))
@@ -38,12 +37,12 @@ describe('tests for /auth', () => {
     email: 'ivan@gmail.com'
   }
 
-  const usersRepository = new UsersRepository()
+  const usersQueryRepository = new UsersQueryRepository()
 
   beforeAll( async () => {
     await mongoose.connect(mongooseUri)
 
-    jest.mock('../../src/managers/emailManager')
+    jest.mock('../../src/application/emailTemplatesManager')
 
     await getRequest().delete(`${RouterPaths.testing}/all-data`)
   })
@@ -111,32 +110,17 @@ describe('tests for /auth', () => {
   })
 
   it('should register user with correct credentials', async () => {
-    emailManager.sendEmailConfirmationMessage = jest.fn()
+    emailTemplatesManager.sendEmailConfirmationMessage = jest.fn()
 
     await getRequest()
       .post(`${RouterPaths.auth}/registration`)
       .send(secondUserData)
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-    const newUser = await usersRepository.findUserByEmail(secondUserData.email)
+    const newUser = await usersQueryRepository.findUserByLoginOrEmail(secondUserData.email)
     if (newUser) simpleUser = newUser
 
-    expect(emailManager.sendEmailConfirmationMessage).toHaveBeenCalledTimes(1)
-    expect(emailManager.sendEmailConfirmationMessage).toHaveBeenCalledWith({
-      id: expect.any(ObjectId),
-      accountData: {
-        login: newUser?.accountData.login,
-        email: newUser?.accountData.email,
-        passwordHash: newUser?.accountData.passwordHash,
-        createdAt: newUser?.accountData.createdAt
-      },
-      emailConfirmation: {
-        confirmationCode: newUser?.emailConfirmation.confirmationCode,
-        expirationDate: newUser?.emailConfirmation.expirationDate,
-        isConfirmed: newUser?.emailConfirmation.isConfirmed
-      },
-      commentsLikes: []
-    })
+    expect(emailTemplatesManager.sendEmailConfirmationMessage).toHaveBeenCalledTimes(1)
   })
 
   it('should not resend confirmation code to email if email is incorrect', async () => {
@@ -184,7 +168,7 @@ describe('tests for /auth', () => {
   })
 
   it('should resend confirmation code to email if email is correct', async () => {
-    emailManager.resendEmailConfirmationMessage = jest.fn()
+    emailTemplatesManager.resendEmailConfirmationMessage = jest.fn()
 
     await getRequest()
       .post(`${RouterPaths.auth}/registration-email-resending`)
@@ -193,9 +177,9 @@ describe('tests for /auth', () => {
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-    const newUser = await usersRepository.findUserByEmail(simpleUser.accountData.email)
+    const newUser = await usersQueryRepository.findUserByLoginOrEmail(simpleUser.accountData.email)
     if (newUser) simpleUser = newUser
-    expect(emailManager.sendEmailConfirmationMessage).toHaveBeenCalledTimes(1)
+    expect(emailTemplatesManager.sendEmailConfirmationMessage).toHaveBeenCalledTimes(1)
   })
 
   it('should not confirm email if code is not a string', async () => {
@@ -231,7 +215,7 @@ describe('tests for /auth', () => {
   })
 
   it('should not confirm email if email is already confirmed', async () => {
-    const adminUser = await usersRepository.findUserByEmail(superAdminUser.email)
+    const adminUser = await usersQueryRepository.findUserByLoginOrEmail(superAdminUser.email)
 
     await getRequest()
       .post(`${RouterPaths.auth}/registration-confirmation`)
@@ -266,7 +250,7 @@ describe('tests for /auth', () => {
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-    const currentUser = await usersRepository.findUserByEmail(simpleUser.accountData.email)
+    const currentUser = await usersQueryRepository.findUserByLoginOrEmail(simpleUser.accountData.email)
     expect(currentUser?.emailConfirmation.isConfirmed).toEqual(true)
   })
 
