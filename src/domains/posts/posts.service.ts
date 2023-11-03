@@ -49,21 +49,25 @@ export class PostsService {
     shortDescription: string,
     blogId: string
   ): Promise<boolean> {
-    return await this.postsRepository.updatePostById(
-      id,
-      title,
-      content,
-      shortDescription,
-      blogId
-    )
+    if (!ObjectId.isValid(id)) return false
+    if (!ObjectId.isValid(blogId)) return false
+
+    const post = await this.postsQueryRepository.findPostById(new ObjectId(id))
+    if (!post) return false
+
+    post.updatePost(title, content, shortDescription,)
+
+    await this.postsRepository.save(post)
+    return true
   }
 
   async findPostById(id: string): Promise<PostType | null> {
     if (!ObjectId.isValid(id)) return null
-    return await this.postsQueryRepository.findPostById(new ObjectId(id))
+    return await this.postsQueryRepository.findPostByIdWithoutMongoId(new ObjectId(id))
   }
 
   async deletePost(id: string): Promise<boolean> {
-    return await this.postsRepository.deletePost(id)
+    if (!ObjectId.isValid(id)) return false
+    return await this.postsRepository.deletePost(new ObjectId(id))
   }
 }

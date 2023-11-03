@@ -35,12 +35,7 @@ export class PostController {
   }
 
   async getPost(req: RequestWithParams<GetPostModel>, res: Response) {
-    if (!ObjectId.isValid(req.params.id)) {
-      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-      return
-    }
-
-    const foundPost = await this.postsQueryRepository.findPostById(new ObjectId(req.params.id))
+    const foundPost = await this.postsService.findPostById(req.params.id)
 
     !foundPost
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

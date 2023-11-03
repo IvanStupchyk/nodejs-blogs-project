@@ -3,7 +3,7 @@ import {PostType} from "../dto/postDto";
 import {ObjectId} from "mongodb";
 
 export type PostMethodsType = {
-  canBeConfirmed: (code: string) => boolean,
+  updatePost: (title: string, content: string, shortDescription: string) => void,
 }
 
 export type postModelType = mongoose.Model<PostType, {}, PostMethodsType>

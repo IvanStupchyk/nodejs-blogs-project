@@ -6,6 +6,7 @@ import {mockPostModel} from "../../constants/blanks";
 import {ObjectId} from "mongodb";
 import 'reflect-metadata'
 import {injectable} from "inversify";
+import {HydratedPostType} from "../../types/postsTypes";
 import {PostType} from "../../dto/postDto";
 
 @injectable()
@@ -45,8 +46,12 @@ export class PostsQueryRepository {
     }
   }
 
-  async findPostById(id: ObjectId): Promise<PostType | null> {
+  async findPostByIdWithoutMongoId(id: ObjectId): Promise<PostType | null> {
     return await PostModel.findOne({id}, {_id: 0, __v: 0}).exec()
+  }
+
+  async findPostById(id: ObjectId): Promise<HydratedPostType | null> {
+    return PostModel.findOne({id})
   }
 
   async findPostsByIdForSpecificBlog(params: GetSortedPostsModel, id: string): Promise<PostsType | null> {

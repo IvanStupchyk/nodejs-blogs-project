@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import {PostType} from "../dto/postDto";
 import {PostModel} from "../db/db";
 import {ObjectId} from "mongodb";
+import {HydratedPostType} from "../types/postsTypes";
 
 export const postSchema = new mongoose.Schema<PostType>({
   id: {type: String, required: true},
@@ -11,6 +12,18 @@ export const postSchema = new mongoose.Schema<PostType>({
   blogId: {type: String, required: true},
   createdAt: {type: String, required: true},
   blogName: {type: String, required: true}
+})
+
+postSchema.method('updatePost', function updatePost(
+  title: string,
+  content: string,
+  shortDescription: string,
+) {
+  const that = this as HydratedPostType
+
+  that.content = content
+  that.title = title
+  that.shortDescription = shortDescription
 })
 
 postSchema.static('makeInstance', function makeInstance(
