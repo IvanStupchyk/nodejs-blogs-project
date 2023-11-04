@@ -5,6 +5,7 @@ import {commentValidationMiddleware} from "../../middlewares/commentValidationMi
 import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
 import {postContainer} from "../../compositionRoots/compositionRootPosts";
 import {PostController} from "./postController";
+import {likeValidationMiddleware} from "../../middlewares/likeValidationMiddleware";
 
 const postController = postContainer.resolve(PostController)
 
@@ -36,6 +37,13 @@ export const postRouter = () => {
     ...postValidationMiddleware,
     inputValidationErrorsMiddleware,
     postController.updatePost.bind(postController)
+  )
+
+  router.put(
+    '/:id/like-status',
+    ...likeValidationMiddleware,
+    inputValidationErrorsMiddleware,
+    postController.changeLikeStatus.bind(postController)
   )
 
   router.delete(

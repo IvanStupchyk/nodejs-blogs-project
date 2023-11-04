@@ -1,4 +1,5 @@
 import {ObjectId} from "mongodb";
+import {ExtendedLikesInfoType} from "../types/generalTypes";
 
 export class PostType {
   constructor(public id: ObjectId,
@@ -8,5 +9,6 @@ export class PostType {
               public blogId: ObjectId,
               public createdAt: string,
               public blogName: string,
+              public extendedLikesInfo: ExtendedLikesInfoType
   ) {}
 }

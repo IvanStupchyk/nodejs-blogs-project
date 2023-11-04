@@ -21,6 +21,7 @@ import {URIParamsPostIdModel} from "./models/URIParamsPostIdModel";
 import {UpdatePostModel} from "./models/UpdatePostModel";
 import {DeletePostModel} from "./models/DeletePostModel";
 import {inject, injectable} from "inversify";
+import {UpdatePostLikeModel} from "./models/UpdatePostLikeModel";
 
 @injectable()
 export class PostController {
@@ -31,11 +32,11 @@ export class PostController {
   }
 
   async getPosts(req: RequestWithQuery<GetSortedPostsModel>, res: Response) {
-    res.json(await this.postsQueryRepository.getSortedPosts(req.query))
+    res.json(await this.postsService.getSortedPosts(req.query, req.headers?.authorization))
   }
 
   async getPost(req: RequestWithParams<GetPostModel>, res: Response) {
-    const foundPost = await this.postsService.findPostById(req.params.id)
+    const foundPost = await this.postsService.getPostById(req.params.id, req.headers?.authorization)
 
     !foundPost
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -90,6 +91,21 @@ export class PostController {
     !updatedPost
       ? res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       : res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+  }
+
+  async changeLikeStatus(req: RequestWithParamsAndBody<URIParamsPostIdModel, UpdatePostLikeModel>, res: Response) {
+    const isLikesCountChanges = await this.postsService.changeLikesCount(
+      req.params.id,
+      req.body.likeStatus,
+      new ObjectId(req.user!.id),
+      req.user!.login
+    )
+
+    res.sendStatus(
+      isLikesCountChanges
+        ? HTTP_STATUSES.NO_CONTENT_204
+        : HTTP_STATUSES.NOT_FOUND_404
+    )
   }
 
   async deletePost(req: RequestWithParams<DeletePostModel>, res: Response) {

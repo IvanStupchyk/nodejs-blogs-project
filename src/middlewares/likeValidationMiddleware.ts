@@ -1,7 +1,7 @@
 import {authValidationMiddleware} from "./authValidationMiddleware";
 import {body} from "express-validator";
 
-export const commentLikesValidationMiddleware = [
+export const likeValidationMiddleware = [
   authValidationMiddleware,
 
   body('likeStatus')

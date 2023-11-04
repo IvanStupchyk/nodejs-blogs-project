@@ -10,6 +10,9 @@ import {UserModelFullType} from "../types/usersTypes";
 import {postSchema} from "../domains/postsEntity";
 import {PostType} from "../dto/postDto";
 import {postModelFullType} from "../types/postsTypes";
+import {postLikeSchema} from "../domains/postLikes/postsLikesEntity";
+import {PostLikesType} from "../dto/postLikesDto";
+import {postLikesModelFullType} from "../types/postsLikesTypes";
 
 dotenv.config()
 
@@ -20,6 +23,7 @@ export const PostModel = mongoose.model<PostType, postModelFullType>('posts', po
 export const UserModel = mongoose.model<UserType, UserModelFullType>('users', userSchema)
 export const CommentModel = mongoose.model('comments', commentSchema)
 export const DeviceModel = mongoose.model('devices', deviceSchema)
+export const PostLikeModel = mongoose.model<PostLikesType, postLikesModelFullType>('postLikes', postLikeSchema)
 export const ApiRequestModel = mongoose.model('requests', apiRequestSchema)
 
 export async function runDb () {

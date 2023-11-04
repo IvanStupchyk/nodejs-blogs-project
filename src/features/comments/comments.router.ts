@@ -2,7 +2,7 @@ import express from "express";
 import {commentValidationMiddleware} from "../../middlewares/commentValidationMiddleware";
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
 import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
-import {commentLikesValidationMiddleware} from "../../middlewares/commentLikesValidationMiddleware";
+import {likeValidationMiddleware} from "../../middlewares/likeValidationMiddleware";
 import {commentsContainer} from "../../compositionRoots/compositionRootComments";
 import {CommentsController} from "./commentsController";
 
@@ -22,7 +22,7 @@ export const commentsRouter = () => {
 
   router.put(
     '/:id/like-status',
-    ...commentLikesValidationMiddleware,
+    ...likeValidationMiddleware,
     inputValidationErrorsMiddleware,
     commentsController.likeComment.bind(commentsController)
   )
