@@ -4,14 +4,14 @@ import {ObjectId} from "mongodb";
 
 class JwtService {
   async createAccessJWT(userId: ObjectId) {
-    return jwt.sign({userId}, settings.JWT_ACCESS_SECRET, {expiresIn: 500})
+    return jwt.sign({userId}, settings.JWT_ACCESS_SECRET, {expiresIn: 5000})
   }
 
   async createRefreshJWT(userId: ObjectId, deviceId: ObjectId) {
     return jwt.sign(
       {userId, deviceId},
       settings.JWT_REFRESH_SECRET,
-      {expiresIn: 1000}
+      {expiresIn: 10000}
     )
   }
 

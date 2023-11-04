@@ -5,6 +5,7 @@ import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 import {ObjectId} from "mongodb";
 import {PostType} from "../dto/postDto";
 import {BlogType} from "../domains/blogs/dto/createBlogDto";
+import {PostViewModel} from "../features/posts/models/PostViewModel";
 
 export type BlogsType = {
   pagesCount: number,
@@ -40,6 +41,25 @@ export type CommentLikesViewType = {
   likesCount: number,
   dislikesCount: number,
   myStatus: CommentStatus
+}
+
+export type PostLikeUserInfo = {
+  addedAt: string
+  userId: ObjectId
+  login: string
+}
+
+export type ExtendedLikesInfoType = {
+  likesCount: number
+  dislikesCount: number
+  newestLikes: Array<PostLikeUserInfo>
+}
+
+export type ExtendedLikesInfoViewType = {
+  likesCount: number
+  dislikesCount: number
+  myStatus: CommentStatus
+  newestLikes: Array<PostLikeUserInfo>
 }
 
 export type DeviceViewType = {
@@ -81,7 +101,7 @@ export type PostsType = {
   page: number,
   pageSize: number,
   totalCount: number,
-  items: Array<PostType>
+  items: Array<PostViewModel>
 }
 
 export type UsersType = {
@@ -90,6 +110,14 @@ export type UsersType = {
   pageSize: number,
   totalCount: number,
   items: Array<ViewUserModel>
+}
+
+export type PostsLikesInfo = {
+  id: ObjectId
+  userId: ObjectId
+  myStatus: CommentStatus
+  postId: ObjectId
+  addedAt: string
 }
 
 export type SortConditionsType = {

@@ -21,6 +21,7 @@ import {ObjectId} from "mongodb";
 import {UpdateBlogModel} from "./models/UpdateBlogModel";
 import {DeleteBlogModel} from "./models/DeleteBlogModel";
 import {inject, injectable} from "inversify";
+import {jwtService} from "../../application/jwt-service";
 
 @injectable()
 export class BlogController {
@@ -53,7 +54,13 @@ export class BlogController {
       return
     }
 
-    const foundPosts = await this.postsQueryRepository.findPostsByIdForSpecificBlog(req.query, req.params.id)
+    let userId
+    if (req.headers?.authorization) {
+      const accessToken = req.headers.authorization.split(' ')[1]
+      userId = await jwtService.getUserIdByAccessToken(accessToken)
+    }
+
+    const foundPosts = await this.postsQueryRepository.findPostsByIdForSpecificBlog(req.query, req.params.id, userId)
     res.send(foundPosts)
   }
 
