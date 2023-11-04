@@ -17,6 +17,16 @@ export class PostsRepository {
     }).exec()
   }
 
+  async deleteUserLikeInfo(id: ObjectId, userId: ObjectId): Promise<boolean> {
+    return !!await PostModel.updateOne(
+      {id},
+      {$pull: {
+        'extendedLikesInfo.newestLikes': {userId}}
+      })
+      .exec()
+  }
+
+
   async deletePost(id: ObjectId): Promise<boolean> {
     const deletedPost = await PostModel.deleteOne({id}).exec()
 
