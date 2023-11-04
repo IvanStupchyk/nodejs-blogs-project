@@ -1,4 +1,4 @@
-import {HTTP_STATUSES, HttpStatusType} from "../../src/utils";
+import {HTTP_STATUSES, HttpStatusType} from "../../src/utils/utils";
 import request from "supertest";
 import {app, RouterPaths} from "../../src/app";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";

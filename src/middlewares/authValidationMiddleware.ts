@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUSES} from "../utils";
 import {AuthService} from "../application/auth.service";
 import {generalContainer} from "../compositionRoot/generalRoot";
+import {HTTP_STATUSES} from "../utils/utils";
 
 const authService = generalContainer.resolve(AuthService)
 

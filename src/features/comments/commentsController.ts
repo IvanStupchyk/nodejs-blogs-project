@@ -2,13 +2,13 @@ import {CommentsService} from "../../domains/comments/comments.service";
 import {RequestWithParams, RequestWithParamsAndBody} from "../../types/types";
 import {GetCommentModel} from "./models/GetCommentModel";
 import {Response} from "express";
-import {HTTP_STATUSES} from "../../utils";
 import {URIParamsCommentModel} from "./models/URIParamsCommentModel";
 import {UpdateCommentModel} from "./models/UpdateCommentModel";
 import {UpdateLikesModel} from "./models/UpdateLikesModel";
 import {ObjectId} from "mongodb";
 import {DeleteCommentModel} from "./models/DeleteCommentModel";
 import {inject, injectable} from "inversify";
+import {HTTP_STATUSES} from "../../utils/utils";
 
 @injectable()
 export class CommentsController {

@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUSES} from "../utils";
 import {ApiRequestRepository} from "../infrastructure/repositories/apiRequestsRepository";
+import {HTTP_STATUSES} from "../utils/utils";
 
 const apiRequestRepository = new ApiRequestRepository()
 

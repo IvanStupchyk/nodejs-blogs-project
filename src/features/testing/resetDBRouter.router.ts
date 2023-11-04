@@ -6,7 +6,7 @@ import {
   UserModel,
 } from "../../db/db";
 import express, {Request, Response} from "express";
-import {HTTP_STATUSES} from "../../utils";
+import {HTTP_STATUSES} from "../../utils/utils";
 
 export const resetDBRouterRouter = () => {
   const router = express.Router()

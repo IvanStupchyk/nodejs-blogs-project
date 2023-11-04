@@ -1,6 +1,6 @@
 import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
-import {HTTP_STATUSES} from "../../src/utils";
+import {HTTP_STATUSES} from "../../src/utils/utils";
 import {errorsConstants} from "../../src/constants/errorsContants";
 import {mongooseUri} from "../../src/db/db";
 import {mockBlogs, mockUsers} from "../../src/constants/blanks";

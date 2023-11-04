@@ -10,6 +10,7 @@ import {PostsQueryRepository} from "../../infrastructure/repositories/postsQuery
 import {ObjectId} from "mongodb";
 import {inject, injectable} from "inversify";
 import {CommentType} from "./dto/createCommentDto";
+import {likesCounter} from "../../utils/likesCounter";
 
 @injectable()
 export class CommentsService {
@@ -93,7 +94,6 @@ export class CommentsService {
     const foundComment = await this.commentsQueryRepository.findCommentById(commentObjectId)
     if (!foundComment) return false
 
-    const likesInfo = {...foundComment.likesInfo}
     let userCommentsLikes = await this.usersQueryRepository.findUserCommentLikesById(userId)
     let initialCommentData
 
@@ -104,53 +104,15 @@ export class CommentsService {
 
     if (initialCommentData?.myStatus === myStatus) return true
 
-    let newStatus: CommentStatus = CommentStatus.None
-
-    if (initialCommentData?.myStatus) {
-      if (myStatus === 'Like' && initialCommentData?.myStatus === 'Dislike') {
-        likesInfo.likesCount = ++likesInfo.likesCount
-        likesInfo.dislikesCount = --likesInfo.dislikesCount
-        newStatus = CommentStatus.Like
-      }
-
-      if (myStatus === 'Like' && initialCommentData?.myStatus === 'None') {
-        likesInfo.likesCount = ++likesInfo.likesCount
-        newStatus = CommentStatus.Like
-      }
-
-      if (myStatus === 'Dislike' && initialCommentData?.myStatus === 'Like') {
-        likesInfo.dislikesCount = ++likesInfo.dislikesCount
-        likesInfo.likesCount = --likesInfo.likesCount
-        newStatus = CommentStatus.Dislike
-      }
-
-      if (myStatus === 'Dislike' && initialCommentData?.myStatus === 'None') {
-        likesInfo.dislikesCount = ++likesInfo.dislikesCount
-        newStatus = CommentStatus.Dislike
-      }
-
-      if (myStatus === 'None' && initialCommentData?.myStatus === 'Like') {
-        likesInfo.likesCount = --likesInfo.likesCount
-        newStatus = CommentStatus.None
-      }
-
-      if (myStatus === 'None' && initialCommentData?.myStatus === 'Dislike') {
-        likesInfo.dislikesCount = --likesInfo.dislikesCount
-        newStatus = CommentStatus.None
-      }
-    } else {
-      switch (myStatus) {
-        case 'Like':
-          likesInfo.likesCount = ++likesInfo.likesCount
-          newStatus = CommentStatus.Like
-          break
-        case 'Dislike':
-          likesInfo.dislikesCount = ++likesInfo.dislikesCount
-          newStatus = CommentStatus.Dislike
-          break
-        default: return true
-      }
-    }
+    const {likesInfo, newStatus} = likesCounter(
+      myStatus,
+      CommentStatus.None,
+      initialCommentData?.myStatus,
+      {
+        likesCount: foundComment.likesInfo.likesCount,
+        dislikesCount: foundComment.likesInfo.dislikesCount
+      },
+    )
 
     const user = await this.usersQueryRepository.fetchAllUserDataById(userId)
     if (!user) return false

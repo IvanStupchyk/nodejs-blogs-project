@@ -1,7 +1,7 @@
 import {CreateBlogModel} from "../../src/features/blogs/models/CreateBlogModel";
-import {HTTP_STATUSES, HttpStatusType} from "../../src/utils";
 import request from "supertest";
 import {app, RouterPaths} from "../../src/app";
+import {HTTP_STATUSES, HttpStatusType} from "../../src/utils/utils";
 
 export const blogsTestManager = {
   async createBlog(

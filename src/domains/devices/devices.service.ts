@@ -2,9 +2,9 @@ import {Request} from "express";
 import {jwtService} from "../../application/jwt-service";
 import {UsersQueryRepository} from "../../infrastructure/repositories/usersQueryRepository";
 import {DevicesRepository} from "../../infrastructure/repositories/DevicesRepository";
-import {HTTP_STATUSES} from "../../utils";
 import {inject, injectable} from "inversify";
 import {UserType} from "../../dto/userDto";
+import {HTTP_STATUSES} from "../../utils/utils";
 
 @injectable()
 export class DevicesService  {

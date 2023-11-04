@@ -12,7 +12,6 @@ import {GetSortedPostsModel} from "./models/GetSortedPostsModel";
 import {Response} from "express";
 import {GetPostModel} from "./models/GetPostModel";
 import {ObjectId} from "mongodb";
-import {HTTP_STATUSES} from "../../utils";
 import {CreatePostModel} from "./models/CreatePostModel";
 import {URIParamsCommentModel} from "../comments/models/URIParamsCommentModel";
 import {CreateCommentModel} from "../comments/models/CreateCommentModel";
@@ -22,6 +21,7 @@ import {UpdatePostModel} from "./models/UpdatePostModel";
 import {DeletePostModel} from "./models/DeletePostModel";
 import {inject, injectable} from "inversify";
 import {UpdatePostLikeModel} from "./models/UpdatePostLikeModel";
+import {HTTP_STATUSES} from "../../utils/utils";
 
 @injectable()
 export class PostController {
