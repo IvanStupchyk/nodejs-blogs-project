@@ -162,7 +162,7 @@ export class PostsService {
       await this.postsRepository.addNewUserLikeInfo(postObjectId, userPostLikeViewInfo)
     }
 
-    if (newStatus === CommentStatus.None) {
+    if (newStatus === CommentStatus.None || newStatus === CommentStatus.Dislike) {
       await this.postsRepository.deleteUserLikeInfo(postObjectId, userId)
     }
 
