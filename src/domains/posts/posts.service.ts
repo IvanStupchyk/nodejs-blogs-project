@@ -5,13 +5,14 @@ import {inject, injectable} from "inversify";
 import {PostType} from "../../dto/postDto";
 import {PostLikeModel, PostModel} from "../../db/db";
 import {BlogsQueryRepository} from "../../infrastructure/repositories/blogsQueryRepository";
-import {CommentStatus, PostLikeUserInfo} from "../../types/generalTypes";
+import {likeStatus} from "../../types/generalTypes";
 import {PostViewModel} from "../../features/posts/models/PostViewModel";
 import {LikesQueryRepository} from "../../infrastructure/repositories/likesQueryRepository";
 import {LikesRepository} from "../../infrastructure/repositories/likesRepository";
 import {jwtService} from "../../application/jwt-service";
 import {GetSortedPostsModel} from "../../features/posts/models/GetSortedPostsModel";
 import {likesCounter} from "../../utils/likesCounter";
+import {PostLikeUserInfoType} from "../../types/postsLikesTypes";
 
 @injectable()
 export class PostsService {
@@ -51,7 +52,7 @@ export class PostsService {
       extendedLikesInfo: {
         likesCount: initialPostModel.extendedLikesInfo.likesCount,
         dislikesCount: initialPostModel.extendedLikesInfo.dislikesCount,
-        myStatus: CommentStatus.None,
+        myStatus: likeStatus.None,
         newestLikes: initialPostModel.extendedLikesInfo.newestLikes
       }
     }
@@ -95,7 +96,7 @@ export class PostsService {
 
     const {likesInfo, newStatus} = likesCounter(
       myStatus,
-      CommentStatus.None,
+      likeStatus.None,
       initialStatus,
       {
         likesCount: foundPost.extendedLikesInfo.likesCount,
@@ -111,8 +112,8 @@ export class PostsService {
       await this.likesRepository.save(postLike)
     }
 
-    if (newStatus === CommentStatus.Like) {
-      const userPostLikeViewInfo: PostLikeUserInfo = {
+    if (newStatus === likeStatus.Like) {
+      const userPostLikeViewInfo: PostLikeUserInfoType = {
         addedAt: new Date().toISOString(),
         userId,
         login
@@ -121,7 +122,7 @@ export class PostsService {
       await this.postsRepository.addNewUserLikeInfo(postObjectId, userPostLikeViewInfo)
     }
 
-    if (newStatus === CommentStatus.None || newStatus === CommentStatus.Dislike) {
+    if (newStatus === likeStatus.None || newStatus === likeStatus.Dislike) {
       await this.postsRepository.deleteUserLikeInfo(postObjectId, userId)
     }
 
@@ -155,7 +156,7 @@ export class PostsService {
       userId = await jwtService.getUserIdByAccessToken(accessToken)
     }
 
-    let userLikeStatus = CommentStatus.None
+    let userLikeStatus = likeStatus.None
 
     if (userId) {
       const userCommentsLikes = await this.likesQueryRepository.findPostLikeByUserIdAndPostId(userId, objectPostId)

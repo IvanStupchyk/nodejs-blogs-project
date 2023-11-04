@@ -2,7 +2,7 @@ import {HTTP_STATUSES, HttpStatusType} from "../../src/utils/utils";
 import request from "supertest";
 import {app, RouterPaths} from "../../src/app";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
-import {CommentStatus} from "../../src/types/generalTypes";
+import {likeStatus} from "../../src/types/generalTypes";
 
 export const postsTestManager = {
   async createPost(
@@ -32,7 +32,7 @@ export const postsTestManager = {
         extendedLikesInfo: {
           dislikesCount: 0,
           likesCount: 0,
-          myStatus: CommentStatus.None,
+          myStatus: likeStatus.None,
           newestLikes: []
         }
       })
@@ -69,7 +69,7 @@ export const postsTestManager = {
         extendedLikesInfo: {
           dislikesCount: 0,
           likesCount: 0,
-          myStatus: CommentStatus.None,
+          myStatus: likeStatus.None,
           newestLikes: []
         }
       })

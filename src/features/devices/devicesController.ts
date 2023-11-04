@@ -1,10 +1,10 @@
 import {DevicesRepository} from "../../infrastructure/repositories/DevicesRepository";
 import {DevicesService} from "../../domains/devices/devices.service";
 import {Request, Response} from "express";
-import {RequestWithParams} from "../../types/types";
 import {DeleteDeviceModel} from "./models/DeleteDeviceModel";
 import {inject, injectable} from "inversify";
 import {HTTP_STATUSES} from "../../utils/utils";
+import {RequestWithParams} from "../../types/generalTypes";
 
 @injectable()
 export class DevicesController {

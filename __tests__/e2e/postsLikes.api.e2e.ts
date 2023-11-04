@@ -14,7 +14,7 @@ import {ViewUserModel} from "../../src/features/users/models/ViewUserModel";
 import {PostViewModel} from "../../src/features/posts/models/PostViewModel";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
-import {CommentStatus} from "../../src/types/generalTypes";
+import {likeStatus} from "../../src/types/generalTypes";
 
 const getRequest = () => {
   return request(app)
@@ -199,7 +199,7 @@ describe('tests for /posts with likes logic', () => {
 
   it('should like post with correct input data', async () => {
     const updateLike = {
-      likeStatus: CommentStatus.Like
+      likeStatus: likeStatus.Like
     }
 
     await getRequest()
@@ -215,7 +215,7 @@ describe('tests for /posts with likes logic', () => {
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
     post1.extendedLikesInfo.likesCount = 1
-    post1.extendedLikesInfo.myStatus = CommentStatus.Like
+    post1.extendedLikesInfo.myStatus = likeStatus.Like
 
     const res = await getRequest()
       .get(`${RouterPaths.posts}/${post1.id}`)
@@ -237,7 +237,7 @@ describe('tests for /posts with likes logic', () => {
 
   it('should dislike post with correct input data', async () => {
     const updateLike = {
-      likeStatus: CommentStatus.Dislike
+      likeStatus: likeStatus.Dislike
     }
 
     await getRequest()
@@ -254,7 +254,7 @@ describe('tests for /posts with likes logic', () => {
 
     post1.extendedLikesInfo.dislikesCount = 1
     post1.extendedLikesInfo.likesCount = 0
-    post1.extendedLikesInfo.myStatus = CommentStatus.Dislike
+    post1.extendedLikesInfo.myStatus = likeStatus.Dislike
 
     const res = await getRequest()
       .get(`${RouterPaths.posts}/${post1.id}`)
@@ -272,7 +272,7 @@ describe('tests for /posts with likes logic', () => {
 
   it('should like post by user2 then set none value then like by user1 and user2', async () => {
     const updateLike = {
-      likeStatus: CommentStatus.Like
+      likeStatus: likeStatus.Like
     }
 
     await getRequest()
@@ -282,7 +282,7 @@ describe('tests for /posts with likes logic', () => {
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
     post1.extendedLikesInfo.likesCount = ++post1.extendedLikesInfo.likesCount
-    post1.extendedLikesInfo.myStatus = CommentStatus.Like
+    post1.extendedLikesInfo.myStatus = likeStatus.Like
 
     const res1 = await getRequest()
       .get(`${RouterPaths.posts}/${post1.id}`)
@@ -305,12 +305,12 @@ describe('tests for /posts with likes logic', () => {
       .put(`${RouterPaths.posts}/${post1.id}/like-status`)
       .set('Authorization', `Bearer ${accessTokenUser2}`)
       .send({
-        likeStatus: CommentStatus.None
+        likeStatus: likeStatus.None
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
     post1.extendedLikesInfo.likesCount = --post1.extendedLikesInfo.likesCount
-    post1.extendedLikesInfo.myStatus = CommentStatus.None
+    post1.extendedLikesInfo.myStatus = likeStatus.None
 
     const res2 = await getRequest()
       .get(`${RouterPaths.posts}/${post1.id}`)
@@ -340,7 +340,7 @@ describe('tests for /posts with likes logic', () => {
 
     post1.extendedLikesInfo.likesCount = 2
     post1.extendedLikesInfo.dislikesCount = 0
-    post1.extendedLikesInfo.myStatus = CommentStatus.Like
+    post1.extendedLikesInfo.myStatus = likeStatus.Like
 
     const res3 = await getRequest()
       .get(`${RouterPaths.posts}/${post1.id}`)
@@ -420,7 +420,7 @@ describe('tests for /posts with likes logic', () => {
           ...post1,
           extendedLikesInfo: {
             ...post1.extendedLikesInfo,
-            myStatus: CommentStatus.None,
+            myStatus: likeStatus.None,
             newestLikes: [
               {
                 addedAt: expect.any(String),
@@ -492,7 +492,7 @@ describe('tests for /posts with likes logic', () => {
           ...post1,
           extendedLikesInfo: {
             ...post1.extendedLikesInfo,
-            myStatus: CommentStatus.None,
+            myStatus: likeStatus.None,
             newestLikes: [
               {
                 addedAt: expect.any(String),

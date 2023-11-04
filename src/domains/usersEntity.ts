@@ -8,7 +8,7 @@ import {UserMethodsType, UserModelFullType, HydratedUserType} from "../types/use
 import {emailConfirmationSchema} from "../schemas/emailConfirmationSchema";
 import {userCommentLikesSchema} from "../schemas/userCommentLikesSchema";
 import {accountDataSchema} from "../schemas/accountDataSchema";
-import {CommentStatus} from "../types/generalTypes";
+import {likeStatus} from "../types/generalTypes";
 
 export const userSchema = new mongoose.Schema<UserType, UserModelFullType, UserMethodsType>({
   id: {type: String, required: true},
@@ -53,7 +53,7 @@ userSchema.method('updateConfirmationCodeAndExpirationTime',
 })
 
 userSchema.method('setNewUserCommentLike',
-  function setNewUserCommentLike(myStatus: CommentStatus, commentId: ObjectId) {
+  function setNewUserCommentLike(myStatus: likeStatus, commentId: ObjectId) {
     const that = this as HydratedUserType
 
     that.commentsLikes.push({
@@ -64,7 +64,7 @@ userSchema.method('setNewUserCommentLike',
 })
 
 userSchema.method('updateExistingUserCommentLike',
-  function updateExistingUserCommentLike(myStatus: CommentStatus, commentId: ObjectId) {
+  function updateExistingUserCommentLike(myStatus: likeStatus, commentId: ObjectId) {
     const that = this as HydratedUserType
 
     const initialComment = that.commentsLikes.find(c => new ObjectId(c.commentId).equals(commentId))

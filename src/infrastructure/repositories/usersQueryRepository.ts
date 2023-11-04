@@ -1,5 +1,5 @@
 import {UserModel} from "../../db/db"
-import {UserCommentLikesType, UsersType} from "../../types/generalTypes";
+import {UserCommentLikesType} from "../../types/generalTypes";
 import {
   createDefaultSortedParams,
   getPagesCount
@@ -11,7 +11,7 @@ import {ObjectId} from "mongodb";
 import {injectable} from "inversify";
 import 'reflect-metadata'
 import {UserType} from "../../dto/userDto";
-import {HydratedUserType} from "../../types/usersTypes";
+import {HydratedUserType, UsersType} from "../../types/usersTypes";
 
 @injectable()
 export class UsersQueryRepository  {

@@ -1,4 +1,4 @@
-import {CommentStatus, CommentsType} from "../../types/generalTypes";
+import {likeStatus, CommentsType} from "../../types/generalTypes";
 import {CommentViewModel} from "../../features/comments/models/CommentViewModel";
 import {CommentsRepository} from "../../infrastructure/repositories/comentsRepository";
 import {CommentsQueryRepository} from "../../infrastructure/repositories/comentsQueryRepository";
@@ -66,7 +66,7 @@ export class CommentsService {
       userId = await jwtService.getUserIdByAccessToken(accessToken)
     }
 
-    let finalCommentStatus = CommentStatus.None
+    let finalCommentStatus = likeStatus.None
 
     if (userId) {
       const userCommentsLikes = await this.usersQueryRepository.findUserCommentLikesById(userId)
@@ -106,7 +106,7 @@ export class CommentsService {
 
     const {likesInfo, newStatus} = likesCounter(
       myStatus,
-      CommentStatus.None,
+      likeStatus.None,
       initialCommentData?.myStatus,
       {
         likesCount: foundComment.likesInfo.likesCount,

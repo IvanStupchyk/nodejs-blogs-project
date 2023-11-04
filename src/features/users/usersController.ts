@@ -1,12 +1,12 @@
 import {UsersQueryRepository} from "../../infrastructure/repositories/usersQueryRepository";
 import {UsersService} from "../../application/users.service";
-import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../../types/types";
 import {CreateUserModel} from "./models/CreateUserModel";
 import {Response} from "express";
 import {GetSortedUsersModel} from "./models/GetSortedUsersModel";
 import {DeleteUserModel} from "./models/DeleteUserModel";
 import {inject, injectable} from "inversify";
 import {HTTP_STATUSES} from "../../utils/utils";
+import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../../types/generalTypes";
 
 @injectable()
 export class UsersController {

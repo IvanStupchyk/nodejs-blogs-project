@@ -1,5 +1,5 @@
 import {CommentModel} from "../../db/db"
-import {CommentLikesInfoType, CommentStatus} from "../../types/generalTypes";
+import {CommentLikesInfoType, likeStatus} from "../../types/generalTypes";
 import {CommentViewModel} from "../../features/comments/models/CommentViewModel";
 import 'reflect-metadata'
 import {injectable} from "inversify";
@@ -29,7 +29,7 @@ export class CommentsRepository {
       likesInfo: {
         likesCount: commentInstance.likesInfo.likesCount,
         dislikesCount: commentInstance.likesInfo.dislikesCount,
-        myStatus: CommentStatus.None
+        myStatus: likeStatus.None
       },
       createdAt: commentInstance.createdAt
     }

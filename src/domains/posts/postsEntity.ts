@@ -4,7 +4,7 @@ import {PostModel} from "../../db/db";
 import {ObjectId} from "mongodb";
 import {HydratedPostType} from "../../types/postsTypes";
 import {extendedPostLikesInfoSchema} from "../../schemas/extendedPostLikesInfo";
-import {ExtendedLikesInfoType, PostLikeUserInfo} from "../../types/generalTypes";
+import {ExtendedLikesInfoType, PostLikeUserInfoType} from "../../types/postsLikesTypes";
 
 export const postSchema = new mongoose.Schema<PostType>({
   id: {type: String, required: true},
@@ -39,7 +39,7 @@ postSchema.method('changeLikesCount', function changeLikesCount(
   that.extendedLikesInfo.dislikesCount = dislikesCount
 })
 
-postSchema.method('setNewUserPostLike', function setNewUserPostLike(newestLike: PostLikeUserInfo) {
+postSchema.method('setNewUserPostLike', function setNewUserPostLike(newestLike: PostLikeUserInfoType) {
     const that = this as HydratedPostType
 
     that.extendedLikesInfo.newestLikes.push(newestLike)

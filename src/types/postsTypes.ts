@@ -1,7 +1,8 @@
 import mongoose, {HydratedDocument} from "mongoose";
 import {PostType} from "../dto/postDto";
 import {ObjectId} from "mongodb";
-import {PostLikeUserInfo} from "./generalTypes";
+import {PostViewModel} from "../features/posts/models/PostViewModel";
+import {PostLikeUserInfoType} from "./postsLikesTypes";
 
 export type PostMethodsType = {
   updatePost: (title: string, content: string, shortDescription: string) => void,
@@ -9,7 +10,7 @@ export type PostMethodsType = {
     likesCount: number,
     dislikesCount: number
   ) => void,
-  setNewUserPostLike: (newestLikes: PostLikeUserInfo) => void
+  setNewUserPostLike: (newestLikes: PostLikeUserInfoType) => void
 }
 
 export type postModelType = mongoose.Model<PostType, {}, PostMethodsType>
@@ -27,3 +28,11 @@ type PostModelStaticType = mongoose.Model<PostType> & {
 export type postModelFullType = postModelType & PostModelStaticType
 
 export type HydratedPostType = HydratedDocument<PostType, PostMethodsType>
+
+export type PostsType = {
+  pagesCount: number,
+  page: number,
+  pageSize: number,
+  totalCount: number,
+  items: Array<PostViewModel>
+}

@@ -1,4 +1,4 @@
-import {CommentStatus} from "../types/generalTypes";
+import {likeStatus} from "../types/generalTypes";
 
 type LikesInfoType = {
   likesCount: number
@@ -7,11 +7,11 @@ type LikesInfoType = {
 
 export const likesCounter = (
   myStatus: string,
-  initialNewStatus: CommentStatus,
-  initialStatus: CommentStatus | undefined,
+  initialNewStatus: likeStatus,
+  initialStatus: likeStatus | undefined,
   initialLikesInfo: LikesInfoType
-): {likesInfo: LikesInfoType, newStatus: CommentStatus}=> {
-  let newStatus: CommentStatus = initialNewStatus
+): {likesInfo: LikesInfoType, newStatus: likeStatus}=> {
+  let newStatus: likeStatus = initialNewStatus
 
   const likesInfo = {...initialLikesInfo}
 
@@ -19,43 +19,43 @@ export const likesCounter = (
     if (myStatus === 'Like' && initialStatus === 'Dislike') {
       likesInfo.likesCount = ++likesInfo.likesCount
       likesInfo.dislikesCount = --likesInfo.dislikesCount
-      newStatus = CommentStatus.Like
+      newStatus = likeStatus.Like
     }
 
     if (myStatus === 'Like' && initialStatus === 'None') {
       likesInfo.likesCount = ++likesInfo.likesCount
-      newStatus = CommentStatus.Like
+      newStatus = likeStatus.Like
     }
 
     if (myStatus === 'Dislike' && initialStatus === 'Like') {
       likesInfo.dislikesCount = ++likesInfo.dislikesCount
       likesInfo.likesCount = --likesInfo.likesCount
-      newStatus = CommentStatus.Dislike
+      newStatus = likeStatus.Dislike
     }
 
     if (myStatus === 'Dislike' && initialStatus === 'None') {
       likesInfo.dislikesCount = ++likesInfo.dislikesCount
-      newStatus = CommentStatus.Dislike
+      newStatus = likeStatus.Dislike
     }
 
     if (myStatus === 'None' && initialStatus === 'Like') {
       likesInfo.likesCount = --likesInfo.likesCount
-      newStatus = CommentStatus.None
+      newStatus = likeStatus.None
     }
 
     if (myStatus === 'None' && initialStatus === 'Dislike') {
       likesInfo.dislikesCount = --likesInfo.dislikesCount
-      newStatus = CommentStatus.None
+      newStatus = likeStatus.None
     }
   } else {
     switch (myStatus) {
       case 'Like':
         likesInfo.likesCount = ++likesInfo.likesCount
-        newStatus = CommentStatus.Like
+        newStatus = likeStatus.Like
         break
       case 'Dislike':
         likesInfo.dislikesCount = ++likesInfo.dislikesCount
-        newStatus = CommentStatus.Dislike
+        newStatus = likeStatus.Dislike
         break
       default: return {likesInfo, newStatus}
     }
