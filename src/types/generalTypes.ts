@@ -5,7 +5,7 @@ import {CommentViewModel} from "../features/comments/models/CommentViewModel";
 import {ObjectId} from "mongodb";
 import {PostType} from "../dto/postDto";
 import {BlogType} from "../domains/blogs/dto/createBlogDto";
-import {PostViewModel} from "../features/posts/models/PostViewModel";
+import {Request} from "express";
 
 export type BlogsType = {
   pagesCount: number,
@@ -20,7 +20,7 @@ export type CommentatorInfoType = {
   userLogin: string
 }
 
-export enum CommentStatus {
+export enum likeStatus {
   None = 'None',
   Like = 'Like',
   Dislike = 'Dislike'
@@ -28,7 +28,7 @@ export enum CommentStatus {
 
 export type UserCommentLikesType = {
   commentId: ObjectId,
-  myStatus: CommentStatus,
+  myStatus: likeStatus,
   createdAt: string
 }
 
@@ -40,26 +40,7 @@ export type CommentLikesInfoType = {
 export type CommentLikesViewType = {
   likesCount: number,
   dislikesCount: number,
-  myStatus: CommentStatus
-}
-
-export type PostLikeUserInfo = {
-  addedAt: string
-  userId: ObjectId
-  login: string
-}
-
-export type ExtendedLikesInfoType = {
-  likesCount: number
-  dislikesCount: number
-  newestLikes: Array<PostLikeUserInfo>
-}
-
-export type ExtendedLikesInfoViewType = {
-  likesCount: number
-  dislikesCount: number
-  myStatus: CommentStatus
-  newestLikes: Array<PostLikeUserInfo>
+  myStatus: likeStatus
 }
 
 export type DeviceViewType = {
@@ -96,30 +77,6 @@ export type EmailConfirmationType = {
   isConfirmed: boolean
 }
 
-export type PostsType = {
-  pagesCount: number,
-  page: number,
-  pageSize: number,
-  totalCount: number,
-  items: Array<PostViewModel>
-}
-
-export type UsersType = {
-  pagesCount: number,
-  page: number,
-  pageSize: number,
-  totalCount: number,
-  items: Array<ViewUserModel>
-}
-
-export type PostsLikesInfo = {
-  id: ObjectId
-  userId: ObjectId
-  myStatus: CommentStatus
-  postId: ObjectId
-  addedAt: string
-}
-
 export type SortConditionsType = {
   pageNumber: string,
   pageSize: string,
@@ -127,3 +84,9 @@ export type SortConditionsType = {
   model: typeof mockBlogModel | typeof mockPostModel | typeof mockUserModel | typeof mockCommentModel
   sortDirection: SortOrder.asc | SortOrder.desc,
 }
+
+export type RequestWithBody<T> = Request<{}, {}, T>
+export type RequestWithQuery<T> = Request<{}, {}, {}, T>
+export type RequestWithParams<T> = Request<T>
+export type RequestWithParamsAndBody<T, B> = Request<T, {}, B>
+export type RequestWithParamsAndQuery<T, C> = Request<T, {}, {}, C>

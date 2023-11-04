@@ -2,7 +2,7 @@ import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
 import {HTTP_STATUSES} from "../../src/utils/utils";
 import {mongooseUri} from "../../src/db/db";
-import {CommentStatus} from "../../src/types/generalTypes";
+import {likeStatus} from "../../src/types/generalTypes";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
 import {usersTestManager} from "../utils/usersTestManager";
 import {LoginUserModel} from "../../src/features/auth/models/LoginUserModel";
@@ -312,7 +312,7 @@ describe('tests for /comments and posts/:id/comments', () => {
 
   it('should like comment with correct input data', async () => {
     const updateLike = {
-      likeStatus: CommentStatus.Like
+      likeStatus: likeStatus.Like
     }
 
     await getRequest()
@@ -338,7 +338,7 @@ describe('tests for /comments and posts/:id/comments', () => {
 
   it('should dislike comment with correct input data', async () => {
     const updateLike = {
-      likeStatus: CommentStatus.Dislike
+      likeStatus: likeStatus.Dislike
     }
 
     await getRequest()
@@ -365,7 +365,7 @@ describe('tests for /comments and posts/:id/comments', () => {
 
   it('should reset likes and dislikes', async () => {
     const updateLike = {
-      likeStatus: CommentStatus.None
+      likeStatus: likeStatus.None
     }
 
     await getRequest()
@@ -395,7 +395,7 @@ describe('tests for /comments and posts/:id/comments', () => {
       .put(`${RouterPaths.comments}/${comment1.id}/like-status`)
       .set('Authorization', `Bearer ${accessTokenUser1}`)
       .send({
-        likeStatus: CommentStatus.Like
+        likeStatus: likeStatus.Like
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
@@ -403,7 +403,7 @@ describe('tests for /comments and posts/:id/comments', () => {
       .put(`${RouterPaths.comments}/${comment1.id}/like-status`)
       .set('Authorization', `Bearer ${accessTokenUser2}`)
       .send({
-        likeStatus: CommentStatus.Like
+        likeStatus: likeStatus.Like
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
@@ -411,7 +411,7 @@ describe('tests for /comments and posts/:id/comments', () => {
       .put(`${RouterPaths.comments}/${comment1.id}/like-status`)
       .set('Authorization', `Bearer ${accessTokenUser2}`)
       .send({
-        likeStatus: CommentStatus.Like
+        likeStatus: likeStatus.Like
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
@@ -419,13 +419,13 @@ describe('tests for /comments and posts/:id/comments', () => {
       .put(`${RouterPaths.comments}/${comment1.id}/like-status`)
       .set('Authorization', `Bearer ${accessTokenUser3}`)
       .send({
-        likeStatus: CommentStatus.Dislike
+        likeStatus: likeStatus.Dislike
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
     comment1.likesInfo.likesCount = 2
     comment1.likesInfo.dislikesCount = 1
-    comment1.likesInfo.myStatus = CommentStatus.Like
+    comment1.likesInfo.myStatus = likeStatus.Like
 
     await getRequest()
       .get(`${RouterPaths.comments}/${comment1.id}`)

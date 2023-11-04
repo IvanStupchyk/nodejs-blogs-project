@@ -1,10 +1,10 @@
 import {ObjectId} from "mongodb";
-import {CommentStatus} from "../types/generalTypes";
+import {likeStatus} from "../types/generalTypes";
 
 export class PostLikesType {
   constructor(public id: ObjectId,
               public userId: ObjectId,
-              public myStatus: CommentStatus,
+              public myStatus: likeStatus,
               public postId: ObjectId,
               public addedAt: string
   ) {}

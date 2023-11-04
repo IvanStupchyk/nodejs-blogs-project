@@ -1,19 +1,17 @@
 import {PostModel} from "../../db/db"
-import {
-  CommentStatus,
-  PostsLikesInfo,
-  PostsType,
-} from "../../types/generalTypes";
+import {likeStatus} from "../../types/generalTypes";
 import {createDefaultSortedParams, getPagesCount} from "../../utils/utils";
 import {GetSortedPostsModel} from "../../features/posts/models/GetSortedPostsModel";
 import {mockPostModel} from "../../constants/blanks";
 import {ObjectId} from "mongodb";
 import 'reflect-metadata'
 import {injectable} from "inversify";
-import {HydratedPostType} from "../../types/postsTypes";
+import {HydratedPostType, PostsType} from "../../types/postsTypes";
 import {PostType} from "../../dto/postDto";
 import {PostViewModel} from "../../features/posts/models/PostViewModel";
 import {LikesQueryRepository} from "./likesQueryRepository";
+import {PostLikesType} from "../../dto/postLikesDto";
+import {getPostsMapper} from "../../utils/dataMappers/postsMappers/getPostsMapper";
 
 @injectable()
 export class PostsQueryRepository {
@@ -49,7 +47,7 @@ export class PostsQueryRepository {
 
     const pagesCount = getPagesCount(postsCount, pageSize)
 
-    let usersPostsLikes: any
+    let usersPostsLikes: Array<PostLikesType> | null = null
     if (userId) {
       usersPostsLikes = await this.likesQueryRepository.fetchAllUserLikeByUserId(userId)
     }
@@ -59,25 +57,7 @@ export class PostsQueryRepository {
       page: pageNumber,
       pageSize,
       totalCount: postsCount,
-      items: posts.map(post => {
-        return {
-          id: post.id,
-          title: post.title,
-          shortDescription: post.shortDescription,
-          content: post.content,
-          blogId: post.blogId,
-          blogName: post.blogName,
-          createdAt: post.createdAt,
-          extendedLikesInfo: {
-            likesCount: post.extendedLikesInfo.likesCount,
-            dislikesCount: post.extendedLikesInfo.dislikesCount,
-            myStatus: usersPostsLikes?.find((up: PostsLikesInfo) => up.postId === post.id)?.myStatus ?? CommentStatus.None,
-            newestLikes: post.extendedLikesInfo.newestLikes
-              .sort((a: any, b: any) => new Date(b.addedAt).valueOf() - new Date(a.addedAt).valueOf())
-              .slice(0, 3)
-          }
-        }
-      })
+      items: getPostsMapper(posts, usersPostsLikes)
     }
   }
 
@@ -85,7 +65,7 @@ export class PostsQueryRepository {
     return await PostModel.findOne({id}, {_id: 0, __v: 0}).exec()
   }
 
-  async getPost(id: ObjectId, userLikeStatus: CommentStatus): Promise<PostViewModel | null> {
+  async getPost(id: ObjectId, userLikeStatus: likeStatus): Promise<PostViewModel | null> {
     const post =  await PostModel.findOne({id}, {_id: 0, __v: 0}).exec()
     return post ? {
       id: post.id,
@@ -136,7 +116,7 @@ export class PostsQueryRepository {
 
     const pagesCount = getPagesCount(postsCount , pageSize)
 
-    let usersPostsLikes: any
+    let usersPostsLikes: Array<PostLikesType> | null = null
     if (userId) {
       usersPostsLikes = await this.likesQueryRepository.fetchAllUserLikeByUserId(userId)
     }
@@ -146,25 +126,7 @@ export class PostsQueryRepository {
       page: pageNumber,
       pageSize,
       totalCount: postsCount,
-      items: posts.map(post => {
-        return {
-          id: post.id,
-          title: post.title,
-          shortDescription: post.shortDescription,
-          content: post.content,
-          blogId: post.blogId,
-          blogName: post.blogName,
-          createdAt: post.createdAt,
-          extendedLikesInfo: {
-            likesCount: post.extendedLikesInfo.likesCount,
-            dislikesCount: post.extendedLikesInfo.dislikesCount,
-            myStatus: usersPostsLikes?.find((up: PostsLikesInfo) => up.postId === post.id)?.myStatus ?? CommentStatus.None,
-            newestLikes: post.extendedLikesInfo.newestLikes
-              .sort((a: any, b: any) => new Date(b.addedAt).valueOf() - new Date(a.addedAt).valueOf())
-              .slice(0, 3)
-          }
-        }
-      })
+      items: getPostsMapper(posts, usersPostsLikes)
     }
   }
 }

@@ -1,6 +1,5 @@
 import {AuthService} from "../../application/auth.service";
 import {Request, Response} from "express";
-import {RequestWithBody} from "../../types/types";
 import {LoginUserModel} from "./models/LoginUserModel";
 import {CreateUserModel} from "../users/models/CreateUserModel";
 import {RecoveryCodeToEmailModel} from "./models/RecoveryCodeToEmailModel";
@@ -9,6 +8,7 @@ import {ConfirmEmailModel} from "./models/ConfirmEmailModel";
 import {ResendingCodeToEmailModel} from "./models/ResendingCodeToEmailModel";
 import {inject, injectable} from "inversify";
 import {HTTP_STATUSES} from "../../utils/utils";
+import {RequestWithBody} from "../../types/generalTypes";
 
 @injectable()
 export class AuthController {

@@ -2,13 +2,6 @@ import {BlogsQueryRepository} from "../../infrastructure/repositories/blogsQuery
 import {PostsQueryRepository} from "../../infrastructure/repositories/postsQueryRepository";
 import {BlogsService} from "../../domains/blogs/blogs.service";
 import {PostsService} from "../../domains/posts/posts.service";
-import {
-  RequestWithBody,
-  RequestWithParams,
-  RequestWithParamsAndBody,
-  RequestWithParamsAndQuery,
-  RequestWithQuery
-} from "../../types/types";
 import {GetSortedBlogsModel} from "./models/GetSortedBlogsModel";
 import {Response} from "express";
 import {GetBlogModel} from "./models/GetBlogModel";
@@ -22,6 +15,13 @@ import {DeleteBlogModel} from "./models/DeleteBlogModel";
 import {inject, injectable} from "inversify";
 import {jwtService} from "../../application/jwt-service";
 import {HTTP_STATUSES} from "../../utils/utils";
+import {
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+  RequestWithParamsAndQuery,
+  RequestWithQuery
+} from "../../types/generalTypes";
 
 @injectable()
 export class BlogController {

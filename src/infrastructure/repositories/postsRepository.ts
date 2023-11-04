@@ -3,7 +3,7 @@ import 'reflect-metadata'
 import {injectable} from "inversify";
 import {HydratedPostType} from "../../types/postsTypes";
 import {ObjectId} from "mongodb";
-import {PostLikeUserInfo} from "../../types/generalTypes";
+import {PostLikeUserInfoType} from "../../types/postsLikesTypes";
 
 @injectable()
 export class PostsRepository {
@@ -11,7 +11,7 @@ export class PostsRepository {
     return await model.save()
   }
 
-  async addNewUserLikeInfo(id: ObjectId, newestLike: PostLikeUserInfo): Promise<boolean> {
+  async addNewUserLikeInfo(id: ObjectId, newestLike: PostLikeUserInfoType): Promise<boolean> {
     return !!await PostModel.findOneAndUpdate({id}, {
       $push: {'extendedLikesInfo.newestLikes': newestLike}
     }).exec()

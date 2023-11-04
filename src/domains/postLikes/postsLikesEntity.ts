@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import {ObjectId} from "mongodb";
-import {CommentStatus, PostsLikesInfo} from "../../types/generalTypes";
+import {likeStatus} from "../../types/generalTypes";
 import {PostLikeModel} from "../../db/db";
-import {HydratedPostLikesType} from "../../types/postsLikesTypes";
+import {HydratedPostLikesType, PostsLikesInfoType} from "../../types/postsLikesTypes";
 
-export const postLikeSchema = new mongoose.Schema<PostsLikesInfo>({
+export const postLikeSchema = new mongoose.Schema<PostsLikesInfoType>({
   id: {type: String, required: true},
   userId: {type: String, required: true},
   myStatus: {type: String, required: true},
@@ -13,7 +13,7 @@ export const postLikeSchema = new mongoose.Schema<PostsLikesInfo>({
 })
 
 postLikeSchema.method('updateExistingPostLike', function updateExistingPostLike(
-  myStatus: CommentStatus
+  myStatus: likeStatus
 ) {
   const that = this as HydratedPostLikesType
 
@@ -24,7 +24,7 @@ postLikeSchema.method('updateExistingPostLike', function updateExistingPostLike(
 postLikeSchema.static('makeInstance', function makeInstance(
   userId: ObjectId,
   postId: ObjectId,
-  newStatus: CommentStatus
+  newStatus: likeStatus
 ) {
 
   return new PostLikeModel({
