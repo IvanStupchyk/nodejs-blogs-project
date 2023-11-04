@@ -11,6 +11,7 @@ import {LikesQueryRepository} from "../../infrastructure/repositories/likesQuery
 import {LikesRepository} from "../../infrastructure/repositories/likesRepository";
 import {jwtService} from "../../application/jwt-service";
 import {GetSortedPostsModel} from "../../features/posts/models/GetSortedPostsModel";
+import {likesCounter} from "../../utils/likesCounter";
 
 @injectable()
 export class PostsService {
@@ -86,63 +87,21 @@ export class PostsService {
     const foundPost = await this.postsQueryRepository.findPostById(postObjectId)
     if (!foundPost) return false
 
-    const likesInfo = {
-      likesCount: foundPost.extendedLikesInfo.likesCount,
-      dislikesCount: foundPost.extendedLikesInfo.dislikesCount
-    }
 
     const userPostLike = await this.likesQueryRepository.findPostLikeByUserIdAndPostId(userId, postObjectId)
     const initialStatus = userPostLike?.myStatus
 
     if (initialStatus === myStatus) return true
 
-    let newStatus: CommentStatus = CommentStatus.None
-
-    if (initialStatus) {
-      if (myStatus === 'Like' && initialStatus === 'Dislike') {
-        likesInfo.likesCount = ++likesInfo.likesCount
-        likesInfo.dislikesCount = --likesInfo.dislikesCount
-        newStatus = CommentStatus.Like
-      }
-
-      if (myStatus === 'Like' && initialStatus === 'None') {
-        likesInfo.likesCount = ++likesInfo.likesCount
-        newStatus = CommentStatus.Like
-      }
-
-      if (myStatus === 'Dislike' && initialStatus === 'Like') {
-        likesInfo.dislikesCount = ++likesInfo.dislikesCount
-        likesInfo.likesCount = --likesInfo.likesCount
-        newStatus = CommentStatus.Dislike
-      }
-
-      if (myStatus === 'Dislike' && initialStatus === 'None') {
-        likesInfo.dislikesCount = ++likesInfo.dislikesCount
-        newStatus = CommentStatus.Dislike
-      }
-
-      if (myStatus === 'None' && initialStatus === 'Like') {
-        likesInfo.likesCount = --likesInfo.likesCount
-        newStatus = CommentStatus.None
-      }
-
-      if (myStatus === 'None' && initialStatus === 'Dislike') {
-        likesInfo.dislikesCount = --likesInfo.dislikesCount
-        newStatus = CommentStatus.None
-      }
-    } else {
-      switch (myStatus) {
-        case 'Like':
-          likesInfo.likesCount = ++likesInfo.likesCount
-          newStatus = CommentStatus.Like
-          break
-        case 'Dislike':
-          likesInfo.dislikesCount = ++likesInfo.dislikesCount
-          newStatus = CommentStatus.Dislike
-          break
-        default: return true
-      }
-    }
+    const {likesInfo, newStatus} = likesCounter(
+      myStatus,
+      CommentStatus.None,
+      initialStatus,
+      {
+        likesCount: foundPost.extendedLikesInfo.likesCount,
+        dislikesCount: foundPost.extendedLikesInfo.dislikesCount
+      },
+    )
 
     if (userPostLike) {
       userPostLike.updateExistingPostLike(newStatus)

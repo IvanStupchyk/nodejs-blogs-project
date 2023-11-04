@@ -1,6 +1,6 @@
 import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
-import {HTTP_STATUSES} from "../../src/utils";
+import {HTTP_STATUSES} from "../../src/utils/utils";
 import {mongooseUri} from "../../src/db/db";
 import {CommentStatus} from "../../src/types/generalTypes";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";

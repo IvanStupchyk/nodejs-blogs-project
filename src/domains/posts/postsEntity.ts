@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import {PostType} from "../dto/postDto";
-import {PostModel} from "../db/db";
+import {PostType} from "../../dto/postDto";
+import {PostModel} from "../../db/db";
 import {ObjectId} from "mongodb";
-import {HydratedPostType} from "../types/postsTypes";
-import {extendedPostLikesInfoSchema} from "../schemas/extendedPostLikesInfo";
-import {ExtendedLikesInfoType, PostLikeUserInfo} from "../types/generalTypes";
+import {HydratedPostType} from "../../types/postsTypes";
+import {extendedPostLikesInfoSchema} from "../../schemas/extendedPostLikesInfo";
+import {ExtendedLikesInfoType, PostLikeUserInfo} from "../../types/generalTypes";
 
 export const postSchema = new mongoose.Schema<PostType>({
   id: {type: String, required: true},

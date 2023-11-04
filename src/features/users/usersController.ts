@@ -3,10 +3,10 @@ import {UsersService} from "../../application/users.service";
 import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../../types/types";
 import {CreateUserModel} from "./models/CreateUserModel";
 import {Response} from "express";
-import {HTTP_STATUSES} from "../../utils";
 import {GetSortedUsersModel} from "./models/GetSortedUsersModel";
 import {DeleteUserModel} from "./models/DeleteUserModel";
 import {inject, injectable} from "inversify";
+import {HTTP_STATUSES} from "../../utils/utils";
 
 @injectable()
 export class UsersController {

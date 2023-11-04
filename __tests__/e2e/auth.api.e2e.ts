@@ -1,6 +1,5 @@
 import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
-import {HTTP_STATUSES} from "../../src/utils";
 import {errorsConstants} from "../../src/constants/errorsContants";
 import {mongooseUri} from "../../src/db/db";
 import {CreateUserModel} from "../../src/features/users/models/CreateUserModel";
@@ -10,6 +9,7 @@ import {emailTemplatesManager} from "../../src/application/emailTemplatesManager
 import mongoose from "mongoose";
 import {UserType} from "../../src/dto/userDto";
 import {UsersQueryRepository} from "../../src/infrastructure/repositories/usersQueryRepository";
+import {HTTP_STATUSES} from "../../src/utils/utils";
 const { parse } = require('cookie')
 
 const sleep = (seconds: number) => new Promise((r) => setTimeout(r, seconds * 1000))

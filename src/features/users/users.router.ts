@@ -2,10 +2,10 @@ import express from "express";
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
 import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
 import {userAdminValidationMiddleware} from "../../middlewares/userAdminValidationMiddleware";
-import {usersContainer} from "../../compositionRoots/compositionRootUsers";
 import {UsersController} from "./usersController";
+import {generalContainer} from "../../compositionRoot/generalRoot";
 
-const usersController = usersContainer.resolve(UsersController)
+const usersController = generalContainer.resolve(UsersController)
 
 export const userRouter = () => {
   const router = express.Router()

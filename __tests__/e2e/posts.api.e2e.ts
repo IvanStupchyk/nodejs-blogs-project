@@ -1,6 +1,6 @@
 import {app, RouterPaths} from "../../src/app";
 import request from 'supertest'
-import {HTTP_STATUSES} from "../../src/utils";
+import {HTTP_STATUSES} from "../../src/utils/utils";
 import {CreateBlogModel} from "../../src/features/blogs/models/CreateBlogModel";
 import {blogsTestManager} from "../utils/blogsTestManager";
 import {errorsConstants} from "../../src/constants/errorsContants";
@@ -95,7 +95,7 @@ describe('tests for /posts', () => {
   let newPost: PostType
   let newPosts: Array<PostType> = []
   let newBlog: BlogType
-  it('shouldn create a post if the user sent valid data with existing blog id', async () => {
+  it('should create a post if the user sent valid data with existing blog id', async () => {
     const { createdBlog } = await blogsTestManager.createBlog(validBlogData)
 
     await getRequest()

@@ -7,7 +7,7 @@ import {apiRequestSchema} from "../schemas/apiRequestSchema";
 import {UserType} from "../dto/userDto";
 import {userSchema} from "../domains/usersEntity";
 import {UserModelFullType} from "../types/usersTypes";
-import {postSchema} from "../domains/postsEntity";
+import {postSchema} from "../domains/posts/postsEntity";
 import {PostType} from "../dto/postDto";
 import {postModelFullType} from "../types/postsTypes";
 import {postLikeSchema} from "../domains/postLikes/postsLikesEntity";

@@ -12,7 +12,6 @@ import {
 import {GetSortedBlogsModel} from "./models/GetSortedBlogsModel";
 import {Response} from "express";
 import {GetBlogModel} from "./models/GetBlogModel";
-import {HTTP_STATUSES} from "../../utils";
 import {GetSortedPostsModel} from "../posts/models/GetSortedPostsModel";
 import {CreateBlogModel} from "./models/CreateBlogModel";
 import {URIParamsBlogIdModel} from "./models/URIParamsBlogIdModel";
@@ -22,6 +21,7 @@ import {UpdateBlogModel} from "./models/UpdateBlogModel";
 import {DeleteBlogModel} from "./models/DeleteBlogModel";
 import {inject, injectable} from "inversify";
 import {jwtService} from "../../application/jwt-service";
+import {HTTP_STATUSES} from "../../utils/utils";
 
 @injectable()
 export class BlogController {

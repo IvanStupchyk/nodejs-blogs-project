@@ -1,9 +1,9 @@
 import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUSES} from "../utils";
 import {jwtService} from "../application/jwt-service";
-import {RefreshTokenDevicesRepository} from "../infrastructure/repositories/refreshTokenDevicesRepository";
+import {DevicesRepository} from "../infrastructure/repositories/DevicesRepository";
+import {HTTP_STATUSES} from "../utils/utils";
 
-const refreshTokenDevicesRepository = new RefreshTokenDevicesRepository()
+const refreshTokenDevicesRepository = new DevicesRepository()
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.cookies.refreshToken) {
     res.sendStatus( HTTP_STATUSES.UNAUTHORIZED_401)

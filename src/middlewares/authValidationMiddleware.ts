@@ -1,9 +1,9 @@
 import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUSES} from "../utils";
-import {authServiceContainer} from "../compositionRoots/compositionRootAuthService";
 import {AuthService} from "../application/auth.service";
+import {generalContainer} from "../compositionRoot/generalRoot";
+import {HTTP_STATUSES} from "../utils/utils";
 
-const authService = authServiceContainer.resolve(AuthService)
+const authService = generalContainer.resolve(AuthService)
 
 export const authValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.headers.authorization) {

@@ -3,11 +3,11 @@ import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidation
 import {postValidationMiddleware} from "../../middlewares/postValidationMiddleware";
 import {commentValidationMiddleware} from "../../middlewares/commentValidationMiddleware";
 import {authBasicValidationMiddleware} from "../../middlewares/authBasicValidationMiddleware";
-import {postContainer} from "../../compositionRoots/compositionRootPosts";
 import {PostController} from "./postController";
 import {likeValidationMiddleware} from "../../middlewares/likeValidationMiddleware";
+import {generalContainer} from "../../compositionRoot/generalRoot";
 
-const postController = postContainer.resolve(PostController)
+const postController = generalContainer.resolve(PostController)
 
 export const postRouter = () => {
   const router = express.Router()

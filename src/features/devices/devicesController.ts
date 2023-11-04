@@ -1,15 +1,15 @@
-import {RefreshTokenDevicesRepository} from "../../infrastructure/repositories/refreshTokenDevicesRepository";
+import {DevicesRepository} from "../../infrastructure/repositories/DevicesRepository";
 import {DevicesService} from "../../domains/devices/devices.service";
 import {Request, Response} from "express";
-import {HTTP_STATUSES} from "../../utils";
 import {RequestWithParams} from "../../types/types";
 import {DeleteDeviceModel} from "./models/DeleteDeviceModel";
 import {inject, injectable} from "inversify";
+import {HTTP_STATUSES} from "../../utils/utils";
 
 @injectable()
 export class DevicesController {
   constructor(
-    @inject(RefreshTokenDevicesRepository) protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
+    @inject(DevicesRepository) protected refreshTokenDevicesRepository: DevicesRepository,
     @inject(DevicesService) protected devicesService: DevicesService
   ) {
   }

@@ -1,7 +1,8 @@
-import {HTTP_STATUSES, HttpStatusType} from "../../src/utils";
+import {HTTP_STATUSES, HttpStatusType} from "../../src/utils/utils";
 import request from "supertest";
 import {app, RouterPaths} from "../../src/app";
 import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
+import {CommentStatus} from "../../src/types/generalTypes";
 
 export const postsTestManager = {
   async createPost(
@@ -27,7 +28,13 @@ export const postsTestManager = {
         shortDescription: data.shortDescription,
         blogId: data.blogId,
         createdAt: expect.any(String),
-        blogName: createdPost.blogName
+        blogName: createdPost.blogName,
+        extendedLikesInfo: {
+          dislikesCount: 0,
+          likesCount: 0,
+          myStatus: CommentStatus.None,
+          newestLikes: []
+        }
       })
     }
 
@@ -58,7 +65,13 @@ export const postsTestManager = {
         shortDescription: data.shortDescription,
         blogId: data.blogId,
         createdAt: expect.any(String),
-        blogName: createdPost.blogName
+        blogName: createdPost.blogName,
+        extendedLikesInfo: {
+          dislikesCount: 0,
+          likesCount: 0,
+          myStatus: CommentStatus.None,
+          newestLikes: []
+        }
       })
     }
 

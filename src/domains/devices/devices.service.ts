@@ -1,15 +1,15 @@
 import {Request} from "express";
 import {jwtService} from "../../application/jwt-service";
 import {UsersQueryRepository} from "../../infrastructure/repositories/usersQueryRepository";
-import {RefreshTokenDevicesRepository} from "../../infrastructure/repositories/refreshTokenDevicesRepository";
-import {HTTP_STATUSES} from "../../utils";
+import {DevicesRepository} from "../../infrastructure/repositories/DevicesRepository";
 import {inject, injectable} from "inversify";
 import {UserType} from "../../dto/userDto";
+import {HTTP_STATUSES} from "../../utils/utils";
 
 @injectable()
 export class DevicesService  {
   constructor(
-    @inject(RefreshTokenDevicesRepository) protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
+    @inject(DevicesRepository) protected refreshTokenDevicesRepository: DevicesRepository,
     @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository
   ) {}
 
