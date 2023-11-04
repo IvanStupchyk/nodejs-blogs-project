@@ -95,7 +95,7 @@ describe('tests for /posts', () => {
   let newPost: PostType
   let newPosts: Array<PostType> = []
   let newBlog: BlogType
-  it('shouldn create a post if the user sent valid data with existing blog id', async () => {
+  it('should create a post if the user sent valid data with existing blog id', async () => {
     const { createdBlog } = await blogsTestManager.createBlog(validBlogData)
 
     await getRequest()

@@ -7,7 +7,7 @@ import {UsersQueryRepository} from "../infrastructure/repositories/usersQueryRep
 import {ViewUserModel} from "../features/users/models/ViewUserModel";
 import {v4 as uuidv4} from "uuid";
 import {emailTemplatesManager} from "./emailTemplatesManager";
-import {RefreshTokenDevicesRepository} from "../infrastructure/repositories/refreshTokenDevicesRepository";
+import {DevicesRepository} from "../infrastructure/repositories/DevicesRepository";
 import {ObjectId} from "mongodb";
 import {inject, injectable} from "inversify";
 import {DeviceType} from "../domains/devices/dto/createDeviceDto";
@@ -15,7 +15,7 @@ import {UserModel} from "../db/db";
 
 @injectable()
 export class AuthService {
-  constructor(@inject(RefreshTokenDevicesRepository) protected refreshTokenDevicesRepository: RefreshTokenDevicesRepository,
+  constructor(@inject(DevicesRepository) protected refreshTokenDevicesRepository: DevicesRepository,
               @inject(UsersQueryRepository) protected usersQueryRepository: UsersQueryRepository,
               @inject(UsersRepository) protected usersRepository: UsersRepository
   ) {}

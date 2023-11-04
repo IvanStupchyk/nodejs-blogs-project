@@ -3,10 +3,10 @@ import {commentValidationMiddleware} from "../../middlewares/commentValidationMi
 import {inputValidationErrorsMiddleware} from "../../middlewares/inputValidationErrorsMiddleware";
 import {authValidationMiddleware} from "../../middlewares/authValidationMiddleware";
 import {likeValidationMiddleware} from "../../middlewares/likeValidationMiddleware";
-import {commentsContainer} from "../../compositionRoots/compositionRootComments";
 import {CommentsController} from "./commentsController";
+import {generalContainer} from "../../compositionRoot/generalRoot";
 
-const commentsController = commentsContainer.resolve(CommentsController)
+const commentsController = generalContainer.resolve(CommentsController)
 
 export const commentsRouter = () => {
   const router = express.Router()

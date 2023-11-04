@@ -6,7 +6,7 @@ import {injectable} from "inversify";
 import {DeviceType} from "../../domains/devices/dto/createDeviceDto";
 
 @injectable()
-export class RefreshTokenDevicesRepository {
+export class DevicesRepository {
   async getUserSessions(userId: ObjectId): Promise<Array<DeviceViewType>> {
     const result: Array<DeviceType> = await DeviceModel
       .find({userId}, {_id: 0, __v: 0}).lean()
